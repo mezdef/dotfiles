@@ -1,0 +1,104 @@
+#  Path to your oh-my-zsh configuration.
+export ZSH="$HOME/dotfiles/zsh/oh-my-zsh"
+ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
+export ZSH_THEME="ulysses"
+# Comment this out to disable weekly auto-update checks
+export DISABLE_AUTO_UPDATE="true"
+
+# Editor
+export EDITOR='vim'
+export VISUAL="vim"
+alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
+
+source $ZSH/oh-my-zsh.sh
+
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+
+# Aliases
+ alias zshrc="vim ~/dotfiles/zsh/zshrc"
+ alias vimrc="vim ~/dotfiles/vimrc"
+ alias tmuxrc="vim ~/dotfiles/tmux/tmux.conf"
+ alias cl="clear"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# Set to this to use case-sensitive completion
+# CASE_SENSITIVE="true"
+
+
+# Uncomment following line if you want to disable colors in ls
+# DISABLE_LS_COLORS="true"
+
+# Uncomment following line if you want to disable autosetting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment following line if you want red dots to be displayed while waiting for completion
+# COMPLETION_WAITING_DOTS="true"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+plugins=(git brew rvm bundler osx zsh-syntax-highlighting history-substring-search)
+# Set VI mode for zsh
+bindkey -v
+
+#function zle-line-init zle-keymap-select {
+  #RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
+  #RPS2=$RPS1
+  #zle reset-prompt
+#}
+#zle -N zle-line-init
+#zle -N zle-keymap-select
+
+# Customize to your needs...
+export PATH=/Users/mezdef/.nvm/v0.4.12/bin:/Users/mezdef/.rvm/gems/ruby-1.9.2-p180@rails3tutorial/bin:/Users/mezdef/.rvm/gems/ruby-1.9.2-p180@global/bin:/Users/mezdef/.rvm/rubies/ruby-1.9.2-p180/bin:/Users/mezdef/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
+
+# $PATH
+# # This puts homebrew packages first in path
+PATH=/usr/local/bin:/usr/local/sbin:$PATH
+
+# Path ------------------------------------------------------------
+if [ -d ~/.local/bin ]; then export PATH=~/.local/bin:$PATH ; fi
+
+# Python path -----------------------------------------------------
+#if [ -d ~/.local/lib/python2.7/site-packages ]; then
+  export PYTHONPATH=~/.local/lib/python2.7/site-packages:$PYTHONPATH
+#fi
+
+
+# Python variables -----------------------------------------------------------
+# export PIP_DOWNLOAD_CACHE="$HOME/.pip/cache"
+# export PYTHONSTARTUP="$HOME/.pythonrc.py"
+# export WORKON_HOME="${HOME}/lib/virtualenvs"
+# export PATH="${PATH}:/Developer/usr/bin/"
+# export PATH="${PATH}:/usr/local/share/python/"
+# export PATH="${PATH}:$HOME/.lein/bin"
+export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.1/lib/python2.7/site-packages"
+# export PYTHONPATH="$PYTHONPATH:/usr/local/lib/python2.7.1/site-packages"
+# export PYTHONPATH="$PYTHONPATH:/usr/local/lib/python2.7/site-packages"
+# export PYTHONPATH="$PYTHONPATH:/usr/local/lib/python2.6/site-packages"
+# export VEW_PATH="$HOME/lib/python/virtualenvwrapper/virtualenvwrapper.sh"
+# export VEW_PATH="/usr/local/share/python/virtualenvwrapper.sh"
+# export PYTHONPATH="$HOME/lib/python/see:$PYTHONPATH"
+# export NODE_PATH="$NODE_PATH:/usr/local/lib/node:/usr/local/lib/node_modules"
+
+# Load in .bashrc -------------------------------------------------
+#if [ -f ~/.bashrc ]; then
+  #source ~/.bashrc
+#fi
+
+#export PATH=$HOME/.rbenv/bin:$PATH
+#eval "$(rbenv init -)"
+
+# added RVM stuff
+# load RVM
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+#Tmuxinator
+[[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
+
+# Tmux Powerline
+#PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#I_#P") "$PWD")'

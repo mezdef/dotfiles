@@ -15,7 +15,6 @@ call pathogen#infect()                            " Load Pathogen
 call pathogen#helptags()
 filetype plugin indent on                         " load file type plugins + indentation
 set nocompatible                                  " choose no compatibility with legacy vi
-set runtimepath=~/dotfiles/vim,$VIM,$VIMRUNTIME " Set RunTime path to drobox
 syntax on                                         " turn on syntax highlighting
 set mouse=a                                       " automatically enable mouse usage
 
@@ -135,7 +134,6 @@ au VimResized * exe "normal! \<c-w>="
 
 " TABS, SPACES, WRAPPING ///////////////////////////////////////////////////////////////////////////
 
-
 set wrap
 set textwidth=100                                 " Set character width of splitter
 set formatoptions=qrn1
@@ -148,58 +146,10 @@ endif
 
 set background=dark
 colorscheme molokai
-"autocmd InsertEnter * highlight LineNr ctermbg=DarkGreen ctermfg=black  guibg=green
-"autocmd InsertLeave * highlight LineNr ctermbg=none ctermfg=white guibg=black
 
 " Highlight VCS conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
-" }}}
-
-" }}}
-" Status line ----------------------------------------------------------------- {{{
-
-"augroup ft_statuslinecolor
-    "au!
-
-    "au InsertEnter * hi StatusLine ctermfg=196 guifg=#FF3145
-    "au InsertLeave * hi StatusLine ctermfg=130 guifg=#CD5907
-"augroup END
-
-"" disable syntastic on the statusline
-"let g:statline_syntastic = 0
-
-
-"set statusline=%f    " Path.
-"set statusline+=%m   " Modified flag.
-"set statusline+=%r   " Readonly flag.
-"set statusline+=%w   " Preview window flag.
-
-"set statusline+=\    " Space.
-
-"set statusline+=%#redbar#                " Highlight the following as a warning.
-"set statusline+=%{SyntasticStatuslineFlag()} " Syntastic errors.
-"set statusline+=%*                           " Reset highlighting.
-
-"set statusline+=%=   " Right align.
-
-"" File format, encoding and type.  Ex: "(unix/utf-8/python)"
-"set statusline+=(
-"set statusline+=%{&ff}                        " Format (unix/DOS).
-"set statusline+=/
-"set statusline+=%{strlen(&fenc)?&fenc:&enc}   " Encoding (utf-8).
-"set statusline+=/
-"set statusline+=%{&ft}                        " Type (python).
-"set statusline+=)
-
-" Line and column position and counts.
-"set statusline+=\ (line\ %l\/%L,\ col\ %03c)
-
-" Enable fancy mode
-"let g:Powerline_theme="skwp"
-"set guifont=Menlo\ for\ Powerline:h12
-
-""let g:Powerline_colorscheme="skwp"
 
 let g:Powerline_symbols = 'fancy'   " Powerline
 
@@ -303,7 +253,7 @@ nnoremap <m-Up> :cprevious<cr>zvzz
 
 " }}}
 
-" DIRECTIONAL KEYS /////////////////////////////////////////////////////////////////////////////////
+" NAVIGATION ///////////////////////////////////////////////////////////////////////////////////////
 
 " Disable directional keys
 nnoremap <up> <nop>
@@ -325,8 +275,9 @@ noremap <C-j>  <C-w>j
 noremap <C-k>  <C-w>k
 noremap <C-l>  <C-w>l
 
+" Faster Esc
 inoremap jj <ESC>
-" }}}
+inoremap jk <esc>
 
 " Highlight word {{{
 nnoremap <silent> <leader>hh :execute 'match InterestingWord1 /\<<c-r><c-w>\>/'<cr>
@@ -347,8 +298,7 @@ vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR><c-o>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR><c-o>
 " }}}
 
-" }}}
-" Folding --------------------------------------------------------------------- {{{
+" FOLDING //////////////////////////////////////////////////////////////////////////////////////////
 
 set foldlevelstart=20
 
@@ -399,71 +349,7 @@ inoremap # X<BS>#
 " }}}
 " Various filetype-specific stuff --------------------------------------------- {{{
 
-" C {{{
-
-augroup ft_c
-    au!
-    au FileType c setlocal foldmethod=syntax
-augroup END
-
-" }}}
-" Clojure {{{
-
-let g:slimv_leader = '\'
-let g:slimv_keybindings = 2
-
-augroup ft_clojure
-    au!
-
-    au FileType clojure call TurnOnClojureFolding()
-    au FileType clojure compiler clojure
-    au FileType clojure setlocal report=100000
-    au FileType clojure nnoremap <buffer> o jI<cr><esc>kA
-    au FileType clojure nnoremap <buffer> O I<cr><esc>kA
-
-    au BufWinEnter        Slimv.REPL.clj setlocal winfixwidth
-    au BufNewFile,BufRead Slimv.REPL.clj setlocal nowrap
-    au BufNewFile,BufRead Slimv.REPL.clj setlocal foldlevel=99
-    au BufNewFile,BufRead Slimv.REPL.clj nnoremap <buffer> A GA
-    au BufNewFile,BufRead Slimv.REPL.clj unmap <buffer> \\\
-
-    " Fix the eval mapping.
-    au FileType clojure nmap <buffer> \ee \ed
-
-    " Indent top-level form.
-    au FileType clojure nmap <buffer> <localleader>= v((((((((((((=%
-
-    " Use a swank command that works, and doesn't require new app windows.
-    au FileType clojure let g:slimv_swank_cmd='!dtach -n /tmp/dtach-swank.sock -r winch lein swank'
-augroup END
-
-" }}}
-" Confluence {{{
-
-augroup ft_c
-    au!
-
-    au BufRead,BufNewFile *.confluencewiki setlocal filetype=confluencewiki
-
-    " Wiki pages should be soft-wrapped.
-    au FileType confluencewiki setlocal wrap linebreak nolist
-augroup END
-
-" }}}
-" Cram {{{
-
-let cram_fold=1
-
-augroup ft_cram
-    au!
-
-    au BufNewFile,BufRead *.t set filetype=cram
-    au Syntax cram setlocal foldlevel=1
-augroup END
-
-
-" }}}
-" CSS and LessCSS {{{
+" CSS & LESSCSS ////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_css
     au!
@@ -501,8 +387,7 @@ augroup ft_css
     au BufNewFile,BufRead *.less,*.css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
 
-" }}}
-" Django {{{
+" DJANGO ///////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_django
     au!
@@ -525,25 +410,7 @@ augroup END
 
 " }}}
 
-
-" Firefox {{{
-
-augroup ft_firefox
-    au!
-    au BufRead,BufNewFile ~/Library/Caches/*.html setlocal buftype=nofile
-augroup END
-
-" }}}
-" Fish {{{
-
-augroup ft_fish
-    au!
-
-    au BufNewFile,BufRead *.fish setlocal filetype=fish
-augroup END
-
-" }}}
-" HTML and HTMLDjango {{{
+" HTML & HTMLDJANGO ////////////////////////////////////////////////////////////////////////////////
 
 au BufNewFile,BufRead *.j2 setlocal filetype=html
 
@@ -578,8 +445,7 @@ augroup ft_html
     au FileType jinja,htmldjango inoremap <buffer> <c-f> {{<space><space>}}<left><left><left>
 augroup END
 
-" }}}
-" Javascript {{{
+" JAVASCRIPT ///////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_javascript
     au!
@@ -588,16 +454,7 @@ augroup ft_javascript
     au FileType javascript setlocal foldmarker={,}
 augroup END
 
-" }}}
-" Lisp {{{
-
-augroup ft_lisp
-    au!
-    au FileType lisp call TurnOnLispFolding()
-augroup END
-
-" }}}
-" Markdown {{{
+" MARKDOWN /////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_markdown
     au!
@@ -611,46 +468,7 @@ augroup ft_markdown
 augroup END
 
 " }}}
-" Nginx {{{
 
-augroup ft_nginx
-    au!
-
-    au BufRead,BufNewFile /etc/nginx/conf/*                      set ft=nginx
-    au BufRead,BufNewFile /etc/nginx/sites-available/*           set ft=nginx
-    au BufRead,BufNewFile /usr/local/etc/nginx/sites-available/* set ft=nginx
-    au BufRead,BufNewFile vhost.nginx                            set ft=nginx
-augroup END
-
-" }}}
-" OrgMode {{{
-
-augroup ft_org
-    au!
-
-    au Filetype org nmap <buffer> Q vahjgq
-augroup END
-
-" }}}
-" Pentadactyl {{{
-
-augroup ft_pentadactyl
-    au!
-    au BufNewFile,BufRead .pentadactylrc set filetype=pentadactyl
-    au BufNewFile,BufRead ~/Library/Caches/TemporaryItems/pentadactyl-*.tmp set nolist wrap linebreak columns=100 colorcolumn=0
-augroup END
-
-" }}}
-" Puppet {{{
-
-augroup ft_puppet
-    au!
-
-    au Filetype puppet setlocal foldmethod=marker
-    au Filetype puppet setlocal foldmarker={,}
-augroup END
-
-" }}}
 " Python {{{
 
 augroup ft_python
@@ -713,41 +531,19 @@ augroup ft_vim
     au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
 augroup END
 
-" }}}
-
-" }}}
-" Quick editing --------------------------------------------------------------- {{{
+" QUICK FILE EDITING  //////////////////////////////////////////////////////////////////////////////
 
 nnoremap <leader>ev <C-w>s<C-w>j<C-w>L:e ~/dotfiles/vim/vimrc<cr>
-nnoremap <leader>es <C-w>s<C-w>j<C-w>L:e ~/.vim/snippets/<cr>
-nnoremap <leader>eo <C-w>s<C-w>j<C-w>L:e ~/Dropbox/Org<cr>4j
-nnoremap <leader>eh <C-w>s<C-w>j<C-w>L:e ~/.hgrc<cr>
-nnoremap <leader>em <C-w>s<C-w>j<C-w>L:e ~/.mutt/muttrc<cr>
 nnoremap <leader>ez <C-w>s<C-w>j<C-w>L:e ~/lib/dotfiles/zsh<cr>4j
-nnoremap <leader>ek <C-w>s<C-w>j<C-w>L:e ~/lib/dotfiles/keymando/keymandorc.rb<cr>
 
-" }}}
-" Convenience mappings -------------------------------------------------------- {{{
-
-" Clean whitespace
-map <leader>W  :%s/\s\+$//<cr>:let @/=''<CR>
-
-" Dammit, Slimv
-map <leader>WW :%s/\s\+$//<cr>:let @/=''<CR>
-map <leader>WW :%s/\s\+$//<cr>:let @/=''<CR>
+" MAPPINGS /////////////////////////////////////////////////////////////////////////////////////////
 
 " Change case
-nnoremap <C-u> gUiw
-inoremap <C-u> <esc>gUiwea
+noremap <C-u> gUiw
+inoremap <C-u><esc> gUiwea
 
 " Substitute
 nnoremap <leader>s :%s//<left>
-
-" Diffoff
-nnoremap <leader>D :diffoff!<cr>
-
-" Yankring
-nnoremap <silent> <F6> :YRShow<cr>
 
 " Formatting, TextMate-style
 nnoremap Q gqip
@@ -770,8 +566,6 @@ vnoremap <leader>Al :left<cr>
 vnoremap <leader>Ac :center<cr>
 vnoremap <leader>Ar :right<cr>
 
-" Faster Esc
-inoremap jk <esc>
 
 " Cmdheight switching
 nnoremap <leader>1 :set cmdheight=1<cr>
@@ -812,27 +606,6 @@ nnoremap _d  :set ft=diff<CR>
 " Toggle paste
 set pastetoggle=<F8>
 
-" Split/Join {{{
-"
-" Basically this splits the current line into two new ones at the cursor position,
-" then joins the second one with whatever comes next.
-"
-" Example:                      Cursor Here
-"                                    |
-"                                    V
-" foo = ('hello', 'world', 'a', 'b', 'c',
-"        'd', 'e')
-"
-"            becomes
-"
-" foo = ('hello', 'world', 'a', 'b',
-"        'c', 'd', 'e')
-"
-" Especially useful for adding items in the middle of long lists/tuples in Python
-" while maintaining a sane text width.
-nnoremap K h/[^ ]<cr>"zd$jyyP^v$h"zpJk:s/\v +$//<cr>:noh<cr>j^
-" }}}
-
 " Handle URL {{{
 " Stolen from https://github.com/askedrelic/homedir/blob/master/.vimrc
 " OSX only: Open a web-browser with the URL in the current line
@@ -871,37 +644,57 @@ nnoremap <leader>i :call IndentGuides()<cr>
 inoremap <c-l> <c-x><c-l>
 inoremap <c-f> <c-x><c-f>
 
-" }}}
+" CTRL-P ////////////////////////////////////////////////////////////////////////////////////////
+"
+let g:ctrlp_dont_split = 'NERD_tree_2'
+let g:ctrlp_jump_to_buffer = 0
+let g:ctrlp_map = '<leader>,'
+let g:ctrlp_working_path_mode = 0
+let g:ctrlp_match_window_reversed = 1
+let g:ctrlp_split_window = 0
+let g:ctrlp_max_height = 20
+let g:ctrlp_extensions = ['tag']
 
-" }}}
-" Plugin settings ------------------------------------------------------------- {{{
+let g:ctrlp_prompt_mappings = {
+      \ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
+      \ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
+      \ 'PrtHistory(-1)':       ['<c-n>'],
+      \ 'PrtHistory(1)':        ['<c-p>'],
+      \ 'ToggleFocus()':        ['<c-tab>'],
+      \ }
 
-" Ack {{{
+let ctrlp_filter_greps = "".
+      \ "egrep -iv '\\.(" .
+      \ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
+      \ ")$' | " .
+      \ "egrep -v '^(\\./)?(" .
+      \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
+      \ ")'"
 
-map <leader>a :Ack!
+let my_ctrlp_user_command = "" .
+      \ "find %s '(' -type f -or -type l ')' -maxdepth 15 -not -path '*/\\.*/*' | " .
+      \ ctrlp_filter_greps
 
-" }}}
-" Autoclose {{{
+let my_ctrlp_git_command = "" .
+      \ "cd %s && git ls-files --exclude-standard -co | " .
+      \ ctrlp_filter_greps
 
-nmap <Leader>x <Plug>ToggleAutoCloseMappings
+let my_ctrlp_ffind_command = "ffind --semi-restricted --dir %s --type e -B -f"
 
-" }}}
-" Command-T {{{
+let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
 
-let g:CommandTMaxHeight = 20
+nnoremap <leader>. :CtrlPTag<cr>}
+" }"
 
-" }}}
-" Commentary {{{
+
+" COMMENTARY ///////////////////////////////////////////////////////////////////////////////////////
 
 nmap <leader>c <Plug>CommentaryLine
 xmap <leader>c <Plug>Commentary
 au FileType htmldjango setlocal commentstring={#\ %s\ #}
 
-" }}}
-" Easymotion {{{
+" EASYMOTION ///////////////////////////////////////////////////////////////////////////////////////
 
-"let g:EasyMotion_leader_key = '<Leader>'
-"let g:EasyMotion_do_mapping=0
 nnoremap <silent> <Leader>w       :call EasyMotionWB(0, 0)<CR>
 vnoremap <silent> <Leader>w  :<C-U>call EasyMotionWB(1, 0)<CR>
 
@@ -918,8 +711,7 @@ vnoremap <silent> <Leader>F :<C-U>call EasyMotionF(1, 1)<CR>
 onoremap <silent> <Leader>t      :call EasyMotionT(0, 0)<CR>
 onoremap <silent> <Leader>T      :call EasyMotionT(0, 1)<CR>
 
-" }}}
-" Fugitive {{{
+" FUGITIVE /////////////////////////////////////////////////////////////////////////////////////////
 
 nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gs :Gstatus<cr>
@@ -937,40 +729,14 @@ augroup ft_fugitive
     au BufNewFile,BufRead .git/index setlocal nolist
 augroup END
 
-" }}}
-" Gundo {{{
-
-" nnoremap <F5> :GundoToggle<CR>
-nnoremap <leader>z :GundoToggle<cr>
-let g:gundo_debug = 1
-let g:gundo_preview_bottom = 1
-
-" }}}
-" HTML5 {{{
+" HTML5 ////////////////////////////////////////////////////////////////////////////////////////////
 
 let g:event_handler_attributes_complete = 0
 let g:rdfa_attributes_complete = 0
 let g:microdata_attributes_complete = 0
 let g:atia_attributes_complete = 0
 
-" }}}
-" Linediff {{{
-
-vnoremap <leader>l :Linediff<cr>
-nnoremap <leader>L :LinediffReset<cr>
-
-" }}}
-" Lisp (built-in) {{{
-
-let g:lisp_rainbow = 1
-
-" }}}
-" Makegreen {{{
-
-nnoremap \| :call MakeGreen('')<cr>
-
-" }}}
-" NERD Tree {{{
+" NERDTREE /////////////////////////////////////////////////////////////////////////////////////////
 
 noremap  <F2> :NERDTreeToggle<cr>
 inoremap <F2> <esc>:NERDTreeToggle<cr>
@@ -981,17 +747,6 @@ let NERDTreeHighlightCursorline=1
 let NERDTreeIgnore=['.vim$', '\~$', '.*\.pyc$', 'pip-log\.txt$', 'whoosh_index', 'xapian_index', '.*.pid', 'monitor.py', '.*-fixtures-.*.json', '.*\.o$', 'db.db']
 
 " }}}
-" NERD Commenter {{{
-" }}}
-" OrgMode {{{
-
-let g:org_plugins = ['ShowHide', '|', 'Navigator', 'EditStructure', '|', 'Todo', 'Date', 'Misc']
-
-let g:org_todo_keywords = ['TODO', '|', 'DONE']
-
-let g:org_debug = 1
-
-" }}}
 " Pydoc {{{
 
 let g:pydoc_perform_mappings = 0
@@ -999,52 +754,11 @@ let g:pydoc_perform_mappings = 0
 au FileType python noremap <buffer> <localleader>ds :call ShowPyDoc('<C-R><C-W>', 1)<CR>
 au FileType python noremap <buffer> <localleader>dS :call ShowPyDoc('<C-R><C-A>', 1)<CR>
 
-" }}}
-" Rope {{{
-
-""let ropevim_enable_shortcuts = 0
-""let ropevim_guess_project = 1
-""let ropevim_global_prefix = '<C-c>p'
-
-""source $HOME/Dropbox/settings/vim/sadness/sadness.vim
-
-" }}}
-" Scratch {{{
-
-command! ScratchToggle call ScratchToggle()
-
-function! ScratchToggle() " {{{
-  if exists("w:is_scratch_window")
-    unlet w:is_scratch_window
-    exec "q"
-  else
-    exec "normal! :Sscratch\<cr>\<C-W>J:resize 13\<cr>"
-    let w:is_scratch_window = 1
-  endif
-endfunction " }}}
-
-nnoremap <silent> <leader><tab> :ScratchToggle<cr>
-
-" }}}
-" SLIMV {{{
-
-"let g:slimv_lisp = '"java -cp `lein classpath` clojure.main"'
-let g:slimv_repl_split = 4
-let g:slimv_repl_syntax = 1
-
-" }}}}
-" Sparkup {{{
+" SPARKUP //////////////////////////////////////////////////////////////////////////////////////////
 
 let g:sparkupNextMapping = '<c-s>'
 
-"}}}
-" Supertab {{{
-
-let g:SuperTabDefaultCompletionType = "<c-n>"
-let g:SuperTabLongestHighlight = 1
-
-"}}}
-" Syntastic {{{
+" SYNTASTIC ////////////////////////////////////////////////////////////////////////////////////////
 
 let g:syntastic_enable_signs = 1
 let g:syntastic_disabled_filetypes = ['html']
@@ -1075,84 +789,6 @@ let g:threesome_initial_scrollbind_compare = 0
 let g:threesome_initial_scrollbind_path = 0
 
 let g:threesome_wrap = "nowrap"
-
-" }}}
-" VimClojure {{{
-
-let vimclojure#HighlightBuiltins = 1
-let vimclojure#ParenRainbow = 1
-let vimclojure#WantNailgun = 0
-
-" }}}
-" YankRing {{{
-
-function! YRRunAfterMaps()
-    nnoremap Y :<C-U>YRYankCount 'y$'<CR>
-    omap <expr> L YRMapsExpression("", "$")
-    omap <expr> H YRMapsExpression("", "^")
-endfunction
-
-
-" }}}
-" VimRoom {{{
-"
-
-" WRITING //////////////////////////////////////////////////////////////////////////////////////////
-
-"F7 WordProcessorOn
-:map <F7> :set linebreak <CR> :set display+=lastline <CR> :set wrap <CR> :setlocal spell spelllang=en_gb <CR>
-"F8 WordProcessorOff
-:map <F8> :set nowrap <CR> :set nospell <CR>
-
-autocmd BufRead,BufNewFile ~/dropbox/work/marcziani/content/blog/* set syntax=markdown
-
-nnoremap <silent> <Leader>mz <Plug>VimroomToggle
-
-function TextEdit()
-    set spell
-    set formatoptions=1
-    set linebreak
-    set wrap
-    set nolist
-    set showbreak=
-    set columns=100           " size of the
-    colorscheme iawriter
-    set background=light
-  endfunction
-
-  if has('autocmd')
-    au BufRead,BufNewFile *.txt call TextEdit()
-    au BufRead,BufNewFile *.markdown call TextEdit()
-  endif
-
-
-
-" turn-on distraction free writing mode for markdown files
-"au BufNewFile,BufRead *.{md,mdown,mkd,mkdn,markdown,mdwn} call DistractionFreeWriting()
-
-function! DistractionFreeWriting()
-  colorscheme iawriter
-  set background=light
-  "set gfn=Cousine:h14                " font to use
-  set lines=40 columns=100           " size of the
-  " editable area
-  "set fuoptions=background:#00f5f6f6 " macvim
-  " specific setting for editor's background color 
-  set guioptions-=r
-  " remove right scrollbar
-  set laststatus=0
-  " don't show status line
-  set noruler
-  " don't show ruler
-  set fullscreen
-  " go to fullscreen editing mode
-  set linebreak
-  " break the lines on words
-endfunction"
-
-
-
-" }}}
 
 " }}}
 " Text objects ---------------------------------------------------------------- {{{
@@ -1238,87 +874,7 @@ function! StartUp()
     end
 endfunction
 
-
-" Synstack {{{
-
-" Show the stack of syntax hilighting classes affecting whatever is under the
-" cursor.
-function! SynStack() "{{{
-  echo join(map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")'), " > ")
-endfunc "}}}
-
-nnoremap ß :call SynStack()<CR>
-
-" }}}
-" Toggle whitespace in diffs {{{
-
-set diffopt-=iwhite
-let g:diffwhitespaceon = 1
-function! ToggleDiffWhitespace() "{{{
-    if g:diffwhitespaceon
-        set diffopt-=iwhite
-        let g:diffwhitespaceon = 0
-    else
-        set diffopt+=iwhite
-        let g:diffwhitespaceon = 1
-    endif
-    diffupdate
-endfunc "}}}
-
-nnoremap <leader>dw :call ToggleDiffWhitespace()<CR>
-
-" }}}
-
-" }}}
-" Hg -------------------------------------------------------------------------- {{{
-
-function! s:HgDiff()
-    diffthis
-
-    let fn = expand('%:p')
-    let ft = &ft
-
-    wincmd v
-    edit __hgdiff_orig__
-
-    setlocal buftype=nofile
-
-    normal ggdG
-    execute "silent r!hg cat --rev . " . fn
-    normal ggdd
-
-    execute "setlocal ft=" . ft
-
-    diffthis
-    diffupdate
-endf
-command! -nargs=0 HgDiff call s:HgDiff()
-nnoremap <leader>hd :HgDiff<cr>
-
-function! s:HgBlame()
-    let fn = expand('%:p')
-
-    wincmd v
-    wincmd h
-    edit __hgblame__
-    vertical resize 28
-
-    setlocal scrollbind winfixwidth nolist nowrap nonumber buftype=nofile ft=none
-
-    normal ggdG
-    execute "silent r!hg blame -undq " . fn
-    normal ggdd
-    execute ':%s/\v:.*$//'
-
-    wincmd l
-    setlocal scrollbind
-    syncbind
-endf
-command! -nargs=0 HgBlame call s:HgBlame()
-nnoremap <leader>hb :HgBlame<cr>
-
-" }}}
-" MacVim ---------------------------------------------------------------------- {{{
+" MACVIM ///////////////////////////////////////////////////////////////////////////////////////////
 
 if has('gui_running')
     set guifont=Inconsolata-dz\ for\ Powerline:h12
@@ -1382,134 +938,10 @@ if has('gui_running')
 
 else
     " Command-T if we don't have a GUI.
-    noremap <leader><leader> :CommandT<cr>
+    " noremap <leader><leader> :CommandT<cr>
 
     " Dammit, PeepOpen
     map gxxxxx <Plug>PeepOpen
 endif
-
-" }}}
-" Nyan! ----------------------------------------------------------------------- {{{
-
-function! NyanMe() " {{{
-    hi NyanFur             guifg=#BBBBBB
-    hi NyanPoptartEdge     guifg=#ffd0ac
-    hi NyanPoptartFrosting guifg=#fd3699 guibg=#fe98ff
-    hi NyanRainbow1        guifg=#6831f8
-    hi NyanRainbow2        guifg=#0099fc
-    hi NyanRainbow3        guifg=#3cfa04
-    hi NyanRainbow4        guifg=#fdfe00
-    hi NyanRainbow5        guifg=#fc9d00
-    hi NyanRainbow6        guifg=#fe0000
-
-
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl None
-    echo ""
-
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl NyanFur
-    echon "╰"
-    echohl NyanPoptartEdge
-    echon "⟨"
-    echohl NyanPoptartFrosting
-    echon "⣮⣯⡿"
-    echohl NyanPoptartEdge
-    echon "⟩"
-    echohl NyanFur
-    echon "⩾^ω^⩽"
-    echohl None
-    echo ""
-
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl NyanRainbow1
-    echon "≈"
-    echohl NyanRainbow2
-    echon "≋"
-    echohl NyanRainbow3
-    echon "≈"
-    echohl NyanRainbow4
-    echon "≋"
-    echohl NyanRainbow5
-    echon "≈"
-    echohl NyanRainbow6
-    echon "≋"
-    echohl None
-    echon " "
-    echohl NyanFur
-    echon "”   ‟"
-    echohl None
-
-    sleep 1
-    redraw
-    echo " "
-    echo " "
-    echo "Noms?"
-    redraw
-endfunction " }}}
-command! NyanMe call NyanMe()
-
-" }}}
-"
-
-"autocmd rooter BufEnter *.sass :Rooter
-"autocmd rooter BufEnter *.scss :Rooter
 
 

@@ -184,7 +184,7 @@ set smartcase
 set incsearch                                       "Find the next match as we type the search
 set showmatch
 set hlsearch                                        "Hilight searches by default
-set gdefault
+" set gdefault
 
 set scrolloff=3
 set sidescroll=1
@@ -542,6 +542,12 @@ nnoremap <leader>ev <C-w>s<C-w>j<C-w>L:e ~/dotfiles/vim/vimrc<cr>
 nnoremap <leader>ez <C-w>s<C-w>j<C-w>L:e ~/lib/dotfiles/zsh<cr>4j
 
 " MAPPINGS /////////////////////////////////////////////////////////////////////////////////////////
+
+
+" Search/Replace current word with checking
+nnoremap <Leader>s :%s/<c-r><c-w>/<c-r><c-w>/gc<Left><Left><Left>
+vnoremap <Leader>s "hy:%s/\%V/g<Left><Left>
+vnoremap <Leader>S "hy:%s/<C-r>h//gc<left><left><left>
 
 " Change case
 noremap <C-u> gUiw
@@ -957,3 +963,4 @@ else
 endif
 
 
+nnoremap <Leader>s :%s/<c-r><c-w>/<c-r><c-w>/gc<Left><Left><Left>

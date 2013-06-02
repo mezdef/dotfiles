@@ -23,6 +23,8 @@ source $ZSH/oh-my-zsh.sh
  alias vimrc="vim ~/dotfiles/vim/vimrc"
  alias tmuxrc="vim ~/dotfiles/tmux/tmux.conf"
  alias cl="clear"
+ 
+ alias g="git"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Set to this to use case-sensitive completion

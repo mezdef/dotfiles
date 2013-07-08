@@ -62,8 +62,6 @@ set expandtab
 set list
 set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
 
-" let g:indent_guides_enable_on_vim_startup = 1
-" let g:indent_guides_guide_size = 1
 let g:indentLine_color_term = 239
 let g:indentLine_char = ':'
 let g:indentLine_color_gui = '#444444'
@@ -392,6 +390,10 @@ augroup ft_css
     au BufNewFile,BufRead *.less,*.css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
 
+" SCSS /////////////////////////////////////////////////////////////////////////////////////////////
+"
+au BufRead,BufNewFile *.scss set filetype=scss
+
 " DJANGO ///////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_django
@@ -576,6 +578,11 @@ nnoremap <leader>p :w<cr>:Hammer<cr>
 " HTML tag closing
 inoremap <C-_> <Space><BS><Esc>:call InsertCloseTag()<cr>a
 
+" New line and indentation after braces
+inoremap {<cr> {<cr>}<c-o>O
+inoremap [<cr> [<cr>]<c-o>O
+inoremap (<cr> (<cr>)<c-o>O
+
 " Align text
 nnoremap <leader>Al :left<cr>
 nnoremap <leader>Ac :center<cr>
@@ -689,17 +696,7 @@ let ctrlp_filter_greps = "".
       \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
       \ ")'"
 
-let my_ctrlp_user_command = "" .
-      \ "find %s '(' -type f -or -type l ')' -maxdepth 15 -not -path '*/\\.*/*' | " .
-      \ ctrlp_filter_greps
-
-let my_ctrlp_git_command = "" .
-      \ "cd %s && git ls-files --exclude-standard -co | " .
-      \ ctrlp_filter_greps
-
-let my_ctrlp_ffind_command = "ffind --semi-restricted --dir %s --type e -B -f"
-
-let g:ctrlp_user_command = ['.git/', my_ctrlp_ffind_command, my_ctrlp_ffind_command]
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 
 nnoremap <leader>. :CtrlPTag<cr>}
 " }"

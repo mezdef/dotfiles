@@ -62,6 +62,10 @@ set expandtab
 set list
 set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
 
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_guide_size = 1
+
+
 " FOLDS ////////////////////////////////////////////////////////////////////////////////////////////
 
 set foldcolumn=1
@@ -415,7 +419,7 @@ au BufNewFile,BufRead *.j2 setlocal filetype=htmljinja
 augroup ft_html
     au!
 
-    au BufNewFile,BufRead *.html setlocal filetype=htmljinja
+    " au BufNewFile,BufRead *.html setlocal filetype=htmljinja
     au FileType html,jinja,htmldjango setlocal foldmethod=manual
 
     " Use <localleader>f to fold the current tag.

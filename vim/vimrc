@@ -550,6 +550,13 @@ augroup END
 nnoremap <leader>ev <C-w>s<C-w>j<C-w>L:e ~/dotfiles/vim/vimrc<cr>
 nnoremap <leader>ez <C-w>s<C-w>j<C-w>L:e ~/lib/dotfiles/zsh<cr>4j
 
+" Auto re-load vimrc on save
+augroup reload_vimrc " {
+    autocmd!
+    autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END " }
+
+
 " MAPPINGS /////////////////////////////////////////////////////////////////////////////////////////
 
 

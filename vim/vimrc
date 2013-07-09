@@ -13,59 +13,102 @@
 filetype off
 call pathogen#infect()                            " Load Pathogen
 call pathogen#helptags()
-filetype plugin indent on                         " load file type plugins + indentation
-set nocompatible                                  " choose no compatibility with legacy vi
-syntax on                                         " turn on syntax highlighting
-set mouse=a                                       " automatically enable mouse usage
+filetype plugin indent on                         " Load file type plugins + indentation
+set nocompatible                                  " Choose no compatibility with legacy vi
+set cpoptions+=J                                  " Compatability options
+syntax on                                         " Turn on syntax highlighting
+set mouse=a                                       " Automatically enable mouse usage
 
 au FileType python source <rope-vim>
+"
+" DEFAULT OPTIONS //////////////////////////////////////////////////////////////////////////////////
 
-" BACKUPS //////////////////////////////////////////////////////////////////////////////////////////
+set encoding=utf-8                                " Sets Vim's character encoding
+set modelines=0                                   " Fixes security exploits
+set showmode                                      " Displays current editing mode in status line
+set showcmd                                       " Displays incomplete commands in status line
+set hidden                                        " Buffer becomes hidden when abandoned
+set visualbell                                    " Uses a visual que instead of audio
+set cursorline                                    " Highlights current cursor position's line
+set ttyfast                                       " Fast terminal connection
+set ruler                                         " Shows position in current file
+set backspace=indent,eol,start                    " Allows backspace in insert mode
+set shell=/bin/bash                               " Sets Vim's terminal environment
 
-set undodir=~/dotfiles/vim/tmp/undo//     " undo files
-set undofile
-set backupdir=~/dotfiles/vim/tmp/backup// " backups
-set backup                                " enable backups
-set directory=~/dotfiles/vim/tmp/swap//   " swap files
-set noswapfile
+" UNDO, BACKUPS & HISTORY //////////////////////////////////////////////////////////////////////////
+
+set undodir=~/dotfiles/vim/tmp/undo//             " Undo file location
+set undofile                                      " Enable undo file
+set backupdir=~/dotfiles/vim/tmp/backup//         " Backup file location
+set backup                                        " Enable backup file
+set directory=~/dotfiles/vim/tmp/swap//           " Swap file location
+set noswapfile                                    " Disables swp file
+
+set history=1000                                  " Store lots of :cmdline history
+if exists("&undoreload")
+  set undoreload=10000
+endif
 
 " LEADER ///////////////////////////////////////////////////////////////////////////////////////////
 
 let mapleader = ","
 let maplocalleader = "\\"
 
-" DEFAULT OPTIONS //////////////////////////////////////////////////////////////////////////////////
+" LINE NUMBERING ///////////////////////////////////////////////////////////////////////////////////
 
-set encoding=utf-8
-set modelines=0                                   " Fixes security exploits
-filetype indent on                                " activates indenting for files
-set showmode                                      " current mode in status line
-set showcmd                                       " display incomplete commands
-set hidden
-set visualbell
-set cursorline
-set ttyfast
-set ruler
-set backspace=indent,eol,start                    "Allow backspace in insert mode
+set number                                        " Line numbers on
+set numberwidth=4                                 " Fixed coloumn width
+set relativenumber                                " Set line numbers to relative positioning
 
 " INDENTATION  /////////////////////////////////////////////////////////////////////////////////////
 
-set autoindent
-set smartindent
-set smarttab
+filetype indent on                                " Activates indenting for files
+set autoindent                                    " Use current indent on subsaquent lines
+set smartindent                                   " Indents lines after appropriate braces etc
+set smarttab                                      " Inserts blank space according to shiftwidth
 
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
-set expandtab
-
-set list
-set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
+set tabstop=2                                     " Number of <space>s a <tab> inserts
+set shiftwidth=2                                  " Number of <space>s a '>>' inserts
+set softtabstop=2                                 " Number of <space>s inserted when editing
+set expandtab                                     " <tab>s are replaced with <space> characters
 
 " IndentLine plugin config
 let g:indentLine_color_term = 239
 let g:indentLine_char = ':'
 let g:indentLine_color_gui = '#444444'
+
+" WRAPPING /////////////////////////////////////////////////////////////////////////////////////////
+
+set wrap                                          " Wraps lines that are too long for the window
+set textwidth=100                                 " Set character width of splitter
+set formatoptions=qrn1
+if exists("&colorcolumn")
+  set colorcolumn=+1
+endif
+
+" SCROLLING ////////////////////////////////////////////////////////////////////////////////////////
+
+set scrolloff=3                                   " Begin scroll x lines from top / bottom
+set sidescroll=1                                  " Minimum number of columns to scroll horizontally
+set sidescrolloff=10
+
+" INVISIBLE CHARACTERS /////////////////////////////////////////////////////////////////////////////
+
+set list                                          " Display invisible characters
+set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮  " Set invis charactes for tab, eol, extm precd
+set showbreak=↪                                   " Invisible character to indicate wrapped line
+" Characters to fill the statuslines and vertical separators
+set fillchars=diff:\ 
+
+set autowriteall                                  " Write the file, if modified on various actions
+set shiftround
+set autoread                                      "Reload files changed outside vim
+set dictionary=/usr/share/dict/words
+
+" SPLITS ////////////////////////////////////////////////////////////////////////////////////////////
+
+set splitbelow                                    " New horizontal split window is below current
+set splitright                                    " New vertical split window is on the right
 
 " FOLDS ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,40 +118,18 @@ set foldmethod=indent                             "fold based on indent
 set foldnestmax=3                                 "deepest fold is 3 levels
 set nofoldenable                                  "dont fold by default
 
-" LINE NUMBERING ///////////////////////////////////////////////////////////////////////////////////
+" MISC /////////////////////////////////////////////////////////////////////////////////////////////
 
-set number                                        " Line numbers
-set numberwidth=4                                 " Fixed coloumn width
-set relativenumber                                " Set line numbers to relative
-
+set lazyredraw                                    " Screen is not redrawn while using macros
 
 set laststatus=2                                  " Show the statusline
-set history=1000                                  "Store lots of :cmdline history
-if exists("&undoreload")
-set undoreload=10000
-endif
-set cpoptions+=J
 
-" INVISIBLE CHARACTERS /////////////////////////////////////////////////////////////////////////////
-
-set shell=/bin/bash
-set lazyredraw
-set matchtime=3
-set showbreak=↪
-set splitbelow
-set splitright
-set fillchars=diff:\
 set ttimeout
 set notimeout
 set nottimeout
 set timeout timeoutlen=1000 ttimeoutlen=100
-set <F13>=^[[1;6B
-map <F13> <C-S-Down>
-map! <F13> <C-S-Down>]]
-set autowriteall
-set shiftround
-set autoread                                      "Reload files changed outside vim
-set dictionary=/usr/share/dict/words
+
+set matchtime=3                                   " Tenths of a second to show matching paren
 
 " WILDMENU /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,16 +153,6 @@ au FocusLost * :wa                                " Save when losing focus
 " Resize splits when the window is resized
 au VimResized * exe "normal! \<c-w>="
 
-" TABS, SPACES, WRAPPING ///////////////////////////////////////////////////////////////////////////
-
-set wrap
-set textwidth=100                                 " Set character width of splitter
-set formatoptions=qrn1
-if exists("&colorcolumn")
-  set colorcolumn=+1
-endif
-
-
 " COLOUR SCHEME ////////////////////////////////////////////////////////////////////////////////////
 
 set background=dark                               " Dark background / color scheme
@@ -155,15 +166,15 @@ let g:Powerline_symbols = 'fancy'                 " Powerline
 
 " SEARCHING ////////////////////////////////////////////////////////////////////////////////////////
 
-" Use sane regexes.
-nnoremap / /\v
-vnoremap / /\v
-
 set ignorecase                                    " Case insensitive serarching
 set smartcase                                     " Case insensitive serarching
 set incsearch                                     " Find the next match as we type the search
 set showmatch
 set hlsearch                                      " Hilight searches by default
+
+" Use sane regexes.
+nnoremap / /\v
+vnoremap / /\v
 
 " Clear current search
 noremap <leader><space> :noh<cr>:call clearmatches()<cr>
@@ -175,12 +186,6 @@ map <tab> %
 
 " Don't move on *
 nnoremap * *<c-o>
-
-" SCROLLING ////////////////////////////////////////////////////////////////////////////////////////
-
-set scrolloff=3                                   " Begin scroll x lines from top / bottom
-set sidescroll=1                                  " Minimum number of columns to scroll horizontally
-set sidescrolloff=10
 
 " VISUAL MODE //////////////////////////////////////////////////////////////////////////////////////
 "
@@ -200,7 +205,7 @@ inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
 
-" It's 2011.
+" Up and Down work like you expect
 noremap j gj
 noremap k gk
 
@@ -235,39 +240,39 @@ vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR><c-o>
 " CSS & LESSCSS ////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_css
-    au!
+  au!
 
-    au BufNewFile,BufRead *.less setlocal filetype=less
+  au BufNewFile,BufRead *.less setlocal filetype=less
 
-    au Filetype less,css setlocal foldmethod=marker
-    au Filetype less,css setlocal foldmarker={,}
-    au Filetype less,css setlocal omnifunc=csscomplete#CompleteCSS
-    au Filetype less,css setlocal iskeyword+=-
+  au Filetype less,css setlocal foldmethod=marker
+  au Filetype less,css setlocal foldmarker={,}
+  au Filetype less,css setlocal omnifunc=csscomplete#CompleteCSS
+  au Filetype less,css setlocal iskeyword+=-
 
-    " Use <leader>S to sort properties.  Turns this:
-    "
-    "     p {
-    "         width: 200px;
-    "         height: 100px;
-    "         background: red;
-    "
-    "         ...
-    "     }
-    "
-    " into this:
+  " Use <leader>S to sort properties.  Turns this:
+  "
+  "     p {
+  "         width: 200px;
+  "         height: 100px;
+  "         background: red;
+  "
+  "         ...
+  "     }
+  "
+  " into this:
 
-    "     p {
-    "         background: red;
-    "         height: 100px;
-    "         width: 200px;
-    "
-    "         ...
-    "     }
-    au BufNewFile,BufRead *.less,*.css nnoremap <buffer> <localleader>S ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
+  "     p {
+  "         background: red;
+  "         height: 100px;
+  "         width: 200px;
+  "
+  "         ...
+  "     }
+  au BufNewFile,BufRead *.less,*.css nnoremap <buffer> <localleader>S ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
 
-    " Make {<cr> insert a pair of brackets in such a way that the cursor is correctly
-    " positioned inside of them AND the following code doesn't get unfolded.
-    au BufNewFile,BufRead *.less,*.css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
+  " Make {<cr> insert a pair of brackets in such a way that the cursor is correctly
+  " positioned inside of them AND the following code doesn't get unfolded.
+  au BufNewFile,BufRead *.less,*.css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
 
 " SCSS /////////////////////////////////////////////////////////////////////////////////////////////
@@ -277,22 +282,22 @@ au BufRead,BufNewFile *.scss set filetype=scss
 " DJANGO ///////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_django
-    au!
+  au!
 
-    au BufNewFile,BufRead urls.py           setlocal nowrap
-    au BufNewFile,BufRead urls.py           normal! zR
-    au BufNewFile,BufRead dashboard.py      normal! zR
-    au BufNewFile,BufRead local_settings.py normal! zR
+  au BufNewFile,BufRead urls.py           setlocal nowrap
+  au BufNewFile,BufRead urls.py           normal! zR
+  au BufNewFile,BufRead dashboard.py      normal! zR
+  au BufNewFile,BufRead local_settings.py normal! zR
 
-    au BufNewFile,BufRead admin.py     setlocal filetype=python.django
-    au BufNewFile,BufRead urls.py      setlocal filetype=python.django
-    au BufNewFile,BufRead models.py    setlocal filetype=python.django
-    au BufNewFile,BufRead views.py     setlocal filetype=python.django
-    au BufNewFile,BufRead settings.py  setlocal filetype=python.django
-    au BufNewFile,BufRead settings.py  setlocal foldmethod=marker
-    au BufNewFile,BufRead forms.py     setlocal filetype=python.django
-    au BufNewFile,BufRead common_settings.py  setlocal filetype=python.django
-    au BufNewFile,BufRead common_settings.py  setlocal foldmethod=marker
+  au BufNewFile,BufRead admin.py     setlocal filetype=python.django
+  au BufNewFile,BufRead urls.py      setlocal filetype=python.django
+  au BufNewFile,BufRead models.py    setlocal filetype=python.django
+  au BufNewFile,BufRead views.py     setlocal filetype=python.django
+  au BufNewFile,BufRead settings.py  setlocal filetype=python.django
+  au BufNewFile,BufRead settings.py  setlocal foldmethod=marker
+  au BufNewFile,BufRead forms.py     setlocal filetype=python.django
+  au BufNewFile,BufRead common_settings.py  setlocal filetype=python.django
+  au BufNewFile,BufRead common_settings.py  setlocal foldmethod=marker
 augroup END
 
 " }}}
@@ -302,43 +307,43 @@ augroup END
 au BufNewFile,BufRead *.j2 setlocal filetype=htmljinja
 
 augroup ft_html
-    au!
+  au!
 
-    " au BufNewFile,BufRead *.html setlocal filetype=htmljinja
-    au FileType html,jinja,htmldjango setlocal foldmethod=manual
+  " au BufNewFile,BufRead *.html setlocal filetype=htmljinja
+  au FileType html,jinja,htmldjango setlocal foldmethod=manual
 
-    " Use <localleader>f to fold the current tag.
-    au FileType html,jinja,htmldjango nnoremap <buffer> <localleader>f Vatzf
+  " Use <localleader>f to fold the current tag.
+  au FileType html,jinja,htmldjango nnoremap <buffer> <localleader>f Vatzf
 
-    " Use Shift-Return to turn this:
-    "     <tag>|</tag>
-    "
-    " into this:
-    "     <tag>
-    "         |
-    "     </tag>
-    au FileType html,jinja,htmldjango nnoremap <buffer> <s-cr> vit<esc>a<cr><esc>vito<esc>i<cr><esc>
+  " Use Shift-Return to turn this:
+  "     <tag>|</tag>
+  "
+  " into this:
+  "     <tag>
+  "         |
+  "     </tag>
+  au FileType html,jinja,htmldjango nnoremap <buffer> <s-cr> vit<esc>a<cr><esc>vito<esc>i<cr><esc>
 
-    " Smarter pasting
-    au FileType html,jinja,htmldjango nnoremap <buffer> p :<C-U>YRPaste 'p'<CR>v`]=`]
-    au FileType html,jinja,htmldjango nnoremap <buffer> P :<C-U>YRPaste 'P'<CR>v`]=`]
-    au FileType html,jinja,htmldjango nnoremap <buffer> π :<C-U>YRPaste 'p'<CR>
-    au FileType html,jinja,htmldjango nnoremap <buffer> ∏ :<C-U>YRPaste 'P'<CR>
+  " Smarter pasting
+  au FileType html,jinja,htmldjango nnoremap <buffer> p :<C-U>YRPaste 'p'<CR>v`]=`]
+  au FileType html,jinja,htmldjango nnoremap <buffer> P :<C-U>YRPaste 'P'<CR>v`]=`]
+  au FileType html,jinja,htmldjango nnoremap <buffer> π :<C-U>YRPaste 'p'<CR>
+  au FileType html,jinja,htmldjango nnoremap <buffer> ∏ :<C-U>YRPaste 'P'<CR>
 
-    " Django tags
-    au FileType jinja,htmldjango inoremap <buffer> <c-t> {%<space><space>%}<left><left><left>
+  " Django tags
+  au FileType jinja,htmldjango inoremap <buffer> <c-t> {%<space><space>%}<left><left><left>
 
-    " Django variables
-    au FileType jinja,htmldjango inoremap <buffer> <c-f> {{<space><space>}}<left><left><left>
+  " Django variables
+  au FileType jinja,htmldjango inoremap <buffer> <c-f> {{<space><space>}}<left><left><left>
 augroup END
 
 " JAVASCRIPT ///////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_javascript
-    au!
+  au!
 
-    au FileType javascript setlocal foldmethod=marker
-    au FileType javascript setlocal foldmarker={,}
+  au FileType javascript setlocal foldmethod=marker
+  au FileType javascript setlocal foldmarker={,}
 augroup END
 
 " MARKDOWN /////////////////////////////////////////////////////////////////////////////////////////
@@ -353,8 +358,6 @@ augroup ft_markdown
     au Filetype markdown nnoremap <buffer> <localleader>2 yypVr-
     au Filetype markdown nnoremap <buffer> <localleader>3 I### <ESC>
 augroup END
-
-" }}}
 
 " PYTHON ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -603,7 +606,7 @@ nnoremap <leader>i :call IndentGuides()<cr>
 inoremap <c-l> <c-x><c-l>
 inoremap <c-f> <c-x><c-f>
 
-" CTRL-P ////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - CTRL-P ////////////////////////////////////////////////////////////////////////////////////////
 "
 let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_jump_to_buffer = 0
@@ -615,59 +618,39 @@ let g:ctrlp_max_height = 20
 let g:ctrlp_extensions = ['tag']
 
 let g:ctrlp_prompt_mappings = {
-      \ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
-      \ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
-      \ 'PrtHistory(-1)':       ['<c-n>'],
-      \ 'PrtHistory(1)':        ['<c-p>'],
-      \ 'ToggleFocus()':        ['<c-tab>'],
-      \ }
+  \ 'PrtSelectMove("j")':   ['<c-j>', '<down>', '<s-tab>'],
+  \ 'PrtSelectMove("k")':   ['<c-k>', '<up>', '<tab>'],
+  \ 'PrtHistory(-1)':       ['<c-n>'],
+  \ 'PrtHistory(1)':        ['<c-p>'],
+  \ 'ToggleFocus()':        ['<c-tab>'],
+  \ }
 
 let ctrlp_filter_greps = "".
-      \ "egrep -iv '\\.(" .
-      \ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
-      \ ")$' | " .
-      \ "egrep -v '^(\\./)?(" .
-      \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
-      \ ")'"
+  \ "egrep -iv '\\.(" .
+  \ "jar|class|swp|swo|log|so|o|pyc|jpe?g|png|gif|mo|po" .
+  \ ")$' | " .
+  \ "egrep -v '^(\\./)?(" .
+  \ "deploy/|lib/|classes/|libs/|deploy/vendor/|.git/|.hg/|.svn/|.*migrations/|docs/build/" .
+  \ ")'"
 
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 
 nnoremap <leader>. :CtrlPTag<cr>}
-" }"
 
-
-" COMMENTARY ///////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - COMMENTARY ///////////////////////////////////////////////////////////////////////////////////////
 
 nmap <leader>c <Plug>CommentaryLine
 xmap <leader>c <Plug>Commentary
 au FileType htmldjango setlocal commentstring={#\ %s\ #}
 
-" EASYMOTION ///////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - EASYMOTION ///////////////////////////////////////////////////////////////////////////////////////
 
 let g:EasyMotion_leader_key = '<Leader>'
 
-" hi link EasyMotionTarget ErrorMsg
-" hi link EasyMotionShade  Comment
 hi EasyMotionTarget ctermbg=none ctermfg=green
 hi EasyMotionShade  ctermbg=none ctermfg=cyan
 
-" nnoremap <silent> <Leader>w       :call EasyMotionWB(0, 0)<CR>
-" vnoremap <silent> <Leader>w  :<C-U>call EasyMotionWB(1, 0)<CR>
-
-" let g:EasyMotion_do_mapping = 0
-
-" nnoremap <silent> <Leader>f      :call EasyMotionF(0, 0)<CR>
-" onoremap <silent> <Leader>f      :call EasyMotionF(0, 0)<CR>
-" vnoremap <silent> <Leader>f :<C-U>call EasyMotionF(1, 0)<CR>
-
-" nnoremap <silent> <Leader>F      :call EasyMotionF(0, 1)<CR>
-" onoremap <silent> <Leader>F      :call EasyMotionF(0, 1)<CR>
-" vnoremap <silent> <Leader>F :<C-U>call EasyMotionF(1, 1)<CR>
-
-" onoremap <silent> <Leader>t      :call EasyMotionT(0, 0)<CR>
-" onoremap <silent> <Leader>T      :call EasyMotionT(0, 1)<CR>
-
-" FUGITIVE /////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - FUGITIVE /////////////////////////////////////////////////////////////////////////////////////////
 
 nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gs :Gstatus<cr>
@@ -680,9 +663,9 @@ nnoremap <leader>gm :Gmove<cr>
 nnoremap <leader>gr :Gremove<cr>
 
 augroup ft_fugitive
-    au!
+  au!
 
-    au BufNewFile,BufRead .git/index setlocal nolist
+  au BufNewFile,BufRead .git/index setlocal nolist
 augroup END
 
 " HTML5 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -692,7 +675,7 @@ let g:rdfa_attributes_complete = 0
 let g:microdata_attributes_complete = 0
 let g:atia_attributes_complete = 0
 
-" NERDTREE /////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - NERDTREE /////////////////////////////////////////////////////////////////////////////////////////
 
 noremap  <F2> :NERDTreeToggle<cr>
 inoremap <F2> <esc>:NERDTreeToggle<cr>
@@ -710,11 +693,11 @@ let g:pydoc_perform_mappings = 0
 au FileType python noremap <buffer> <localleader>ds :call ShowPyDoc('<C-R><C-W>', 1)<CR>
 au FileType python noremap <buffer> <localleader>dS :call ShowPyDoc('<C-R><C-A>', 1)<CR>
 
-" SPARKUP //////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - SPARKUP //////////////////////////////////////////////////////////////////////////////////////////
 
 let g:sparkupNextMapping = '<c-s>'
 
-" SYNTASTIC ////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - SYNTASTIC ////////////////////////////////////////////////////////////////////////////////////////
 
 let g:syntastic_enable_signs = 1
 let g:syntastic_disabled_filetypes = ['html']

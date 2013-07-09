@@ -62,10 +62,10 @@ set expandtab
 set list
 set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
 
+" IndentLine plugin config
 let g:indentLine_color_term = 239
 let g:indentLine_char = ':'
 let g:indentLine_color_gui = '#444444'
-
 
 " FOLDS ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,7 +91,6 @@ set cpoptions+=J
 
 " INVISIBLE CHARACTERS /////////////////////////////////////////////////////////////////////////////
 
-
 set shell=/bin/bash
 set lazyredraw
 set matchtime=3
@@ -102,7 +101,6 @@ set fillchars=diff:\
 set ttimeout
 set notimeout
 set nottimeout
-"set timeout timeoutlen=100 ttimeoutlen=100
 set timeout timeoutlen=1000 ttimeoutlen=100
 set <F13>=^[[1;6B
 map <F13> <C-S-Down>
@@ -126,13 +124,10 @@ set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.spl                            " compiled spelling word lists
 set wildignore+=*.sw?                            " Vim swap files
 set wildignore+=*.DS_Store?                      " OSX bullshit
-" }}}
 
-" Make Vim able to edit crontab files again.
-set backupskip=/tmp/*,/private/tmp/*"
+set backupskip=/tmp/*,/private/tmp/*"             " Make Vim able to edit crontab files again.
 
-" Save when losing focus
-au FocusLost * :wa
+au FocusLost * :wa                                " Save when losing focus
 
 " Resize splits when the window is resized
 au VimResized * exe "normal! \<c-w>="
@@ -149,34 +144,14 @@ endif
 
 " COLOUR SCHEME ////////////////////////////////////////////////////////////////////////////////////
 
-set background=dark
+set background=dark                               " Dark background / color scheme
 colorscheme molokai
 
-" Highlight VCS conflict markers
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'  " Highlight VCS conflict markers
+let g:Powerline_symbols = 'fancy'                 " Powerline
 
+" ABBREVIATIONS ////////////////////////////////////////////////////////////////////////////////////
 
-let g:Powerline_symbols = 'fancy'   " Powerline
-
-" }}}
-" Abbreviations --------------------------------------------------------------- {{{
-
-function! EatChar(pat)
-    let c = nr2char(getchar(0))
-    return (c =~ a:pat) ? '' : c
-endfunction
-
-function! MakeSpacelessIabbrev(from, to)
-    execute "iabbrev <silent> ".a:from." ".a:to."<C-R>=EatChar('\\s')<CR>"
-endfunction
-
-call MakeSpacelessIabbrev('sl/',  'http://stevelosh.com/')
-call MakeSpacelessIabbrev('bb/',  'http://bitbucket.org/')
-call MakeSpacelessIabbrev('bbs/', 'http://bitbucket.org/sjl/')
-call MakeSpacelessIabbrev('gh/',  'http://github.com/')
-call MakeSpacelessIabbrev('ghs/', 'http://github.com/sjl/')
-
-iabbrev mz@ mezdef@gmail.com
 
 " SEARCHING ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -184,85 +159,42 @@ iabbrev mz@ mezdef@gmail.com
 nnoremap / /\v
 vnoremap / /\v
 
-set ignorecase
-set smartcase
-set incsearch                                       "Find the next match as we type the search
+set ignorecase                                    " Case insensitive serarching
+set smartcase                                     " Case insensitive serarching
+set incsearch                                     " Find the next match as we type the search
 set showmatch
-set hlsearch                                        "Hilight searches by default
-" set gdefault
+set hlsearch                                      " Hilight searches by default
 
-set scrolloff=3
-set sidescroll=1
-set sidescrolloff=10
-
-set virtualedit+=block
-
+" Clear current search
 noremap <leader><space> :noh<cr>:call clearmatches()<cr>
 
+" Smart % jumping
 runtime macros/matchit.vim
+" % Matching with tab key in command mode
 map <tab> %
-
-" Made D behave
-nnoremap D d$
-
-" Keep search matches in the middle of the window.
-nnoremap n nzzzv
-nnoremap N Nzzzv
 
 " Don't move on *
 nnoremap * *<c-o>
 
-" Same when jumping around
-nnoremap g; g;zz
-nnoremap g, g,zz
+" SCROLLING ////////////////////////////////////////////////////////////////////////////////////////
 
-" Easier to type, and I never use the default behavior.
-noremap H ^
-noremap L $
+set scrolloff=3                                   " Begin scroll x lines from top / bottom
+set sidescroll=1                                  " Minimum number of columns to scroll horizontally
+set sidescrolloff=10
 
-" Heresy
-inoremap <c-a> <esc>I
-inoremap <c-e> <esc>A
-
-" Open a Quickfix window for the last search.
-nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
-
-" Ack for the last search.
-nnoremap <silent> <leader>? :execute "Ack! '" . substitute(substitute(substitute(@/, "\\\\<", "\\\\b", ""), "\\\\>", "\\\\b", ""), "\\\\v", "", "") . "'"<CR>
-
-" Fix linewise visual selection of various text objects
-nnoremap VV V
-nnoremap Vit vitVkoj
-nnoremap Vat vatV
-nnoremap Vab vabV
-nnoremap VaB vaBV
-
-" Error navigation {{{
+" VISUAL MODE //////////////////////////////////////////////////////////////////////////////////////
 "
-"             Location List     QuickFix Window
-"            (e.g. Syntastic)     (e.g. Ack)
-"            ----------------------------------
-" Next      |     M-k               M-Down     |
-" Previous  |     M-l                M-Up      |
-"            ----------------------------------
-"
-nnoremap ˚ :lnext<cr>zvzz
-nnoremap ¬ :lprevious<cr>zvzz
-inoremap ˚ <esc>:lnext<cr>zvzz
-inoremap ¬ <esc>:lprevious<cr>zvzz
-nnoremap <m-Down> :cnext<cr>zvzz
-nnoremap <m-Up> :cprevious<cr>zvzz
+set virtualedit+=block
 
-
-" }}}
 
 " NAVIGATION ///////////////////////////////////////////////////////////////////////////////////////
 
-" Disable directional keys
+" Disable arrow keys in Command Mode
 nnoremap <up> <nop>
 nnoremap <down> <nop>
 nnoremap <left> <nop>
 nnoremap <right> <nop>
+" Disable arrow keys in Insert Mode
 inoremap <up> <nop>
 inoremap <down> <nop>
 inoremap <left> <nop>
@@ -282,12 +214,11 @@ noremap <C-l>  <C-w>l
 inoremap jj <ESC>
 inoremap jk <esc>
 
-" Highlight word {{{
+" Highlight word
 nnoremap <silent> <leader>hh :execute 'match InterestingWord1 /\<<c-r><c-w>\>/'<cr>
 nnoremap <silent> <leader>h1 :execute 'match InterestingWord1 /\<<c-r><c-w>\>/'<cr>
 nnoremap <silent> <leader>h2 :execute '2match InterestingWord2 /\<<c-r><c-w>\>/'<cr>
 nnoremap <silent> <leader>h3 :execute '3match InterestingWord3 /\<<c-r><c-w>\>/'<cr>
-" }}}
 
 " Visual Mode */# from Scrooloose {{{
 function! s:VSetSearch()
@@ -299,58 +230,7 @@ endfunction
 
 vnoremap * :<C-u>call <SID>VSetSearch()<CR>//<CR><c-o>
 vnoremap # :<C-u>call <SID>VSetSearch()<CR>??<CR><c-o>
-" }}}
 
-" FOLDING //////////////////////////////////////////////////////////////////////////////////////////
-
-" set foldlevelstart=0
-
-" Space to toggle folds.
-nnoremap <Space> za
-vnoremap <Space> za
-
-" Make zO recursively open whatever top level fold we're in, no matter where the
-" cursor happens to be.
-nnoremap zO zCzO
-
-" Use ,z to "focus" the current fold.
-nnoremap <leader>z zMzvzz
-
-function! MyFoldText() " {{{
-    let line = getline(v:foldstart)
-
-    let nucolwidth = &fdc + &number * &numberwidth
-    let windowwidth = winwidth(0) - nucolwidth - 3
-    let foldedlinecount = v:foldend - v:foldstart
-
-    " expand tabs into spaces
-    let onetab = strpart('          ', 0, &tabstop)
-    let line = substitute(line, '\t', onetab, 'g')
-
-    let line = strpart(line, 0, windowwidth - 2 -len(foldedlinecount))
-    let fillcharcount = windowwidth - len(line) - len(foldedlinecount)
-    return line . '…' . repeat(" ",fillcharcount) . foldedlinecount . '…' . ' '
-endfunction " }}}
-set foldtext=MyFoldText()
-
-" }}}
-" Destroy infuriating keys ---------------------------------------------------- {{{
-
-" Fuck you, help key.
-if exists("fuoptions")
-  set fuoptions=maxvert,maxhorz
-endif
-noremap  <F1> :set invfullscreen<CR>
-inoremap <F1> <ESC>:set invfullscreen<CR>a
-
-" Fuck you too, manual key.
-nnoremap K <nop>
-
-" Stop it, hash key.
-inoremap # X<BS>#
-
-" }}}
-" Various filetype-specific stuff --------------------------------------------- {{{
 
 " CSS & LESSCSS ////////////////////////////////////////////////////////////////////////////////////
 
@@ -476,7 +356,7 @@ augroup END
 
 " }}}
 
-" Python {{{
+" PYTHON ///////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_python
     au!
@@ -491,54 +371,32 @@ augroup ft_python
     au FileType man nnoremap <buffer> <cr> :q<cr>
 augroup END
 
-" }}}
-" QuickFix {{{
+" QUICKFIX /////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_quickfix
     au!
     au Filetype qf setlocal colorcolumn=0 nolist nocursorline nowrap
 augroup END
 
-" }}}
-" ReStructuredText {{{
+" RESTRUCTURED TEXT ////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_rest
-    au!
-
-    au Filetype rst nnoremap <buffer> <localleader>1 yypVr=
-    au Filetype rst nnoremap <buffer> <localleader>2 yypVr-
-    au Filetype rst nnoremap <buffer> <localleader>3 yypVr~
-    au Filetype rst nnoremap <buffer> <localleader>4 yypVr`
+  au!
+  au Filetype rst nnoremap <buffer> <localleader>1 yypVr=
+  au Filetype rst nnoremap <buffer> <localleader>2 yypVr-
+  au Filetype rst nnoremap <buffer> <localleader>3 yypVr~
+  au Filetype rst nnoremap <buffer> <localleader>4 yypVr`
 augroup END
 
-" }}}
-" Ruby {{{
+" RUBY /////////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_ruby
-    au!
-    au Filetype ruby setlocal foldmethod=syntax
-augroup END
-
-" }}}
-" Vagrant {{{
-
-augroup ft_vagrant
-    au!
-    au BufRead,BufNewFile Vagrantfile set ft=ruby
-augroup END
-
-" }}}
-" Vim {{{
-
-augroup ft_vim
-    au!
-
-    au FileType vim setlocal foldmethod=marker
-    au FileType help setlocal textwidth=78
-    au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
+  au!
+  au Filetype ruby setlocal foldmethod=syntax
 augroup END
 
 " MARCZIANI.COM ////////////////////////////////////////////////////////////////////////////////////
+
 augroup ft_marczianicom
   au!
   au BufRead,BufNewFile */marcziani/content/blog/20*/*/*.html set ft=markdown foldlevel=20
@@ -556,14 +414,19 @@ augroup reload_vimrc " {
     autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END " }
 
-
-" MAPPINGS /////////////////////////////////////////////////////////////////////////////////////////
-
+" MISC MAPPINGS ////////////////////////////////////////////////////////////////////////////////////
 
 " Search/Replace current word with checking
 nnoremap <Leader>s :%s/<c-r><c-w>/<c-r><c-w>/gc<Left><Left><Left>
 vnoremap <Leader>s "hy:%s/\%V/g<Left><Left>
 vnoremap <Leader>S "hy:%s/<C-r>h//gc<left><left><left>
+
+"This allows for change paste motion cp{motion}
+nmap <silent> cp :set opfunc=ChangePaste<CR>g@
+function! ChangePaste(type, ...)
+    silent exe "normal! `[v`]\"_c"
+    silent exe "normal! p"
+endfunction
 
 " Change case
 noremap <C-u> gUiw
@@ -614,6 +477,23 @@ noremap ` <C-^>
 " Calculator
 inoremap <C-B> <C-O>yiW<End>=<C-R>=<C-R>0<CR>
 
+" REMAP ANNOYING KEYS ////////////////////////////////////////////////////////////////////////////////////
+
+" Fuck you, help key.
+if exists("fuoptions")
+  set fuoptions=maxvert,maxhorz
+endif
+noremap  <F1> :set invfullscreen<CR>
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+
+" Fuck you too, manual key.
+nnoremap K <nop>
+
+" Stop it, hash key.
+inoremap # X<BS>#
+
+
+
 " Better Completion
 set completeopt=longest,menuone,preview
 " inoremap <expr> <CR>  pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -633,8 +513,55 @@ nnoremap _jt :set ft=htmljinja<CR>
 nnoremap _cw :set ft=confluencewiki<CR>
 nnoremap _pd :set ft=python.django<CR>
 nnoremap _d  :set ft=diff<CR>
-" }}}
 
+" Made D behave
+nnoremap D d$
+
+" Keep search matches in the middle of the window.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+
+" Same when jumping around
+nnoremap g; g;zz
+nnoremap g, g,zz
+
+" Easier to type, and I never use the default behavior.
+noremap H ^
+noremap L $
+
+" Heresy
+inoremap <c-a> <esc>I
+inoremap <c-e> <esc>A
+
+" Open a Quickfix window for the last search.
+nnoremap <silent> <leader>/ :execute 'vimgrep /'.@/.'/g %'<CR>:copen<CR>
+
+" Ack for the last search.
+nnoremap <silent> <leader>? :execute "Ack! '" . substitute(substitute(substitute(@/, "\\\\<", "\\\\b", ""), "\\\\>", "\\\\b", ""), "\\\\v", "", "") . "'"<CR>
+
+" Fix linewise visual selection of various text objects
+nnoremap VV V
+nnoremap Vit vitVkoj
+nnoremap Vat vatV
+nnoremap Vab vabV
+nnoremap VaB vaBV
+
+" Error navigation {{{
+"
+"             Location List     QuickFix Window
+"            (e.g. Syntastic)     (e.g. Ack)
+"            ----------------------------------
+" Next      |     M-k               M-Down     |
+" Previous  |     M-l                M-Up      |
+"            ----------------------------------
+"
+nnoremap ˚ :lnext<cr>zvzz
+nnoremap ¬ :lprevious<cr>zvzz
+inoremap ˚ <esc>:lnext<cr>zvzz
+inoremap ¬ <esc>:lprevious<cr>zvzz
+nnoremap <m-Down> :cnext<cr>zvzz
+nnoremap <m-Up> :cprevious<cr>zvzz
 " Toggle paste
 set pastetoggle=<F8>
 

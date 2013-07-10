@@ -12,6 +12,10 @@ alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
 
+source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+# ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
+
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -43,9 +47,10 @@ source $ZSH/oh-my-zsh.sh
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git brew rvm bundler osx zsh-syntax-highlighting history-substring-search)
+plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
 # Set VI mode for zsh
 bindkey -v
+bindkey -M viins 'jj' vi-cmd-mode
 
 #function zle-line-init zle-keymap-select {
   #RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"

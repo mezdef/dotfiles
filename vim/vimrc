@@ -18,7 +18,6 @@ set nocompatible                                  " Choose no compatibility with
 set cpoptions+=J                                  " Compatability options
 syntax on                                         " Turn on syntax highlighting
 set mouse=a                                       " Automatically enable mouse usage
-
 au FileType python source <rope-vim>
 "
 " DEFAULT OPTIONS //////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +73,7 @@ set expandtab                                     " <tab>s are replaced with <sp
 
 " IndentLine plugin config
 let g:indentLine_color_term = 239
-let g:indentLine_char = ':'
+let g:indentLine_char = '|'
 let g:indentLine_color_gui = '#444444'
 
 " WRAPPING /////////////////////////////////////////////////////////////////////////////////////////
@@ -157,6 +156,7 @@ au VimResized * exe "normal! \<c-w>="
 
 set background=dark                               " Dark background / color scheme
 colorscheme molokai
+set transparency=5
 
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'  " Highlight VCS conflict markers
 let g:Powerline_symbols = 'fancy'                 " Powerline
@@ -190,6 +190,10 @@ nnoremap * *<c-o>
 " VISUAL MODE //////////////////////////////////////////////////////////////////////////////////////
 "
 set virtualedit+=block
+
+" Easier linewise reselection
+nnoremap <leader>v V`]
+noremap <leader>v V`]
 
 
 " NAVIGATION ///////////////////////////////////////////////////////////////////////////////////////
@@ -243,6 +247,8 @@ augroup ft_css
   au!
 
   au BufNewFile,BufRead *.less setlocal filetype=less
+  " au FileType * if &filetype == 'scss' | colorscheme hemisu | else | colorscheme molokai | endif
+
 
   au Filetype less,css setlocal foldmethod=marker
   au Filetype less,css setlocal foldmarker={,}
@@ -361,36 +367,6 @@ augroup END
 
 " PYTHON ///////////////////////////////////////////////////////////////////////////////////////////
 
-augroup ft_python
-    au!
-
-    au Filetype python noremap  <buffer> <localleader>rr :RopeRename<CR>
-    au Filetype python vnoremap <buffer> <localleader>rm :RopeExtractMethod<CR>
-    au Filetype python noremap  <buffer> <localleader>ri :RopeOrganizeImports<CR>
-
-    au FileType python setlocal omnifunc=pythoncomplete#Complete
-    au FileType python setlocal define=^\s*\\(def\\\\|class\\)
-    au FileType python compiler nose
-    au FileType man nnoremap <buffer> <cr> :q<cr>
-augroup END
-
-" QUICKFIX /////////////////////////////////////////////////////////////////////////////////////////
-
-augroup ft_quickfix
-    au!
-    au Filetype qf setlocal colorcolumn=0 nolist nocursorline nowrap
-augroup END
-
-" RESTRUCTURED TEXT ////////////////////////////////////////////////////////////////////////////////
-
-augroup ft_rest
-  au!
-  au Filetype rst nnoremap <buffer> <localleader>1 yypVr=
-  au Filetype rst nnoremap <buffer> <localleader>2 yypVr-
-  au Filetype rst nnoremap <buffer> <localleader>3 yypVr~
-  au Filetype rst nnoremap <buffer> <localleader>4 yypVr`
-augroup END
-
 " RUBY /////////////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_ruby
@@ -441,9 +417,6 @@ nnoremap <leader>s :%s//<left>
 " Formatting, TextMate-style
 nnoremap Q gqip
 
-" Easier linewise reselection
-nnoremap <leader>v V`]
-noremap <leader>v V`]
 
 " Preview Files
 nnoremap <leader>p :w<cr>:Hammer<cr>
@@ -685,14 +658,6 @@ au Filetype nerdtree setlocal nolist
 let NERDTreeHighlightCursorline=1
 let NERDTreeIgnore=['.vim$', '\~$', '.*\.pyc$', 'pip-log\.txt$', 'whoosh_index', 'xapian_index', '.*.pid', 'monitor.py', '.*-fixtures-.*.json', '.*\.o$', 'db.db']
 
-" }}}
-" Pydoc {{{
-
-let g:pydoc_perform_mappings = 0
-
-au FileType python noremap <buffer> <localleader>ds :call ShowPyDoc('<C-R><C-W>', 1)<CR>
-au FileType python noremap <buffer> <localleader>dS :call ShowPyDoc('<C-R><C-A>', 1)<CR>
-
 " PLUGINS - SPARKUP //////////////////////////////////////////////////////////////////////////////////////////
 
 let g:sparkupNextMapping = '<c-s>'
@@ -704,33 +669,6 @@ let g:syntastic_disabled_filetypes = ['html']
 let g:syntastic_stl_format = '[%E{Error 1/%e: line %fe}%B{, }%W{Warning 1/%w: line %fw}]'
 let g:syntastic_jsl_conf = '$HOME/.vim/jsl.conf'
 
-
-" }}}
-" Threesome {{{
-
-let g:threesome_leader = "-"
-
-let g:threesome_initial_mode = "grid"
-
-let g:threesome_initial_layout_grid = 1
-let g:threesome_initial_layout_loupe = 0
-let g:threesome_initial_layout_compare = 0
-let g:threesome_initial_layout_path = 0
-
-let g:threesome_initial_diff_grid = 1
-let g:threesome_initial_diff_loupe = 0
-let g:threesome_initial_diff_compare = 0
-let g:threesome_initial_diff_path = 0
-
-let g:threesome_initial_scrollbind_grid = 0
-let g:threesome_initial_scrollbind_loupe = 0
-let g:threesome_initial_scrollbind_compare = 0
-let g:threesome_initial_scrollbind_path = 0
-
-let g:threesome_wrap = "nowrap"
-
-" }}}
-" Text objects ---------------------------------------------------------------- {{{
 
 " Shortcut for [] {{{
 
@@ -800,79 +738,67 @@ endfunction " }}}
 nmap <silent> <f3> :ErrorsToggle<cr>
 nmap <silent> <f4> :QFixToggle<cr>
 
-" }}}
-" Utils ----------------------------------------------------------------------- {{{
-
-function! g:echodammit(msg)
-    exec 'echom "----------> ' . a:msg . '"'
-endfunction
-
-function! StartUp()
-    if 0 == argc()
-        NERDTree
-    end
-endfunction
 
 " MACVIM ///////////////////////////////////////////////////////////////////////////////////////////
 
 if has('gui_running')
-    set guifont=Inconsolata-dz\ for\ Powerline:h12
+  set guifont=Inconsolata-dz\ for\ Powerline:h12
 
-    " Remove all the UI cruft
-    set go-=T
-    set go-=l
-    set go-=L
-    set go-=r
-    set go-=R
+  " Remove all the UI cruft
+  set go-=T
+  set go-=l
+  set go-=L
+  set go-=r
+  set go-=R
 
-    noremap <c-tab> :tabn<cr>
-    noremap <c-s-tab> :tabp<cr>
+  noremap <c-tab> :tabn<cr>
+  noremap <c-s-tab> :tabp<cr>
 
-    if has("gui_macvim")
+  if has("gui_macvim")
 
-       " PeepOpen on OS X, Command-T elsewhere.
-        macmenu &File.New\ Tab key=<nop>
-        map <leader><leader> <Plug>PeepOpen
+      " PeepOpen on OS X, Command-T elsewhere.
+      macmenu &File.New\ Tab key=<nop>
+      map <leader><leader> <Plug>PeepOpen
 
-      "Use the normal HIG movements, except for M-Up/Down
-        let macvim_skip_cmd_opt_movement = 1
-        no   <D-Left>       <Home>
-        no!  <D-Left>       <Home>
-        no   <M-Left>       <C-Left>
-       no!  <M-Left>       <C-Left>
+    "Use the normal HIG movements, except for M-Up/Down
+      let macvim_skip_cmd_opt_movement = 1
+      no   <D-Left>       <Home>
+      no!  <D-Left>       <Home>
+      no   <M-Left>       <C-Left>
+      no!  <M-Left>       <C-Left>
 
-        no   <D-Right>      <End>
-        no!  <D-Right>      <End>
-        no   <M-Right>      <C-Right>
-        no!  <M-Right>      <C-Right>
+      no   <D-Right>      <End>
+      no!  <D-Right>      <End>
+      no   <M-Right>      <C-Right>
+      no!  <M-Right>      <C-Right>
 
-       no   <D-Up>         <C-Home>
-       ino  <D-Up>         <C-Home>
-        imap <M-Up>         <C-o>{
+      no   <D-Up>         <C-Home>
+      ino  <D-Up>         <C-Home>
+      imap <M-Up>         <C-o>{
 
-        no   <D-Down>       <C-End>
-        ino  <D-Down>       <C-End>
-        imap <M-Down>       <C-o>}
+      no   <D-Down>       <C-End>
+      ino  <D-Down>       <C-End>
+      imap <M-Down>       <C-o>}
 
-        imap <M-BS>         <C-w>
-        inoremap <D-BS>     <esc>my0c`y
-    else
-        map <leader><leader> :CommandT<cr>
+      imap <M-BS>         <C-w>
+      inoremap <D-BS>     <esc>my0c`y
+  else
+      map <leader><leader> :CommandT<cr>
 
-        " Dammit, PeepOpen
-        map gxxxxx <Plug>PeepOpen
-    end
+      " Dammit, PeepOpen
+      map gxxxxx <Plug>PeepOpen
+  end
 
-    highlight SpellBad term=underline gui=undercurl guisp=Orange
+  highlight SpellBad term=underline gui=undercurl guisp=Orange
 
-    " Use a line-drawing char for pretty vertical splits.
-    set fillchars+=vert:\│
-    highlight VertSplit cterm=none gui=none
+  " Use a line-drawing char for pretty vertical splits.
+  set fillchars+=vert:\│
+  highlight VertSplit cterm=none gui=none
 
-    " Different cursors for different modes.
-    set guicursor=n-c:block-Cursor-blinkon0
-    set guicursor+=v:block-vCursor-blinkon0
-    set guicursor+=i-ci:ver20-iCursor
+  " Different cursors for different modes.
+  set guicursor=n-c:block-Cursor-blinkon0
+  set guicursor+=v:block-vCursor-blinkon0
+  set guicursor+=i-ci:ver20-iCursor
 
 
 else

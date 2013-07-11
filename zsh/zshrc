@@ -1,7 +1,11 @@
 #  Path to your oh-my-zsh configuration.
 export ZSH="$HOME/dotfiles/zsh/oh-my-zsh"
+
 ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
-export ZSH_THEME="geoffgarside"
+export ZSH_THEME="paleking"
+
+# Adapted from code found at <https://gist.github.com/1712320>.
+
 # Comment this out to disable weekly auto-update checks
 export DISABLE_AUTO_UPDATE="true"
 
@@ -11,6 +15,9 @@ export VISUAL="vim"
 alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
+
+export LPROMPT=$'%F{cyan}%*%f'
+export RPROMPT=$'%F{cyan}%*%f'
 
 # source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)

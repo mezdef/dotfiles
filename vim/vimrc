@@ -58,6 +58,8 @@ let maplocalleader = "\\"
 set number                                        " Line numbers on
 set numberwidth=4                                 " Fixed coloumn width
 set relativenumber                                " Set line numbers to relative positioning
+autocmd InsertEnter * :set number
+autocmd InsertLeave * :set relativenumber
 
 " INDENTATION  /////////////////////////////////////////////////////////////////////////////////////
 

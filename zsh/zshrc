@@ -1,7 +1,7 @@
 #  Path to your oh-my-zsh configuration.
 export ZSH="$HOME/dotfiles/zsh/oh-my-zsh"
 ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
-export ZSH_THEME="ulysses"
+export ZSH_THEME="geoffgarside"
 # Comment this out to disable weekly auto-update checks
 export DISABLE_AUTO_UPDATE="true"
 
@@ -12,7 +12,7 @@ alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
 
-source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 # ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 

@@ -76,7 +76,7 @@ set expandtab                                     " <tab>s are replaced with <sp
 " IndentLine plugin config
 let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
-let g:indentLine_color_gui = '#444444'
+let g:indentLine_color_gui = '#CCCCCC'
 
 " WRAPPING /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,12 +156,14 @@ au VimResized * exe "normal! \<c-w>="
 
 " COLOUR SCHEME ////////////////////////////////////////////////////////////////////////////////////
 
-set background=dark                               " Dark background / color scheme
-colorscheme molokai
+set background=light                               " Dark background / color scheme
+colorscheme hemisu
 set transparency=5
 
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'  " Highlight VCS conflict markers
-let g:Powerline_symbols = 'fancy'                 " Powerline
+" let g:Powerline_symbols = 'fancy'                 " Powerline
+let g:airline_powerline_fonts = 1
+let g:airline_theme='palefire'
 
 " ABBREVIATIONS ////////////////////////////////////////////////////////////////////////////////////
 
@@ -744,7 +746,7 @@ nmap <silent> <f4> :QFixToggle<cr>
 " MACVIM ///////////////////////////////////////////////////////////////////////////////////////////
 
 if has('gui_running')
-  set guifont=Inconsolata-dz\ for\ Powerline:h12
+  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h12
 
   " Remove all the UI cruft
   set go-=T

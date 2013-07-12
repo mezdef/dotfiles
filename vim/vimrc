@@ -11,8 +11,8 @@
 " STARTING CONFIG //////////////////////////////////////////////////////////////////////////////////
 "
 filetype off
-call pathogen#infect()                            " Load Pathogen
-call pathogen#helptags()
+" call pathogen#infect()                            " Load Pathogen
+" call pathogen#helptags()
 set nocompatible                                  " Choose no compatibility with legacy vi
 set cpoptions+=J                                  " Compatability options
 syntax on                                         " Turn on syntax highlighting
@@ -24,7 +24,8 @@ au FileType python source <rope-vim>
 set rtp+=~/dotfiles/vim/bundle/vundle/
 call vundle#rc()
 
-Bundle 'gmarik/vundle'                            " let Vundle manage Vundle  required! 
+" let Vundle manage Vundle  required! 
+Bundle 'gmarik/vundle'
 
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-surround'
@@ -33,8 +34,8 @@ Bundle 'tpope/vim-repeat'
 Bundle 'Yggdroot/indentLine'
 Bundle 'scrooloose/syntastic'
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'kien/ctrlp'
-Bundle 'mezdef/vim-airline'
+Bundle 'kien/ctrlp.vim'
+Bundle 'mezdef/vim-airline.git'
 
 Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-haml'

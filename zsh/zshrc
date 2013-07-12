@@ -16,8 +16,6 @@ alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
 
-export LPROMPT=$'%F{cyan}%*%f'
-export RPROMPT=$'%F{cyan}%*%f'
 
 # source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
@@ -30,9 +28,10 @@ export RPROMPT=$'%F{cyan}%*%f'
 # time that oh-my-zsh is loaded.
 
 # Aliases
- alias zshrc="vim ~/dotfiles/zsh/zshrc"
- alias vimrc="vim ~/dotfiles/vim/vimrc"
- alias tmuxrc="vim ~/dotfiles/tmux/tmux.conf"
+ alias zshrc="mvim ~/dotfiles/zsh/zshrc"
+ alias vimrc="mvim ~/dotfiles/vim/vimrc"
+ alias tmuxrc="mvim ~/dotfiles/tmux/tmux.conf"
+
  alias cl="clear"
  
  alias g="git"

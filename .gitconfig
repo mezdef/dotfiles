@@ -1,20 +1,24 @@
 [user]
 	name = Marc Ziani de Ferranti
 	email = mezdef@gmail.com
+
 [mergetool "fugitive"]
 	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+
 [merge]
 	tool = fugitive
+
 [push]
 	default = simple
+
 [alias]
   cl = clone
   co = checkout
-  st = 'git status --ignore-submodules=dirty'
-  status = 'git status --ignore-submodules=dirty'
+  st = status
   a = add
   cm = commit
   pu = push
   p = pull
+
 [core]
 	excludesfile = /Users/mezdef/dotfiles/.gitignore

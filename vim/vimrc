@@ -654,8 +654,10 @@ au FileType htmldjango setlocal commentstring={#\ %s\ #}
 
 let g:EasyMotion_leader_key = '<Leader>'
 
-hi EasyMotionTarget ctermbg=none ctermfg=green
-hi EasyMotionShade  ctermbg=none ctermfg=cyan
+" hi EasyMotionTarget ctermbg=light ctermfg=red
+" hi EasyMotionShade  ctermbg=light ctermfg=cyan
+hi link EasyMotionTarget Function
+hi link EasyMotionShade  Comment
 
 " PLUGINS - FUGITIVE /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -832,7 +834,7 @@ if has('gui_running')
   " Different cursors for different modes.
   set guicursor=n-c:block-Cursor-blinkon0
   set guicursor+=v:block-vCursor-blinkon0
-  set guicursor+=i-ci:ver20-iCursor
+  " set guicursor+=i-ci:ver20-iCursor
 
 
 else

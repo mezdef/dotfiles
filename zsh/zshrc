@@ -28,6 +28,12 @@ source $ZSH/oh-my-zsh.sh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 
+# Disable hostname completion
+zstyle ':completion:*' hosts off
+__git_files () { 
+    _wanted files expl 'local files' _files     
+}
+
 # Aliases
 alias mvim="open -a MacVim"
 alias zshrc="mvim ~/dotfiles/zsh/zshrc"
@@ -59,6 +65,10 @@ plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighti
 # Set VI mode for zsh
 bindkey -v
 bindkey -M viins 'jj' vi-cmd-mode
+# make search up and down work, so partially type and hit up/down to find relevant stuff
+bindkey '^[[A' up-line-or-search                                                
+bindkey '^[[B' down-line-or-search
+
 
 #function zle-line-init zle-keymap-select {
   #RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"

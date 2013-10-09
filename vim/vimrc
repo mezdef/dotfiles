@@ -11,8 +11,6 @@
 " STARTING CONFIG //////////////////////////////////////////////////////////////////////////////////
 "
 filetype off
-" call pathogen#infect()                            " Load Pathogen
-" call pathogen#helptags()
 set nocompatible                                  " Choose no compatibility with legacy vi
 set cpoptions+=J                                  " Compatability options
 syntax on                                         " Turn on syntax highlighting
@@ -42,9 +40,11 @@ Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-haml'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'othree/html5.vim'
-Bundle 'lepture/vim-css'
+" Bundle 'lepture/vim-css'
+Bundle 'hail2u/vim-css3-syntax'
 Bundle 'cakebaker/scss-syntax.vim'
 Bundle 'plasticboy/vim-markdown'
+Bundle 'https://github.com/biskark/vim-ultimate-colorscheme-utility'
 
 Bundle 'skammer/vim-css-color'
  
@@ -618,7 +618,8 @@ inoremap <c-f> <c-x><c-f>
 let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_jump_to_buffer = 0
 let g:ctrlp_map = '<leader>,'
-let g:ctrlp_working_path_mode = 0
+" let g:ctrlp_working_path_mode = 0
+let g:ctrlp_regexp = 1
 let g:ctrlp_match_window_reversed = 1
 let g:ctrlp_split_window = 0
 let g:ctrlp_max_height = 20
@@ -643,6 +644,7 @@ let ctrlp_filter_greps = "".
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 
 nnoremap <leader>. :CtrlPTag<cr>}
+
 
 " PLUGINS - COMMENTARY ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -794,7 +796,7 @@ if has('gui_running')
 
       " PeepOpen on OS X, Command-T elsewhere.
       macmenu &File.New\ Tab key=<nop>
-      map <leader><leader> <Plug>PeepOpen
+      " map <leader><leader> <Plug>PeepOpen
 
     "Use the normal HIG movements, except for M-Up/Down
       let macvim_skip_cmd_opt_movement = 1
@@ -822,7 +824,7 @@ if has('gui_running')
       map <leader><leader> :CommandT<cr>
 
       " Dammit, PeepOpen
-      map gxxxxx <Plug>PeepOpen
+      " map gxxxxx <Plug>PeepOpen
   end
 
   highlight SpellBad term=underline gui=undercurl guisp=Orange

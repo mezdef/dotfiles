@@ -17,12 +17,6 @@ alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
 
-
-# source ~/dotfiles/zsh/oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-# ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
-
-
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -34,13 +28,19 @@ __git_files () {
     _wanted files expl 'local files' _files     
 }
 
+#remove git dirty slowness
+function git_prompt_info() {
+  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
+}
+
 # Aliases
 alias mvim="open -a MacVim"
 alias zshrc="mvim ~/dotfiles/zsh/zshrc"
 alias vimrc="mvim ~/dotfiles/vim/vimrc"
 alias tmuxrc="mvim ~/dotfiles/tmux/tmux.conf"
 
- alias cl="clear"
+alias cl="clear"
  
  alias g="git"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
@@ -61,7 +61,8 @@ alias tmuxrc="mvim ~/dotfiles/tmux/tmux.conf"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
+# plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
+plugins=(git rvm bundler osx history-substring-search zsh-syntax-highlighting)
 # Set VI mode for zsh
 bindkey -v
 bindkey -M viins 'jj' vi-cmd-mode

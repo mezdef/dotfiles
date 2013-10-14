@@ -1,11 +1,13 @@
 PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
 #  Path to your oh-my-zsh configuration.
 export ZSH="$HOME/dotfiles/zsh/oh-my-zsh"
 
+# Location of custom additions to zsh
 ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
-export ZSH_THEME="paleking"
 
-# Adapted from code found at <https://gist.github.com/1712320>.
+# ZSH Theme
+export ZSH_THEME="paleking"
 
 # Comment this out to disable weekly auto-update checks
 export DISABLE_AUTO_UPDATE="true"
@@ -13,14 +15,8 @@ export DISABLE_AUTO_UPDATE="true"
 # Editor
 export EDITOR='vim'
 export VISUAL="vim":q
-alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 source $ZSH/oh-my-zsh.sh
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
 
 # Disable hostname completion
 zstyle ':completion:*' hosts off
@@ -34,53 +30,34 @@ function git_prompt_info() {
   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
 }
 
-# Aliases
+# Aliases - Config
 alias mvim="open -a MacVim"
 alias zshrc="mvim ~/dotfiles/zsh/zshrc"
 alias vimrc="mvim ~/dotfiles/vim/vimrc"
 alias tmuxrc="mvim ~/dotfiles/tmux/tmux.conf"
 
+# Aliases - Editor
+# MacVim as terminal vim
+alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
+
+# Aliases - Navigation
 alias cl="clear"
  
- alias g="git"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+# Aliases - Git
+alias g="git"
 
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
-plugins=(git rvm bundler osx history-substring-search zsh-syntax-highlighting)
 # Set VI mode for zsh
 bindkey -v
 bindkey -M viins 'jj' vi-cmd-mode
+
+# Uncomment following line if you want red dots to be displayed while waiting for completion
+COMPLETION_WAITING_DOTS="true"
+
+# plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
+plugins=(git rvm bundler osx history-substring-search zsh-syntax-highlighting)
 # make search up and down work, so partially type and hit up/down to find relevant stuff
 bindkey '^[[A' up-line-or-search                                                
 bindkey '^[[B' down-line-or-search
-
-
-#function zle-line-init zle-keymap-select {
-  #RPS1="${${KEYMAP/vicmd/-- NORMAL --}/(main|viins)/-- INSERT --}"
-  #RPS2=$RPS1
-  #zle reset-prompt
-#}
-#zle -N zle-line-init
-#zle -N zle-keymap-select
-
-# Customize to your needs...
-# export PATH=$PATH:/Users/mezdef/.nvm/v0.4.12/bin:/Users/mezdef/.rvm/gems/ruby-1.9.2-p180@rails3tutorial/bin:/Users/mezdef/.rvm/gems/ruby-1.9.2-p180@global/bin:/Users/mezdef/.rvm/rubies/ruby-1.9.2-p180/bin:/Users/mezdef/.rvm/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
 
 # $PATH
 # # This puts homebrew packages first in path
@@ -136,7 +113,7 @@ export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.3/lib/python2.7/site
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
 #Tmuxinator
-[[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
+# [[ -s $HOME/.tmuxinator/scripts/tmuxinator ]] && source $HOME/.tmuxinator/scripts/tmuxinator
 
 # Tmux Powerline
 #PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#I_#P") "$PWD")'

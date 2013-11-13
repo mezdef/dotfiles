@@ -185,6 +185,19 @@ hi! link htmlEndTag	htmlTag
 hi! link cssBraces	Delimiter
 hi! link cssSelectorOp	cssBraces
 hi! link cssClassName	Normal
+hi! link cssProperty	Normal
+hi! link cssSelectorOp Normal
+hi! link cssSelectorOp2 Normal
+hi! link cssFontProp Normal
+hi! link cssColorProp Normal
+hi! link cssTextProp Normal
+hi! link cssBoxProp Normal
+hi! link cssAuralProp Normal
+hi! link cssRenderProp Normal
+hi! link cssGeneratedContentProp Normal
+hi! link cssPagingProp Normal
+hi! link cssTableProp Normal
+hi! link cssUIProp Normal
 
 "}}}
 " Highlights - Markdown ------------------------------------{{{

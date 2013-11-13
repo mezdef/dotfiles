@@ -40,14 +40,11 @@ Bundle 'tpope/vim-rails'
 Bundle 'tpope/vim-haml'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'othree/html5.vim'
-" Bundle 'lepture/vim-css'
 Bundle 'hail2u/vim-css3-syntax'
 Bundle 'cakebaker/scss-syntax.vim'
 Bundle 'plasticboy/vim-markdown'
-Bundle 'https://github.com/biskark/vim-ultimate-colorscheme-utility'
 
-Bundle 'skammer/vim-css-color'
- 
+
 filetype plugin indent on                         " Load file type plugins + indentation
 
 " DEFAULT OPTIONS //////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +113,7 @@ set formatoptions=qrn1
 if exists("&colorcolumn")
   set colorcolumn=+1
 endif
+set synmaxcol=100                                 " Turns off syntax on long lines to prevent slow
 
 " SCROLLING ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -144,7 +142,7 @@ set splitright                                    " New vertical split window is
 " FOLDS ////////////////////////////////////////////////////////////////////////////////////////////
 
 set foldcolumn=1
-set columns=150
+set columns=120
 set foldmethod=indent                             "fold based on indent
 set foldnestmax=3                                 "deepest fold is 3 levels
 set nofoldenable                                  "dont fold by default
@@ -188,7 +186,7 @@ au VimResized * exe "normal! \<c-w>="
 
 set background=light                               " Dark / light background / color scheme
 colorscheme hemisu
-set transparency=5
+set transparency=1
 
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'  " Highlight VCS conflict markers
 " let g:Powerline_symbols = 'fancy'                 " Powerline
@@ -281,38 +279,10 @@ augroup ft_css
   au!
 
   au BufNewFile,BufRead *.less setlocal filetype=less
-  " au FileType * if &filetype == 'scss' | colorscheme hemisu | else | colorscheme molokai | endif
-
-
   au Filetype less,css setlocal foldmethod=marker
   au Filetype less,css setlocal foldmarker={,}
   au Filetype less,css setlocal omnifunc=csscomplete#CompleteCSS
   au Filetype less,css setlocal iskeyword+=-
-
-  " Use <leader>S to sort properties.  Turns this:
-  "
-  "     p {
-  "         width: 200px;
-  "         height: 100px;
-  "         background: red;
-  "
-  "         ...
-  "     }
-  "
-  " into this:
-
-  "     p {
-  "         background: red;
-  "         height: 100px;
-  "         width: 200px;
-  "
-  "         ...
-  "     }
-  au BufNewFile,BufRead *.less,*.css nnoremap <buffer> <localleader>S ?{<CR>jV/\v^\s*\}?$<CR>k:sort<CR>:noh<CR>
-
-  " Make {<cr> insert a pair of brackets in such a way that the cursor is correctly
-  " positioned inside of them AND the following code doesn't get unfolded.
-  au BufNewFile,BufRead *.less,*.css inoremap <buffer> {<cr> {}<left><cr><space><space><space><space>.<cr><esc>kA<bs>
 augroup END
 
 " SCSS /////////////////////////////////////////////////////////////////////////////////////////////
@@ -346,37 +316,6 @@ augroup END
 
 au BufNewFile,BufRead *.j2 setlocal filetype=htmljinja
 
-augroup ft_html
-  au!
-
-  " au BufNewFile,BufRead *.html setlocal filetype=htmljinja
-  au FileType html,jinja,htmldjango setlocal foldmethod=manual
-
-  " Use <localleader>f to fold the current tag.
-  au FileType html,jinja,htmldjango nnoremap <buffer> <localleader>f Vatzf
-
-  " Use Shift-Return to turn this:
-  "     <tag>|</tag>
-  "
-  " into this:
-  "     <tag>
-  "         |
-  "     </tag>
-  au FileType html,jinja,htmldjango nnoremap <buffer> <s-cr> vit<esc>a<cr><esc>vito<esc>i<cr><esc>
-
-  " Smarter pasting
-  au FileType html,jinja,htmldjango nnoremap <buffer> p :<C-U>YRPaste 'p'<CR>v`]=`]
-  au FileType html,jinja,htmldjango nnoremap <buffer> P :<C-U>YRPaste 'P'<CR>v`]=`]
-  au FileType html,jinja,htmldjango nnoremap <buffer> π :<C-U>YRPaste 'p'<CR>
-  au FileType html,jinja,htmldjango nnoremap <buffer> ∏ :<C-U>YRPaste 'P'<CR>
-
-  " Django tags
-  au FileType jinja,htmldjango inoremap <buffer> <c-t> {%<space><space>%}<left><left><left>
-
-  " Django variables
-  au FileType jinja,htmldjango inoremap <buffer> <c-f> {{<space><space>}}<left><left><left>
-augroup END
-
 " JAVASCRIPT ///////////////////////////////////////////////////////////////////////////////////////
 
 augroup ft_javascript
@@ -408,18 +347,10 @@ augroup ft_ruby
   au Filetype ruby setlocal foldmethod=syntax
 augroup END
 
-" MARCZIANI.COM ////////////////////////////////////////////////////////////////////////////////////
-
-augroup ft_marczianicom
-  au!
-  au BufRead,BufNewFile */marcziani/content/blog/20*/*/*.html set ft=markdown foldlevel=20
-  au BufRead,BufNewFile */marcziani/content/projects/*.html set ft=markdown
-augroup END
-
 " QUICK FILE EDITING  //////////////////////////////////////////////////////////////////////////////
 
 nnoremap <leader>ev <C-w>s<C-w>j<C-w>L:e ~/dotfiles/vim/vimrc<cr>
-nnoremap <leader>ez <C-w>s<C-w>j<C-w>L:e ~/lib/dotfiles/zsh<cr>4j
+nnoremap <leader>ez <C-w>s<C-w>j<C-w>L:e ~/dotfiles/zshrc<cr>
 
 " Auto re-load vimrc on save
 augroup reload_vimrc " {
@@ -434,6 +365,9 @@ nnoremap <Leader>s :%s/<c-r><c-w>/<c-r><c-w>/gc<Left><Left><Left>
 vnoremap <Leader>s "hy:%s/\%V/g<Left><Left>
 vnoremap <Leader>S "hy:%s/<C-r>h//gc<left><left><left>
 
+" Substitute
+nnoremap <leader>s :%s//<left>
+
 "This allows for change paste motion cp{motion}
 nmap <silent> cp :set opfunc=ChangePaste<CR>g@
 function! ChangePaste(type, ...)
@@ -445,15 +379,8 @@ endfunction
 noremap <C-u> gUiw
 inoremap <C-u><esc> gUiwea
 
-" Substitute
-nnoremap <leader>s :%s//<left>
-
 " Formatting, TextMate-style
 nnoremap Q gqip
-
-
-" Preview Files
-nnoremap <leader>p :w<cr>:Hammer<cr>
 
 " HTML tag closing
 inoremap <C-_> <Space><BS><Esc>:call InsertCloseTag()<cr>a
@@ -506,23 +433,12 @@ inoremap # X<BS>#
 
 " Better Completion
 set completeopt=longest,menuone,preview
-" inoremap <expr> <CR>  pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" inoremap <expr> <C-p> pumvisible() ? '<C-n>'  : '<C-n><C-r>=pumvisible() ? "\<lt>up>" : ""<CR>'
-" inoremap <expr> <C-n> pumvisible() ? '<C-n>'  : '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 " Sudo to write
 cmap w!! w !sudo tee % >/dev/null
 
 " I suck at typing.
 nnoremap <localleader>= ==
-
-" Easy filetype switching {{{
-nnoremap _md :set ft=markdown<CR>
-nnoremap _hd :set ft=htmldjango<CR>
-nnoremap _jt :set ft=htmljinja<CR>
-nnoremap _cw :set ft=confluencewiki<CR>
-nnoremap _pd :set ft=python.django<CR>
-nnoremap _d  :set ft=diff<CR>
 
 " Made D behave
 nnoremap D d$
@@ -575,21 +491,6 @@ nnoremap <m-Up> :cprevious<cr>zvzz
 " Toggle paste
 set pastetoggle=<F8>
 
-" Handle URL {{{
-" Stolen from https://github.com/askedrelic/homedir/blob/master/.vimrc
-" OSX only: Open a web-browser with the URL in the current line
-function! HandleURI()
-    let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*')
-    echo s:uri
-    if s:uri != ""
-        exec "!open \"" . s:uri . "\""
-    else
-        echo "No URI found in line."
-    endif
-endfunction
-map <leader>u :call HandleURI()<CR>
-" }}}
-
 " Quickreturn
 inoremap <c-cr> <esc>A<cr>
 inoremap <s-cr> <esc>A:<cr>
@@ -619,7 +520,7 @@ let g:ctrlp_dont_split = 'NERD_tree_2'
 let g:ctrlp_jump_to_buffer = 0
 let g:ctrlp_map = '<leader>,'
 " let g:ctrlp_working_path_mode = 0
-let g:ctrlp_regexp = 1
+" let g:ctrlp_regexp = 1
 let g:ctrlp_match_window_reversed = 1
 let g:ctrlp_split_window = 0
 let g:ctrlp_max_height = 20
@@ -646,22 +547,19 @@ let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -
 nnoremap <leader>. :CtrlPTag<cr>}
 
 
-" PLUGINS - COMMENTARY ///////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - COMMENTARY /////////////////////////////////////////////////////////////////////////////
 
 nmap <leader>c <Plug>CommentaryLine
 xmap <leader>c <Plug>Commentary
 au FileType htmldjango setlocal commentstring={#\ %s\ #}
 
-" PLUGINS - EASYMOTION ///////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - EASYMOTION /////////////////////////////////////////////////////////////////////////////
 
 let g:EasyMotion_leader_key = '<Leader>'
-
-" hi EasyMotionTarget ctermbg=light ctermfg=red
-" hi EasyMotionShade  ctermbg=light ctermfg=cyan
 hi link EasyMotionTarget Function
 hi link EasyMotionShade  Comment
 
-" PLUGINS - FUGITIVE /////////////////////////////////////////////////////////////////////////////////////////
+" PLUGINS - FUGITIVE ///////////////////////////////////////////////////////////////////////////////
 
 nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gs :Gstatus<cr>
@@ -715,72 +613,11 @@ onoremap ad a[
 vnoremap id i[
 vnoremap ad a[
 
-" }}}
-" Next and Last {{{
-
-" Motion for "next/last object". For example, "din(" would go to the next "()" pair
-" and delete its contents.
-
-onoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
-xnoremap an :<c-u>call <SID>NextTextObject('a', 'f')<cr>
-onoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
-xnoremap in :<c-u>call <SID>NextTextObject('i', 'f')<cr>
-
-onoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
-xnoremap al :<c-u>call <SID>NextTextObject('a', 'F')<cr>
-onoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
-xnoremap il :<c-u>call <SID>NextTextObject('i', 'F')<cr>
-
-function! s:NextTextObject(motion, dir)
-  let c = nr2char(getchar())
-
-  if c ==# "b"
-      let c = "("
-  elseif c ==# "B"
-      let c = "{"
-  elseif c ==# "d"
-      let c = "["
-  endif
-
-  exe "normal! ".a:dir.c."v".a:motion.c
-endfunction
-
-" }}}
-
-" }}}
-" Error toggles --------------------------------------------------------------- {{{
-
-command! ErrorsToggle call ErrorsToggle()
-function! ErrorsToggle() " {{{
-  if exists("w:is_error_window")
-    unlet w:is_error_window
-    exec "q"
-  else
-    exec "Errors"
-    lopen
-    let w:is_error_window = 1
-  endif
-endfunction " }}}
-
-command! -bang -nargs=? QFixToggle call QFixToggle(<bang>0)
-function! QFixToggle(forced) " {{{
-  if exists("g:qfix_win") && a:forced == 0
-    cclose
-    unlet g:qfix_win
-  else
-    copen 10
-    let g:qfix_win = bufnr("$")
-  endif
-endfunction " }}}
-
-nmap <silent> <f3> :ErrorsToggle<cr>
-nmap <silent> <f4> :QFixToggle<cr>
-
 
 " MACVIM ///////////////////////////////////////////////////////////////////////////////////////////
 
 if has('gui_running')
-  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h12
+  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h14
 
   " Remove all the UI cruft
   set go-=T

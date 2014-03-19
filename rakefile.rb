@@ -11,8 +11,19 @@
 #-9.  http://www.iterm2.com/#/section/home
 #-10. $ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 #-11. $ brew install zsh
-#-12. $ brew install git
-#-13. $ brew install rvm
+#-11. $ brew install zsh-completions
+#-11. $ brew install zsh-syntax-highlighting
+#-11. $ brew install zsh-history-substring-search
+#-12. $ sudo vim /etc/shells > '/usr/local/bin/zsh'
+#-13. $ chsh -s /usr/local/bin/zsh
+#-14. $ brew install git
+#-15. $ git clone git@github.com:mezdef/dotfiles.git
+#-16. $ ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
+#-17. https://pqrs.org/macosx/keyremap4macbook/
+#-18. $ rm ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
+#-19. $ ln -s ~/dotfiles/KeyRemap4MacBook/private.xml ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
+#-18. http://brettterpstra.com/projects/nvalt/
+#-20. $ brew install rvm
 
 
 # Tasks - Link  ////////////////////////////////////////////////////

@@ -2,44 +2,17 @@
 	name = Marc Ziani de Ferranti
 	email = mezdef@gmail.com
 
-[mergetool "fugitive"]
-	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
-
-[merge]
-	tool = fugitive
-
 [push]
 	default = simple
 
 [alias]
-  cl = clone
-  co = checkout
-  st = status
-  a = add
-  cm = commit
-  pu = push
-  p = pull
 
 [core]
 	excludesfile = /Users/mezdef/dotfiles/.gitignore
-	editor = mvim
+	editor = vim
 
 [diff]
 	tool = vimdiff
+
 [difftool]
     tool = vimdiff
-
-; [difftool "default-difftool"]
-;     cmd = default-difftool.sh $LOCAL $REMOTE
-; [difftool "sourcetree"]
-; 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-; 	path = 
-; [mergetool "sourcetree"]
-; 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-; 	trustExitCode = true
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true

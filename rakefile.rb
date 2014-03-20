@@ -17,13 +17,14 @@
 #-12. $ sudo vim /etc/shells > '/usr/local/bin/zsh'
 #-13. $ chsh -s /usr/local/bin/zsh
 #-14. $ brew install git
-#-15. $ git clone git@github.com:mezdef/dotfiles.git
-#-16. $ ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
-#-17. https://pqrs.org/macosx/keyremap4macbook/
-#-18. $ rm ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
-#-19. $ ln -s ~/dotfiles/KeyRemap4MacBook/private.xml ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
-#-18. http://brettterpstra.com/projects/nvalt/
-#-20. $ brew install rvm
+#-15. $ rake link_git
+#-16. $ git clone git@github.com:mezdef/dotfiles.git
+#-17. $ ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
+#-18. https://pqrs.org/macosx/keyremap4macbook/
+#-19. $ rm ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
+#-20. $ ln -s ~/dotfiles/KeyRemap4MacBook/private.xml ~/Library/Application\ Support/KeyRemap4MacBook/private.xml
+#-21. http://brettterpstra.com/projects/nvalt/
+#-22. $ brew install node
 
 
 # Tasks - Link  ////////////////////////////////////////////////////
@@ -32,6 +33,12 @@
 desc "Link Sublime Text"
 task :link_sublime do
   system "ln -s ~/Dropbox/settings/Sublime\ Text\ 2/Packages/User/ ~/Library/Application Support/Sublime Text 2/Packages/User"
+end
+
+# http://atom.io/
+desc "Link Atom"
+task :link_atom do
+  system "ln -s ~/Dropbox/settings/atom/ ~/.atom"
 end
 
 # http://www.gnupg.org/
@@ -46,6 +53,11 @@ task :link_pass do
   system "ln -s ~/Dropbox/settings/.password-store ~/.password-store"
 end
 
+desc "Link Git"
+task :link_git do
+  system "ln -s ~/dotfiles/.gitconfig ~/.gitconfig"
+  system "ln -s ~/dotfiles/.gitignore ~/.gitignore"
+end
 
 # Automation ///////////////////////////////////////////////////////
 

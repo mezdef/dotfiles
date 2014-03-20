@@ -1,26 +1,172 @@
+# Path /////////////////////////////////////////////////////////////////////////
+
+# Homebrew path
 PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
-#  Path to your oh-my-zsh configuration.
-export ZSH="$HOME/dotfiles/zsh/oh-my-zsh"
+# RVM path for scripting
+PATH=$PATH:$HOME/.rvm/bin
 
-# Location of custom additions to zsh
-ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
-# ZSH Theme
-export ZSH_THEME="paleking"
+# Python path
+export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.3/lib/python2.7/site-packages"
 
-# Comment this out to disable weekly auto-update checks
-export DISABLE_AUTO_UPDATE="true"
+# ZSH function path
+fpath=(/usr/local/share/zsh-completions $fpath)
 
-# Editor
-export EDITOR='vim'
+# RVM
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+if [ -d ~/.local/bin ]; then export PATH=~/.local/bin:$PATH ; fi
+
+
+# General options //////////////////////////////////////////////////////////////
+
+setopt prompt_subst
+autoload -U colors && colors # Enable colors in prompt
+autoload -U compinit
+compinit
+
+setopt autocd
+setopt AUTO_NAME_DIRS
+setopt VI
+# Set VI mode for zsh
+bindkey -v
+bindkey -M viins 'jj' vi-cmd-mode
+setopt NO_CASE_GLOB
+
+# CLI Editor
+export EDITOR="vim"
 export VISUAL="vim":q
 
-source $ZSH/oh-my-zsh.sh
+# Prompt ///////////////////////////////////////////////////////////////////////
+
+# Show different symbols as appropriate for various Git repository states
+parse_git_state() {
+
+  # Compose this value via multiple conditional appends.
+  local GIT_STATE=""
+
+  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_AHEAD" -gt 0 ]; then
+    GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
+  fi
+
+  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_BEHIND" -gt 0 ]; then
+    GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
+  fi
+
+  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+    GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
+  fi
+
+}
+
+# If inside a Git repository, print its branch and state
+git_prompt_string() {
+  local git_where="$(parse_git_branch)"
+  [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL ${git_where#(refs/heads/|tags/)}$(parse_git_state)"
+}
+
+# Set Git Prompt symbol
+GIT_PROMPT_SYMBOL=" "
+
+# Left hand prompt
+PROMPT='$ '
+
+# Right hand prompt
+RPROMPT=$'%c$(git_prompt_string) | %F%*%f'
+
+
+# ZSH Autocompletion ///////////////////////////////////////////////////////////
+
+bindkey -M viins '\C-i' complete-word
+
+# Faster! (?)
+zstyle ':completion::complete:*' use-cache 1
+
+# case insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*' group-name ''
+#zstyle ':completion:*' completer _oldlist _expand _complete
+zstyle ':completion:*' completer _expand _complete _approximate _ignored
+
+# generate descriptions with magic.
+zstyle ':completion:*' auto-description 'specify: %d'
+
+# Don't prompt for a huge list, page it!
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+
+# Don't prompt for a huge list, menu it!
+zstyle ':completion:*:default' menu 'select=0'
+
+# Have the newer files last so I see them first
+zstyle ':completion:*' file-sort modification reverse
+
+# color code completion!!!!  Wohoo!
+zstyle ':completion:*' list-colors "=(#b) #([0-9]#)*=36=31"
+
+unsetopt LIST_AMBIGUOUS
+setopt  COMPLETE_IN_WORD
+
+
+# ZSH History //////////////////////////////////////////////////////////////////
+
+# Where it gets saved
+HISTFILE=~/.history
+
+# Remember about a years worth of history (AWESOME)
+SAVEHIST=10000
+HISTSIZE=10000
+
+# Don't overwrite, append!
+setopt APPEND_HISTORY
+
+# Write after each command
+# setopt INC_APPEND_HISTORY
+
+# Killer: share history between multiple shells
+setopt SHARE_HISTORY
+
+# If I type cd and then cd again, only save the last one
+setopt HIST_IGNORE_DUPS
+
+# Even if there are commands inbetween commands that are the same, still only save the last one
+setopt HIST_IGNORE_ALL_DUPS
+
+# Pretty    Obvious.  Right?
+setopt HIST_REDUCE_BLANKS
+
+# If a line starts with a space, don't save it.
+setopt HIST_IGNORE_SPACE
+setopt HIST_NO_STORE
+
+# When using a hist thing, make a newline show the change before executing it.
+setopt HIST_VERIFY
+
+# Save the time and how long a command ran
+setopt EXTENDED_HISTORY
+
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+
+
+# Show Git branch/tag, or name-rev if on detached head
+parse_git_branch() {
+  (git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
+}
+
 
 # Disable hostname completion
 zstyle ':completion:*' hosts off
-__git_files () { 
-    _wanted files expl 'local files' _files     
+__git_files () {
+    _wanted files expl 'local files' _files
 }
 
 #remove git dirty slowness
@@ -29,63 +175,49 @@ function git_prompt_info() {
   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
 }
 
+# Aliases //////////////////////////////////////////////////////////////////////
+
 # Aliases - Config
 alias mvim="open -a MacVim"
-alias zshrc="mvim ~/dotfiles/zsh/zshrc"
-alias vimrc="mvim ~/dotfiles/vim/vimrc"
+alias zshrc="vim ~/dotfiles/zsh/zshrc"
+alias vimrc="vim ~/dotfiles/vim/vimrc"
 
 # Aliases - Editor
 # MacVim as terminal vim
-alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
+#alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
-# Aliases - Navigation
-alias cl="clear"
- 
 # Aliases - Git
 alias g="git"
 
 # Aliases - Rails
 alias dbsetup="rake db:create db:migrate db:seed db:populate db:test:prepare"
 
-# Set VI mode for zsh
-bindkey -v
-bindkey -M viins 'jj' vi-cmd-mode
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
-
-# plugins=(git brew rvm bundler osx history-substring-search zsh-syntax-highlighting)
-plugins=(osx history-substring-search zsh-syntax-highlighting)
-# make search up and down work, so partially type and hit up/down to find relevant stuff
-bindkey '^[[A' up-line-or-search                                                
-bindkey '^[[B' down-line-or-search
-
-# $PATH
-# # This puts homebrew packages first in path
-PATH=/usr/local/bin:/usr/local/sbin:$PATH
-
-# Path ------------------------------------------------------------
-if [ -d ~/.local/bin ]; then export PATH=~/.local/bin:$PATH ; fi
-
-# Python path -----------------------------------------------------
-# export PIP_DOWNLOAD_CACHE="$HOME/.pip/cache"
-# export PYTHONSTARTUP="$HOME/.pythonrc.py"
-# export WORKON_HOME="${HOME}/lib/virtualenvs"
-# export PATH="${PATH}:/Developer/usr/bin/"
-# export PATH="${PATH}:/usr/local/share/python/"
-# export PATH="${PATH}:$HOME/.lein/bin"
-# export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.3/lib/python2.7/site-packages"
-# export PYTHONPATH="$PYTHONPATH:/usr/local/lib/python2.7.3/site-packages"
-# export PYTHONPATH="$PYTHONPATH:/usr/local/lib/python2.7/site-packages"
-# export VEW_PATH="$HOME/lib/python/virtualenvwrapper/virtualenvwrapper.sh"
-# export VEW_PATH="/usr/local/share/python/virtualenvwrapper.sh"
-# export PYTHONPATH="$HOME/lib/python/see:$PYTHONPATH"
-# export NODE_PATH="$NODE_PATH:/usr/local/lib/node:/usr/local/lib/node_modules"
+# Aliases - Shell navigation
+alias cl="clear"
+alias k='tree'
+alias ltr='ls -ltr'
+alias r='screen -D -R'
+alias ls='ls -G'
+alias l='ls -lh'
+alias ll='ls -la'
 
 
-export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.3/lib/python2.7/site-packages"
 
-# load RVM
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+# Plugins //////////////////////////////////////////////////////////////////////
+
+# Syntax highlighting
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# History search
+source /usr/local/Cellar/zsh-history-substring-search/1.0.0/zsh-history-substring-search.zsh
+
+
+# Misc /////////////////////////////////////////////////////////////////////////
+
+# Set iTerm tab and window title to dir
+precmd () {
+  tab_label=${PWD##*/} # Set name to current dir
+  echo -ne "\e]2;${tab_label}\a" # Set window title to full string
+  echo -ne "\e]1;${tab_label: -24}\a" # Set tab title to rightmost 24 characters
+}

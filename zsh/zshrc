@@ -35,7 +35,7 @@ setopt NO_CASE_GLOB
 
 # CLI Editor
 export EDITOR="vim"
-export VISUAL="vim":q
+export VISUAL="vim"
 
 # Prompt ///////////////////////////////////////////////////////////////////////
 

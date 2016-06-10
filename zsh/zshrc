@@ -69,7 +69,7 @@ git_prompt_string() {
 }
 
 # Set Git Prompt symbol
-GIT_PROMPT_SYMBOL=" "
+GIT_PROMPT_SYMBOL=" ⚡"
 
 # Left hand prompt
 PROMPT='$ '

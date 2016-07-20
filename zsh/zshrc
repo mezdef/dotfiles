@@ -6,7 +6,7 @@ PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 # RVM path for scripting
 PATH=$PATH:$HOME/.rvm/bin
 
-# Python path
+# PATH Python
 export PYTHONPATH="$PYTHONPATH:/usr/local/Cellar/python/2.7.3/lib/python2.7/site-packages"
 
 # ZSH function path
@@ -121,8 +121,8 @@ setopt  COMPLETE_IN_WORD
 HISTFILE=~/.history
 
 # Remember about a years worth of history (AWESOME)
-SAVEHIST=10000
-HISTSIZE=10000
+SAVEHIST=100000
+HISTSIZE=100000
 
 # Don't overwrite, append!
 setopt APPEND_HISTORY
@@ -155,6 +155,10 @@ setopt EXTENDED_HISTORY
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
+
+# Bind Up and Down to search backwards / forwards after typing
+bindkey "^[[A" history-beginning-search-backward
+bindkey "^[[B" history-beginning-search-forward
 
 
 # Show Git branch/tag, or name-rev if on detached head

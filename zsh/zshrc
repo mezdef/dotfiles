@@ -75,7 +75,7 @@ GIT_PROMPT_SYMBOL=" ⚡"
 PROMPT='$ '
 
 # Right hand prompt
-RPROMPT=$'%c$(git_prompt_string) | %F%*%f'
+RPROMPT=$'%c$(git_prompt_string) | %*%f'
 
 
 # ZSH Autocompletion ///////////////////////////////////////////////////////////

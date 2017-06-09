@@ -1,9 +1,9 @@
 ".vimrc
-"              _                                                                                    
-"      __   __(_)_ __ ___  _ __  ___                                                                
-" _____\ \ / /| | '_ ` _ \| / _|/ __|                                                               
-"|_____|\ V / | | | | | | |  / | |__                                                                
-"        \_/  |_|_| |_| |_|_|   \___|                                                               
+"              _
+"      __   __(_)_ __ ___  _ __  ___
+" _____\ \ / /| | '_ ` _ \| / _|/ __|
+"|_____|\ V / | | | | | | |  / | |__
+"        \_/  |_|_| |_| |_|_|   \___|
 "
 " Author: Marc Ziani de Ferranti
 "
@@ -19,30 +19,30 @@ au FileType python source <rope-vim>
 
 " VUNDLE ///////////////////////////////////////////////////////////////////////////////////////////
 
-set rtp+=~/dotfiles/vim/bundle/vundle/
-call vundle#rc()
+" set rtp+=~/dotfiles/vim/bundle/vundle/
+" call vundle#rc()
 
-" let Vundle manage Vundle  required! 
-Bundle 'gmarik/vundle'
+" let Vundle manage Vundle  required!
+" Bundle 'gmarik/vundle'
 
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-repeat'
-Bundle 'YankRing.vim'
-Bundle 'Yggdroot/indentLine'
-Bundle 'scrooloose/syntastic'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'kien/ctrlp.vim'
-Bundle 'mezdef/vim-airline.git'
+" Bundle 'tpope/vim-fugitive'
+" Bundle 'tpope/vim-surround'
+" Bundle 'tpope/vim-commentary'
+" Bundle 'tpope/vim-repeat'
+" Bundle 'YankRing.vim'
+" Bundle 'Yggdroot/indentLine'
+" Bundle 'scrooloose/syntastic'
+" Bundle 'Lokaltog/vim-easymotion'
+" Bundle 'kien/ctrlp.vim'
+" Bundle 'mezdef/vim-airline.git'
 
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-haml'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'othree/html5.vim'
-Bundle 'hail2u/vim-css3-syntax'
-Bundle 'cakebaker/scss-syntax.vim'
-Bundle 'plasticboy/vim-markdown'
+" Bundle 'tpope/vim-rails'
+" Bundle 'tpope/vim-haml'
+" Bundle 'kchmck/vim-coffee-script'
+" Bundle 'othree/html5.vim'
+" Bundle 'hail2u/vim-css3-syntax'
+" Bundle 'cakebaker/scss-syntax.vim'
+" Bundle 'plasticboy/vim-markdown'
 
 
 filetype plugin indent on                         " Load file type plugins + indentation
@@ -127,7 +127,7 @@ set list                                          " Display invisible characters
 set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮  " Set invis charactes for tab, eol, extm precd
 set showbreak=↪                                   " Invisible character to indicate wrapped line
 " Characters to fill the statuslines and vertical separators
-set fillchars=diff:\ 
+set fillchars=diff:\
 
 set autowriteall                                  " Write the file, if modified on various actions
 set shiftround
@@ -184,9 +184,9 @@ au VimResized * exe "normal! \<c-w>="
 
 " COLOUR SCHEME ////////////////////////////////////////////////////////////////////////////////////
 
-set background=light                               " Dark / light background / color scheme
-colorscheme hemisu
-set transparency=1
+" set background=light                               " Dark / light background / color scheme
+" colorscheme hemisu
+" set transparency=1
 
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'  " Highlight VCS conflict markers
 " let g:Powerline_symbols = 'fancy'                 " Powerline

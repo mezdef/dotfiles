@@ -24,3 +24,4 @@ script-names.vim-scripts.org.json
 
 vim/tmp
 *.swp
+*.zsh_history

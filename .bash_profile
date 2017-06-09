@@ -39,3 +39,5 @@ fi;
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
 
 set -o vi
+
+source /usr/local/opt/autoenv/activate.sh

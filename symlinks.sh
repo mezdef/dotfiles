@@ -1,14 +1,17 @@
 #!/bin/bash
 
 # Variables
-dir=~/Dropbox/Settings/dotfiles
-files=".bashrc .bash_profile .aliases .gitconfig .gitignore"
+dir=~/Dropbox/Settings
+files=".bashrc .bash_profile .aliases .gitconfig .gitignore .zshrc"
 
 cd ~/
 for file in $files; do
-    echo "Symlinking $file"
-    ln -s $dir/$file ~/$file
+    rm ~/$file
+    ln -s $dir/dotfiles/$file ~/$file
 done
 
+rm ~/.hyper.js
+ln -s $dir/dotfiles/.hyper.js ~/.hyper.js
+
 rm ~/.atom
-ln -s ~/Dropbox/Settings/Atom ~/.atom
+ln -s $dir/Atom ~/.atom

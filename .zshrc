@@ -39,43 +39,9 @@ export VISUAL="vim"
 
 # Prompt ///////////////////////////////////////////////////////////////////////
 
-# Show different symbols as appropriate for various Git repository states
-# parse_git_state() {
-#
-#   # Compose this value via multiple conditional appends.
-#   local GIT_STATE=""
-#
-#   local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
-#   if [ "$NUM_AHEAD" -gt 0 ]; then
-#     GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
-#   fi
-#
-#   local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-#   if [ "$NUM_BEHIND" -gt 0 ]; then
-#     GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
-#   fi
-#
-#   local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-#   if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
-#     GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
-#   fi
-#
-# }
-
-# If inside a Git repository, print its branch and state
-# git_prompt_string() {
-#   local git_where="$(parse_git_branch)"
-#   [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL ${git_where#(refs/heads/|tags/)}$(parse_git_state)"
-# }
-
-# Set Git Prompt symbol
-# GIT_PROMPT_SYMBOL=" ⚡"
-
 # Left hand prompt
 PROMPT='$ '
-
 # Right hand prompt
-# RPROMPT=$'%c$(git_prompt_string) | %F%*%f'
 RPROMPT='%F%*%f'
 
 
@@ -119,7 +85,7 @@ setopt  COMPLETE_IN_WORD
 # ZSH History //////////////////////////////////////////////////////////////////
 
 # Where it gets saved
-HISTFILE=~/.history
+HISTFILE=~/Dropbox/Settings/dotfiles/.zsh_history
 
 # Remember about a years worth of history (AWESOME)
 SAVEHIST=100000
@@ -128,23 +94,14 @@ HISTSIZE=100000
 # Don't overwrite, append!
 setopt APPEND_HISTORY
 
-# Write after each command
-# setopt INC_APPEND_HISTORY
-
 # Killer: share history between multiple shells
 setopt SHARE_HISTORY
-
 # If I type cd and then cd again, only save the last one
 setopt HIST_IGNORE_DUPS
-
 # Even if there are commands inbetween commands that are the same, still only save the last one
 setopt HIST_IGNORE_ALL_DUPS
-
-# Pretty    Obvious.  Right?
 setopt HIST_REDUCE_BLANKS
-
-# If a line starts with a space, don't save it.
-setopt HIST_IGNORE_SPACE
+setopt HIST_IGNORE_SPACE # If a line starts with a space, don't save it.
 setopt HIST_NO_STORE
 
 # When using a hist thing, make a newline show the change before executing it.
@@ -152,7 +109,6 @@ setopt HIST_VERIFY
 
 # Save the time and how long a command ran
 setopt EXTENDED_HISTORY
-
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
@@ -161,24 +117,6 @@ setopt HIST_FIND_NO_DUPS
 bindkey "^[[A" history-beginning-search-backward
 bindkey "^[[B" history-beginning-search-forward
 
-
-# Show Git branch/tag, or name-rev if on detached head
-# parse_git_branch() {
-#   (git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
-# }
-
-
-# Disable hostname completion
-# zstyle ':completion:*' hosts off
-# __git_files () {
-#     _wanted files expl 'local files' _files
-# }
-
-#remove git dirty slowness
-# function git_prompt_info() {
-#   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-#   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
-# }
 
 # Aliases //////////////////////////////////////////////////////////////////////
 
@@ -202,27 +140,13 @@ alias cl="clear"
 alias k='tree'
 alias ltr='ls -ltr'
 alias r='screen -D -R'
-alias ls='ls -G'
+alias ls='ls -Ga'
 alias l='ls -lh'
 alias ll='ls -la'
-
-
-
 
 # Plugins //////////////////////////////////////////////////////////////////////
 
 # Syntax highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 # History search
 source /usr/local/Cellar/zsh-history-substring-search/1.0.0/zsh-history-substring-search.zsh
-
-
-# Misc /////////////////////////////////////////////////////////////////////////
-
-# Set iTerm tab and window title to dir
-precmd () {
-  tab_label=${PWD##*/} # Set name to current dir
-  echo -ne "\e]2;${tab_label}\a" # Set window title to full string
-  echo -ne "\e]1;${tab_label: -24}\a" # Set tab title to rightmost 24 characters
-}

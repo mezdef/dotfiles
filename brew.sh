@@ -13,6 +13,14 @@ brew install git
 brew install imagemagick --with-webp
 brew install chrome-cli
 
+# Env
+brew install zsh
+echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
+chsh -s /usr/local/bin/zsh
+brew install zsh-completions
+brew install zsh-syntax-highlighting
+brew install zsh-history-substring-search
+
 # Apps
 brew install caskroom/cask/brew-cask
 brew cask install hyper

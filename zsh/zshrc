@@ -30,7 +30,7 @@ setopt AUTO_NAME_DIRS
 setopt VI
 # Set VI mode for zsh
 bindkey -v
-bindkey -M viins 'jj' vi-cmd-mode
+# bindkey -M viins 'jj' vi-cmd-mode
 setopt NO_CASE_GLOB
 
 # CLI Editor
@@ -40,42 +40,43 @@ export VISUAL="vim"
 # Prompt ///////////////////////////////////////////////////////////////////////
 
 # Show different symbols as appropriate for various Git repository states
-parse_git_state() {
-
-  # Compose this value via multiple conditional appends.
-  local GIT_STATE=""
-
-  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
-  if [ "$NUM_AHEAD" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
-  fi
-
-  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
-  if [ "$NUM_BEHIND" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
-  fi
-
-  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
-    GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
-  fi
-
-}
+# parse_git_state() {
+#
+#   # Compose this value via multiple conditional appends.
+#   local GIT_STATE=""
+#
+#   local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+#   if [ "$NUM_AHEAD" -gt 0 ]; then
+#     GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
+#   fi
+#
+#   local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+#   if [ "$NUM_BEHIND" -gt 0 ]; then
+#     GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
+#   fi
+#
+#   local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+#   if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+#     GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
+#   fi
+#
+# }
 
 # If inside a Git repository, print its branch and state
-git_prompt_string() {
-  local git_where="$(parse_git_branch)"
-  [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL ${git_where#(refs/heads/|tags/)}$(parse_git_state)"
-}
+# git_prompt_string() {
+#   local git_where="$(parse_git_branch)"
+#   [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL ${git_where#(refs/heads/|tags/)}$(parse_git_state)"
+# }
 
 # Set Git Prompt symbol
-GIT_PROMPT_SYMBOL=" ⚡"
+# GIT_PROMPT_SYMBOL=" ⚡"
 
 # Left hand prompt
 PROMPT='$ '
 
 # Right hand prompt
-RPROMPT=$'%c$(git_prompt_string) | %*%f'
+# RPROMPT=$'%c$(git_prompt_string) | %F%*%f'
+RPROMPT='%F%*%f'
 
 
 # ZSH Autocompletion ///////////////////////////////////////////////////////////
@@ -162,39 +163,39 @@ bindkey "^[[B" history-beginning-search-forward
 
 
 # Show Git branch/tag, or name-rev if on detached head
-parse_git_branch() {
-  (git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
-}
+# parse_git_branch() {
+#   (git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD) 2> /dev/null
+# }
 
 
 # Disable hostname completion
-zstyle ':completion:*' hosts off
-__git_files () {
-    _wanted files expl 'local files' _files
-}
+# zstyle ':completion:*' hosts off
+# __git_files () {
+#     _wanted files expl 'local files' _files
+# }
 
 #remove git dirty slowness
-function git_prompt_info() {
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || return
-  echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
-}
+# function git_prompt_info() {
+#   ref=$(git symbolic-ref HEAD 2> /dev/null) || return
+#   echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$ZSH_THEME_GIT_PROMPT_SUFFIX"
+# }
 
 # Aliases //////////////////////////////////////////////////////////////////////
 
 # Aliases - Config
-alias mvim="open -a MacVim"
-alias zshrc="vim ~/dotfiles/zsh/zshrc"
-alias vimrc="vim ~/dotfiles/vim/vimrc"
+# alias mvim="open -a MacVim"
+# alias zshrc="vim ~/dotfiles/zsh/zshrc"
+# alias vimrc="vim ~/dotfiles/vim/vimrc"
 
 # Aliases - Editor
 # MacVim as terminal vim
 #alias vim="/Users/mezdef/Applications/MacVim.app/Contents/MacOS/Vim"
 
 # Aliases - Git
-alias g="git"
+# alias g="git"
 
 # Aliases - Rails
-alias dbsetup="rake db:create db:migrate db:seed db:populate db:test:prepare"
+# alias dbsetup="rake db:create db:migrate db:seed db:populate db:test:prepare"
 
 # Aliases - Shell navigation
 alias cl="clear"

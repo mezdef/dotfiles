@@ -1,0 +1,22 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "Marc de Ferranti"
+email = "mezdef@gmail.com"
+
+[merge-tools.nvimdiff]
+program = "nvim"
+edit-args = ["-d", "$left", "$right"]
+merge-args = ["-d", "$base", "$left", "$right", "$output"]
+# Optional: use a plugin like diffview.nvim for a better experience
+# edit-args = ["-c", "DiffviewOpen $left $right", "-c", "normal Gzz"]
+# merge-args = ["-c", "DiffviewOpen $base $left $right $output", "-c", "normal Gzz"]
+
+[ui]
+# Set nvimdiff as the default tool for `jj diffedit` and `jj resolve`
+merge-tool = "nvimdiff" 
+editor = "nvim"
+# diff-editor = ":builtin"
+diff-editor = "nvim"
+# Also use nvim for general diff paging (optional, you can also use delta, etc.)
+# pager = "nvim -c 'set wrap' -c 'set ft=diff'"

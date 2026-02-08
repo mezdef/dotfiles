@@ -4,11 +4,10 @@ font-size = 22
 background-blur-radius=80
 window-decoration=true
 background-opacity=0.9
-# background-opacity=1
+
+window-padding-x = 20
+window-padding-y = 20,10
 
 macos-hidden = always
 macos-titlebar-style = hidden
 macos-window-buttons = hidden
-
-window-padding-x = 20
-window-padding-y = 20

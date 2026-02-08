@@ -5,7 +5,6 @@ return {
     -- Optional: set floats (e.g. documentation popups) to transparent as well
     float = {
       transparent = true,
-      solid = true,
     },
     custom_highlights = function(colors)
       return {

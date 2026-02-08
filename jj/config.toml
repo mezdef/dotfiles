@@ -6,17 +6,30 @@ email = "mezdef@gmail.com"
 
 [merge-tools.nvimdiff]
 program = "nvim"
-edit-args = ["-d", "$left", "$right"]
-merge-args = ["-d", "$base", "$left", "$right", "$output"]
-# Optional: use a plugin like diffview.nvim for a better experience
-# edit-args = ["-c", "DiffviewOpen $left $right", "-c", "normal Gzz"]
-# merge-args = ["-c", "DiffviewOpen $base $left $right $output", "-c", "normal Gzz"]
 
 [ui]
-# Set nvimdiff as the default tool for `jj diffedit` and `jj resolve`
-merge-tool = "nvimdiff" 
-# Also use nvim for general diff paging (optional, you can also use delta, etc.)
-# pager = "nvim -c 'set wrap' -c 'set ft=diff'"
+merge-tool = "nvimdiff"
 editor = "nvim"
-# diff-editor = ":builtin"
 diff-editor = "nvim"
+
+[colors]
+# Custom colors (catppucin)
+# colors.mauve = "#cba6f7"
+# colors.lavender = "#b4befe"
+
+change_id = { fg = "#cba6f7" }
+commit_id = { fg = "red" }
+# Unique prefixes and the rest for change & commit ids
+prefix = { bold = true }
+rest = "bright black"
+
+timestamp = "bright black"
+working_copies = "green"
+bookmark = "blue"
+bookmarks = "blue"
+local_bookmarks = "blue"
+remote_bookmarks = "blue"
+tag = "blue"
+tags = "blue"
+
+config_list = "cyan"

@@ -1,6 +1,6 @@
 .DS_Store
 .zcompdump
-.zsh_history
+zsh/.zsh_history
 tmux/plugins/
 raycast/
 fzf

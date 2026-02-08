@@ -169,6 +169,13 @@ export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 # Aliases
 ################################################################################
 
+# Dirs
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+
 alias cl="clear"
 alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
 alias ls="lsd -la"

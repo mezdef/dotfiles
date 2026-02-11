@@ -1,0 +1,67 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+[user]
+name = "Marc de Ferranti"
+email = "mezdef@gmail.com"
+
+[merge-tools.nvimdiff]
+program = "nvim"
+
+[ui]
+merge-tool = "nvimdiff"
+editor = "nvim"
+diff-editor = "nvim"
+
+[colors]
+# Changeset
+change_id = { fg = "#cba6f7" }             # catppuccin.mauve
+commit_id = { fg = "magenta" }
+prefix = { bold = true }                   # Prefix for change and commit
+rest = { fg = "default", dim = true }      # Text after prefix
+author = { fg = "blue", dim = true }       # Author email
+committer = { fg = "blue", dim = false }   # Author email
+timestamp = { fg = "default", dim = true }
+"bookmark" = "red"
+"bookmarks" = "red"
+"local_bookmarks" = "red"
+"remote_bookmarks" = "red"
+
+"working_copy" = { bold = true }
+"working_copy change_id" = "#cba6f7"
+"working_copy commit_id" = "magenta"
+"working_copy author" = "blue"
+"working_copy committer" = "blue"
+"working_copy timestamp" = "default"
+"working_copy working_copies" = "bright green"
+"working_copy bookmark" = "bright magenta"
+"working_copy bookmarks" = "bright magenta"
+"working_copy local_bookmarks" = "bright magenta"
+"working_copy remote_bookmarks" = "bright magenta"
+"working_copy tag" = "bright magenta"
+"working_copy tags" = "bright magenta"
+"working_copy git_ref" = "bright green"
+"working_copy git_refs" = "bright green"
+"working_copy divergent" = "bright magenta"
+"working_copy mutable divergent" = "bright red"
+"working_copy mutable divergent change_id" = "bright red"
+"working_copy conflict" = "bright red"
+"working_copy empty" = "yellow"
+"working_copy placeholder" = "bright red"
+"working_copy description placeholder" = "yellow"
+"working_copy empty description placeholder" = "yellow"
+
+"diff header" = "yellow"
+"diff empty" = "cyan"
+"diff binary" = "cyan"
+"diff file_header" = { bold = true }
+"diff hunk_header" = "cyan"
+# Colors - Difftool
+"diff context line_number" = { dim = true }
+"diff removed" = { fg = "red" }
+"diff added" = { fg = "green" }
+"diff token" = { underline = false }
+# Colors - File changes
+"diff modified" = "yellow"
+"diff untracked" = "magenta"
+"diff renamed" = "cyan"
+"diff copied" = "green"

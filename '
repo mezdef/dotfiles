@@ -2,8 +2,6 @@
 # Misc
 ################################################################################
 
-HISTFILE=~/.cache/zsh/.zsh_history
-
 autoload -U compinit && compinit
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -90,5 +88,13 @@ alias ......="cd ../../../../.."
 alias cl="clear"
 alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
 alias ls="lsd -la"
+alias e="code"
 alias v="nvim"
 
+# Marc's pinggy
+# alias pinggy="ssh -p 443 -R0:localhost:3000 -L4300:localhost:4300 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 1rjYSQvZ8oe@pro.pinggy.io"
+# marc.deferranti@lawconnect.com
+alias pinggy="ssh -p 443 -R0:localhost:3000 -L4300:localhost:4300 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 usFzpf7aVpy@free.pinggy.iov"
+
+# Created by `pipx` on 2025-09-15 04:04:36
+export PATH="$PATH:/Users/marc.deferranti/.local/bin"

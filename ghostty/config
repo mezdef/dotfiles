@@ -11,3 +11,6 @@ window-padding-y = 20,10
 macos-hidden = always
 macos-titlebar-style = hidden
 macos-window-buttons = hidden
+
+keybind = ctrl+backspace=text:\x11
+keybind = ctrl+\=text:\x1f

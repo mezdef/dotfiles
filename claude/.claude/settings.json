@@ -1,0 +1,9 @@
+{
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/marc.deferranti/.claude/statusline.sh"
+  }
+}

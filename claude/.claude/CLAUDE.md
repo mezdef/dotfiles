@@ -27,21 +27,38 @@
 
 ### Memory Management
 
-- YOU MUST use the journal tool to record technical insights, failed approaches, architectural decisions, and user preferences
-- YOU MUST use the journal before starting tasks for relevant experiences and insights
-- When you notice something that should be fixed but is unrelated to your current task, document it in your journal rather than fixing it immediately
+- Document learnings in `~/.claude/projects/.../memory/` files after complex tasks (use `save-learning.sh`)
+- Check MEMORY.md first for known patterns before re-solving problems
 - Write plans to `~/.claude/plans/YYYY-MM-DD-<feature-name>.md` format (e.g., `2026-02-03-foreign-currency-support.md`)
 - When plan mode auto-generates a random filename, ALWAYS rename it to follow this format before exiting plan mode
+- Monthly review: Run `~/.claude/scripts/review-memory.sh` (first Monday)
 
-## Required Skills by Task Type
+## Skill Usage Guidelines
 
-**MANDATORY**: Invoke the appropriate skill BEFORE starting work:
+**Default to NOT using meta-skills** - only invoke when truly needed:
 
-| Task Type | Skill | When |
-|-----------|-------|------|
-| Context gathering | `/docs` | Before planning, brainstorming, or unfamiliar domains |
-| Design/features | `/superpowers:brainstorming` | Before implementing new features or major changes |
-| Bug investigation | `/superpowers:systematic-debugging` | Before proposing fixes for bugs |
-| Writing tests | `/superpowers:test-driven-development` | Before implementing features (write tests first) |
+### When to SKIP Skills
 
-No exceptions. Skills ensure consistent quality and prevent rework.
+- Trivial fixes (<5 lines, typos, formatting) → Use `/quick-fix` or just do it
+- Clear requirements → Skip `/brainstorming`, go straight to work
+- One-file changes → Skip `/writing-plans`
+- Obvious bugs → Fix directly, skip `/systematic-debugging`
+- Simple tests → Skip `/test-driven-development` overhead
+- Context loading → Use Read on specific file, not `/docs` (loads everything)
+
+### When to USE Skills
+
+| Situation | Skill | Why |
+|-----------|-------|-----|
+| Truly ambiguous requirements | `/brainstorming` | Need to explore design space |
+| Complex multi-step refactor | `/writing-plans` | Need coordination |
+| Stuck debugging >15min | `/systematic-debugging` | Need structured approach |
+| Complex feature with tests | `/test-driven-development` | TDD mindset valuable |
+
+### Meta-Skills to NEVER Use
+
+- `using-superpowers` - system-reminder already lists skills
+- `verification-before-completion` - checklist in MEMORY.md
+- `requesting-code-review` - `/code-review` already AUTO-INVOKE
+
+**Key principle:** Skills are tools, not rituals. Use them when they add value, not by default.

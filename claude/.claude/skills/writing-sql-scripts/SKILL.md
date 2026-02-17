@@ -1,5 +1,5 @@
 ---
-name: write-sql-script
+name: writing-sql-scripts
 description: AUTO-INVOKE when user asks to write SQL scripts, create database queries, fix data, update records, or run ad-hoc database operations. Produces a single script with verification and execution sections.
 ---
 

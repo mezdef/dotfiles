@@ -1,5 +1,5 @@
 ---
-name: quick-fix
+name: writing-code-quick
 description: Use for trivial code changes that don't require planning or review. Examples - typos, formatting, single-line fixes, renaming variables, adding missing imports, fixing obvious bugs. NEVER use for logic changes, new features, or multi-file refactors.
 ---
 

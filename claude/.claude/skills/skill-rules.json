@@ -1,0 +1,197 @@
+{
+    "version": "1.0",
+    "skills": {
+        "jj-examine": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Examine changes, prepare commits, resolve conflicts in jj repos",
+            "promptTriggers": {
+                "keywords": [
+                    "jj",
+                    "jujutsu",
+                    "examine changes",
+                    "jj status",
+                    "jj diff",
+                    "jj log",
+                    "resolve conflict",
+                    "change id",
+                    "trunk()"
+                ],
+                "intentPatterns": [
+                    "(examine|review|check|look at).*?(change|diff|what.*changed)",
+                    "(prepare|create|write|make).*?(commit|description)",
+                    "(resolve|fix).*?conflict"
+                ]
+            }
+        },
+        "drizzle-migrations": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Database schema changes, migrations, and conflict resolution",
+            "promptTriggers": {
+                "keywords": [
+                    "migration",
+                    "drizzle",
+                    "schema change",
+                    "generate migration",
+                    "journal",
+                    "snapshot",
+                    "backfill",
+                    "schema drift",
+                    "enum",
+                    "foreign key"
+                ],
+                "intentPatterns": [
+                    "(add|modify|change|update|alter).*?(schema|column|table|enum|index)",
+                    "(migration|migrate).*?(conflict|error|fail)",
+                    "(generate|run|push).*?migration"
+                ]
+            }
+        },
+        "github-commits-and-prs": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Create git commits and GitHub PRs with proper conventions",
+            "promptTriggers": {
+                "keywords": [
+                    "pull request",
+                    "create pr",
+                    "open pr",
+                    "release notes",
+                    "amend commit"
+                ],
+                "intentPatterns": [
+                    "(create|open|make|write).*?(pull request|PR)",
+                    "(write|create|draft).*?release note"
+                ]
+            }
+        },
+        "github-examining-changes": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "medium",
+            "description": "Examine branch changes before committing or creating PRs",
+            "promptTriggers": {
+                "keywords": [
+                    "what changed",
+                    "review changes",
+                    "before committing",
+                    "before creating pr",
+                    "unintended changes"
+                ],
+                "intentPatterns": [
+                    "(what|which).*(changed|modified|different)",
+                    "(check|verify|review).*?(before|prior to).*(commit|push|pr)"
+                ]
+            }
+        },
+        "writing-sql-scripts": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Write SQL scripts with verification and execution sections",
+            "promptTriggers": {
+                "keywords": [
+                    "sql script",
+                    "write sql",
+                    "database query",
+                    "fix data",
+                    "update records",
+                    "ad-hoc query",
+                    "backfill data",
+                    "data migration"
+                ],
+                "intentPatterns": [
+                    "(write|create|run).*?sql",
+                    "(fix|update|insert|delete|backfill).*?(record|row|data)",
+                    "(query|script).*?database"
+                ]
+            }
+        },
+        "writing-plans": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Create plans with proper naming, status workflow, and file locations",
+            "promptTriggers": {
+                "keywords": [
+                    "write a plan",
+                    "create a plan",
+                    "plan this",
+                    "planning",
+                    "roadmap",
+                    "backlog",
+                    "plan mode"
+                ],
+                "intentPatterns": [
+                    "(write|create|make|draft).*?plan",
+                    "plan.*?(feature|task|work|implementation)",
+                    "move.*?plan.*(todo|active|done|backlog|draft|archived)"
+                ]
+            }
+        },
+        "writing-recipes": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Format recipes in markdown with correct ingredient syntax",
+            "promptTriggers": {
+                "keywords": [
+                    "recipe",
+                    "cooking",
+                    "ingredient",
+                    "convert recipe",
+                    "recipe format"
+                ],
+                "intentPatterns": [
+                    "(add|create|write|format|convert).*?recipe",
+                    "recipe.*?(url|link|site|from)"
+                ]
+            }
+        },
+        "writing-memories": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Save learnings to memory files after complex tasks or recurring patterns",
+            "promptTriggers": {
+                "keywords": [
+                    "save learning",
+                    "write memory",
+                    "remember this",
+                    "save to memory",
+                    "add to memory",
+                    "document this pattern",
+                    "save pattern"
+                ],
+                "intentPatterns": [
+                    "(save|write|add|store|document).*(learn|memory|pattern|preference)",
+                    "remember.*(this|across|next|session)"
+                ]
+            }
+        },
+        "writing-code-quick": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "low",
+            "description": "Trivial fixes: typos, formatting, single-line changes",
+            "promptTriggers": {
+                "keywords": [
+                    "typo",
+                    "quick fix",
+                    "minor fix",
+                    "small fix",
+                    "formatting issue",
+                    "rename variable"
+                ],
+                "intentPatterns": [
+                    "(fix|correct).*(typo|spelling|formatting)",
+                    "(rename|change).*(variable|function|method).*name"
+                ]
+            }
+        }
+    }
+}

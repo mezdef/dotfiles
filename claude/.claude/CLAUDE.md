@@ -29,9 +29,31 @@
 
 - Document learnings in `~/.claude/projects/.../memory/` files after complex tasks (use `save-learning.sh`)
 - Check MEMORY.md first for known patterns before re-solving problems
-- Write plans to `~/.claude/plans/YYYY-MM-DD-<feature-name>.md` format (e.g., `2026-02-03-foreign-currency-support.md`)
+- Write plans to `~/.claude/plans/<status>/YYYY-MM-DD-<feature-name>.md` format (e.g., `draft/2026-02-03-foreign-currency-support.md`)
 - When plan mode auto-generates a random filename, ALWAYS rename it to follow this format before exiting plan mode
 - Monthly review: Run `~/.claude/scripts/review-memory.sh` (first Monday)
+
+#### Plan Organization
+
+Plans are organized by status in subdirectories:
+- `backlog/` - Ideas and future plans, not yet detailed
+- `draft/` - Plans being written, not finalized
+- `todo/` - Approved and ready to implement
+- `active/` - Currently being implemented
+- `done/` - Completed and verified
+- `archived/` - Old or superseded plans
+
+**Workflow:**
+1. Create plan in `draft/` while designing
+2. Move to `todo/` after approval (using plan-move.sh)
+3. Move to `active/` when starting implementation
+4. Move to `done/` after verification
+5. Move to `archived/` when no longer relevant
+
+**Helper scripts:**
+- `plan-status.sh` - See count of plans in each status
+- `plan-move.sh <filename> <status>` - Move plan to new status
+- `plan-list.sh [status]` - List plans (all or by status)
 
 ## Skill Usage Guidelines
 

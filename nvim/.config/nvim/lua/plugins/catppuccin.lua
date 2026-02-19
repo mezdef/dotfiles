@@ -15,5 +15,18 @@ return {
         CursorLineNr = { fg = colors.mauve, bold = false }, -- Color for the current line number
       }
     end,
+    integrations = {
+      diffview = true, -- Enable the diffview integration
+      cmp = true,
+      gitsigns = true,
+      nvimtree = true,
+      treesitter = true,
+      notify = false,
+      mini = {
+        enabled = true,
+        indentscope_color = "",
+      },
+      -- Other integrations can be listed here
+    },
   },
 }

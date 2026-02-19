@@ -15,3 +15,16 @@ vim.keymap.set("n", "<leader>gd", function()
     vim.cmd("DiffviewClose")
   end
 end, { desc = "Toggle Diffview window" })
+
+local function get_default_branch_jj()
+  vim.fn.system({ "jj", "log", "-r", "main@origin", "--no-graph", "--template", " ", "--limit", "1" })
+  if vim.v.shell_error == 0 then
+    return "origin/main"
+  end
+  return "origin/master"
+end
+
+vim.keymap.set("n", "<leader>dm", function()
+  local branch = get_default_branch_jj()
+  vim.cmd("DiffviewOpen " .. branch)
+end, { desc = "Diff against master/main branch" })

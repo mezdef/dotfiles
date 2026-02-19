@@ -7,12 +7,22 @@ return {
       transparent = true,
     },
     custom_highlights = function(colors)
+      local blend = require("catppuccin.utils.colors").blend
       return {
         Comment = { fg = colors.overlay1, italic = false }, -- Commented lines
         CursorLine = { bg = colors.surface1 }, -- Current line highlight
         Visual = { bg = colors.mauve, fg = colors.mantle }, -- Visual Block mode
         LineNr = { fg = colors.surface2 }, -- Color for normal line numbers
         CursorLineNr = { fg = colors.mauve, bold = false }, -- Color for the current line number
+        DiffAdd = {
+          bg = blend(colors.green, colors.base, 0.2),
+        },
+        DiffDelete = {
+          bg = blend(colors.red, colors.base, 0.2),
+          fg = blend(colors.red, colors.base, 0.25),
+        },
+        DiffChange = { bg = blend(colors.yellow, colors.base, 0.2) },
+        DiffText = { bg = blend(colors.yellow, colors.base, 0.25) },
       }
     end,
     integrations = {

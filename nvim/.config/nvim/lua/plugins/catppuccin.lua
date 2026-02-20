@@ -18,15 +18,24 @@ return {
         GitSignsChangeNr = { fg = colors.yellow },
         GitSignsDeleteNr = { fg = colors.red },
         GitSignsChangeLn = { bg = blend(colors.yellow, colors.base, 0.2) },
-        DiffAdd = {
+        -- Set colors for diffview, applied via a hook
+        DiffviewNormal = { fg = colors.subtext0 },
+        DiffviewAdd = {
+          fg = colors.green,
           bg = blend(colors.green, colors.base, 0.2),
         },
-        DiffDelete = {
-          bg = blend(colors.red, colors.base, 0.2),
-          fg = blend(colors.red, colors.base, 0.25),
+        DiffviewDelete = {
+          bg = blend(colors.red, colors.base, 0.15),
+          fg = colors.red,
         },
-        DiffChange = { bg = blend(colors.yellow, colors.base, 0.2) },
-        DiffText = { bg = blend(colors.yellow, colors.base, 0.25) },
+        DiffviewChange = {
+          -- fg = colors.yellow,
+          -- bg = blend(colors.yellow, colors.base, 0.2),
+        },
+        DiffviewText = {
+          fg = colors.yellow,
+          bg = blend(colors.yellow, colors.base, 0.25),
+        },
       }
     end,
     integrations = {

@@ -3,18 +3,40 @@ return {
   cmd = { "DiffviewOpen", "DiffviewClose" },
   config = function()
     require("diffview").setup({
+      enhanced_diff_hl = true,
+      view = {
+        default = {
+          winbar_info = true,
+          disable_diagnostics = true,
+        },
+        file_history = {
+          disable_diagnostics = true,
+        },
+      },
       hooks = {
+        diff_buf_read = function(bufnr)
+          vim.treesitter.stop(bufnr)
+          vim.bo[bufnr].syntax = ""
+        end,
+        diff_buf_win_enter = function(bufnr, winid, ctx)
+          -- In the old/base pane (symbol "a"), lines marked DiffAdd are actually
+          -- deleted lines (present in old, not in new) → remap to DiffviewDelete (red)
+          local diff_add = ctx.symbol == "a" and "DiffviewDelete" or "DiffviewAdd"
+          vim.wo[winid].winhighlight = table.concat({
+            "Normal:DiffviewNormal",
+            "DiffAdd:" .. diff_add,
+            "DiffDelete:DiffviewDelete",
+            "DiffChange:DiffviewChange",
+            "DiffText:DiffviewText",
+          }, ",")
+        end,
         view_closed = function()
           require("gitsigns").change_base(nil, true)
         end,
       },
     })
 
-    vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#20303b" })
-    vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#37222c" })
-    vim.api.nvim_set_hl(0, "DiffChange", { bg = "#1f2231" })
-    vim.api.nvim_set_hl(0, "DiffText", { bg = "#394b70" })
-    vim.opt.fillchars = vim.opt.fillchars + ""
+    vim.opt.fillchars:append("diff: ")
 
     local function toggle_diffview(open_cmd, gs_base)
       if next(require("diffview.lib").views) == nil then

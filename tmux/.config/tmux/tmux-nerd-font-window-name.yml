@@ -1,0 +1,7 @@
+config:
+  fallback-icon: ""
+
+icons:
+  claude: "󰫢"
+  vim: ""
+  nvim: ""

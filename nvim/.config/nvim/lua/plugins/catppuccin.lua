@@ -14,6 +14,10 @@ return {
         Visual = { bg = colors.mauve, fg = colors.mantle }, -- Visual Block mode
         LineNr = { fg = colors.surface2 }, -- Color for normal line numbers
         CursorLineNr = { fg = colors.mauve, bold = false }, -- Color for the current line number
+        GitSignsAddNr = { fg = colors.green },
+        GitSignsChangeNr = { fg = colors.yellow },
+        GitSignsDeleteNr = { fg = colors.red },
+        GitSignsChangeLn = { bg = blend(colors.yellow, colors.base, 0.2) },
         DiffAdd = {
           bg = blend(colors.green, colors.base, 0.2),
         },

@@ -2,6 +2,9 @@ return {
   "sindrets/diffview.nvim",
   cmd = { "DiffviewOpen", "DiffviewClose" },
   config = function()
+    local dv_wins = {}
+    local dv_bufs = {}
+
     require("diffview").setup({
       enhanced_diff_hl = true,
       view = {
@@ -15,10 +18,12 @@ return {
       },
       hooks = {
         diff_buf_read = function(bufnr)
+          dv_bufs[bufnr] = true
           vim.treesitter.stop(bufnr)
           vim.bo[bufnr].syntax = ""
         end,
         diff_buf_win_enter = function(bufnr, winid, ctx)
+          dv_wins[winid] = true
           -- In the old/base pane (symbol "a"), lines marked DiffAdd are actually
           -- deleted lines (present in old, not in new) → remap to DiffviewDelete (red)
           local diff_add = ctx.symbol == "a" and "DiffviewDelete" or "DiffviewAdd"
@@ -31,6 +36,26 @@ return {
           }, ",")
         end,
         view_closed = function()
+          -- Clear winhighlight on any windows diffview touched that are still open
+          -- (diffview restores original buffers to the same windows, so winhighlight
+          -- would persist and cause DiffAdd to render with DiffviewAdd's fg color)
+          for winid in pairs(dv_wins) do
+            if vim.api.nvim_win_is_valid(winid) then
+              vim.wo[winid].winhighlight = ""
+            end
+          end
+          dv_wins = {}
+
+          -- Restart treesitter for file buffers that diff_buf_read disabled it on
+          vim.schedule(function()
+            for bufnr in pairs(dv_bufs) do
+              if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr) then
+                pcall(vim.treesitter.start, bufnr)
+              end
+            end
+            dv_bufs = {}
+          end)
+
           require("gitsigns").change_base(nil, true)
         end,
       },

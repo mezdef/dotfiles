@@ -3,7 +3,13 @@
     "allow": [
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(curl:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(/Users/marc.deferranti/dotfiles/tmux/.config/tmux/scripts/jj-status.sh)",
+      "Bash(python3:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(brew info:*)",
+      "Bash(jjui:*)",
+      "Bash(jjui --help:*)"
     ]
   }
 }

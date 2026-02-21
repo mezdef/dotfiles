@@ -12,6 +12,14 @@ merge-tool = "nvimdiff"
 editor = "nvim"
 diff-editor = "nvim"
 
+[ui.colors]
+# catppuccin mocha: mauve=#cba6f7, subtext0=#a6adc8, base=#1e1e2e
+"help shortcut" = { fg = "#cba6f7" }
+"help dimmed"   = { fg = "#a6adc8" }
+"status title"    = { fg = "#1e1e2e", bg = "#cba6f7", bold = true }
+"status shortcut" = { fg = "#cba6f7" }
+"status dimmed"   = { fg = "#a6adc8" }
+
 [custom_commands.open_file]
 key = ["o"]
 lua = '''

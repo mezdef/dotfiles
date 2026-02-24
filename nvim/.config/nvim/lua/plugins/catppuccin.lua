@@ -10,6 +10,7 @@ return {
       local blend = require("catppuccin.utils.colors").blend
       return {
         Comment = { fg = colors.overlay1, italic = false }, -- Commented lines
+        ["@comment"] = { fg = colors.overlay1, italic = false },
         CursorLine = { bg = colors.surface1 }, -- Current line highlight
         Visual = { bg = colors.mauve, fg = colors.mantle }, -- Visual Block mode
         LineNr = { fg = colors.surface2 }, -- Color for normal line numbers
@@ -36,6 +37,8 @@ return {
           fg = colors.yellow,
           bg = blend(colors.yellow, colors.base, 0.25),
         },
+        MiniMapNormal = { bg = "NONE" },
+        MiniMapSymbolView = { bg = "NONE" },
       }
     end,
     integrations = {

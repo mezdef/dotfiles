@@ -59,13 +59,7 @@
     ],
     "defaultMode": "default"
   },
-  "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "/Users/marc.deferranti/.claude/statusline.sh"
-  },
+  "model": "sonnet",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -77,5 +71,13 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/marc.deferranti/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "effortLevel": "medium"
 }

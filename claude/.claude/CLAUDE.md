@@ -21,7 +21,7 @@
 - Plans: `~/.claude/plans/<status>/YYYY-MM-DD-<feature-name>.md`
 - When plan mode auto-generates a filename, rename before exiting.
 - Plan statuses: backlog / draft / todo / active / done / archived
-- Scripts: `plan-status.sh`, `plan-move.sh <file> <status>`, `plan-list.sh [status]`
+- Scripts: `~/.claude/scripts/plan-status.sh`, `~/.claude/scripts/plan-move.sh <file> <status>`, `~/.claude/scripts/plan-list.sh [status]`
 
 ## Skill Usage
 Default to NOT using meta-skills — only invoke when they add value.

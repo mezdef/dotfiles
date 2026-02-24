@@ -35,6 +35,10 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 # VIM Settings for Terminal
 ################################################################################
 
+# Catppuccin mocha colors (for cursor)
+CATPPUCCIN_TEXT="#cdd6f4"
+CATPPUCCIN_GREEN="#a6e3a1"
+
 # vi mode
 bindkey -v
 export KEYTIMEOUT=1
@@ -43,22 +47,23 @@ export KEYTIMEOUT=1
 function zle-keymap-select {
   if [[ ${KEYMAP} == vicmd ]] ||
      [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
+    echo -ne "\e[1 q\e]12;${CATPPUCCIN_GREEN}\a"  # block, blue (normal mode)
   elif [[ ${KEYMAP} == main ]] ||
        [[ ${KEYMAP} == viins ]] ||
        [[ ${KEYMAP} = '' ]] ||
        [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
+    echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a"  # block, white (insert mode)
   fi
+  zle reset-prompt
 }
 zle -N zle-keymap-select
 zle-line-init() {
     zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
+    echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a"
 }
 zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
+echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a" # Block cursor, white on startup.
+preexec() { echo -ne '\e[1 q\e]12;${CATPPUCCIN_TEXT}\a' ;} # Reset to insert mode cursor before each command.
 
 ################################################################################
 # Git

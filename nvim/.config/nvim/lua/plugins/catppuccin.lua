@@ -39,6 +39,9 @@ return {
         },
         MiniMapNormal = { bg = "NONE" },
         MiniMapSymbolView = { bg = "NONE" },
+        NormalCursor = { bg = colors.green, fg = colors.base },
+        InsertCursor = { bg = colors.text, fg = colors.base },
+        VisualCursor = { bg = colors.mauve, fg = colors.base },
       }
     end,
     integrations = {

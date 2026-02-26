@@ -7,6 +7,9 @@ email = "personal@example.com"
 [merge-tools.nvimdiff]
 program = "nvim"
 
+[snapshot]
+max-new-file-size = "10MiB"
+
 [ui]
 merge-tool = "nvimdiff"
 editor = "nvim"

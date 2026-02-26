@@ -7,9 +7,9 @@ right_format = """$directory $all"""
 command_timeout = 1000
 
 [character]
-vicmd_symbol = '[ 󱨊 ](text)'
-success_symbol = '[ 󱨊 ](text)'
-error_symbol = '[ 󱨊 ](bold red)'
+vicmd_symbol = '[󱨊](green)'
+success_symbol = '[󱨊](text)'
+error_symbol = '[󱨊](bold red)'
 
 [directory]
 truncation_length = 1

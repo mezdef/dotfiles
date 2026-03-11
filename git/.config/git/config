@@ -1,0 +1,18 @@
+[core]
+	pager = delta
+
+[pager]
+	diff = diffnav
+	show = diffnav
+	log = diffnav
+
+[delta]
+	features = split-view
+	navigate = true
+	line-numbers = true
+
+[delta "split-view"]
+	side-by-side = true
+
+[delta "non-split-view"]
+	side-by-side = false

@@ -14,6 +14,21 @@ max-new-file-size = "10MiB"
 merge-tool = "nvimdiff"
 editor = "nvim"
 diff-editor = "nvim"
+pager = "diffnav"
+
+[ui.diff]
+format = "git"
+
+[merge-tools.delta-non-split-view]
+program = "delta"
+diff-args = [
+  "--width",
+  "$width",
+  "--features",
+  "non-split-view",
+  "$left",
+  "$right",
+]
 
 [colors]
 # Changeset

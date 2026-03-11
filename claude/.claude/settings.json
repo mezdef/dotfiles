@@ -71,7 +71,7 @@
       "Bash(~/.claude/scripts/plan-list.sh:*)",
       "Bash(~/.claude/scripts/clean-project.sh:*)",
       "Bash(~/.claude/scripts/migrate-plans.sh:*)",
-      "Bash(/Users/marc.deferranti/dotfiles/tmux/.config/tmux/scripts/jj-status.sh:*)"
+      "Bash(~/dotfiles/tmux/.config/tmux/scripts/jj-status.sh:*)"
     ],
     "ask": [
       "Bash(git checkout:*)"
@@ -93,7 +93,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "/Users/marc.deferranti/.claude/statusline.sh"
+    "command": "$HOME/.claude/statusline.sh"
   },
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true

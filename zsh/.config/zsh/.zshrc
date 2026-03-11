@@ -92,7 +92,7 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 # bun completions
-[ -s "/Users/marc.deferranti/.bun/_bun" ] && source "/Users/marc.deferranti/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 ################################################################################
 # Aliases

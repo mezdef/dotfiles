@@ -1,7 +1,7 @@
 ---
 name: writing-plans
 description: AUTO-INVOKE when writing, creating, or updating a plan; when entering plan mode; when moving a plan between statuses; or when checking plan progress. Covers naming conventions, file location, status workflow, and plan format for this repo.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Plan Writing & Management

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(jj config:*)",
+      "Bash(jj help:*)"
+    ]
+  }
+}

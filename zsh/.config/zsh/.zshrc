@@ -80,6 +80,9 @@ CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 source <(carapace _carapace)
 
+# Eza - better ls
+export EZA_ICONS_AUTO=always
+
 # Zoxide - Better CD
 eval "$(zoxide init zsh)"
 
@@ -102,7 +105,9 @@ alias ......="cd ../../../../.."
 
 alias cl="clear"
 alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
-alias ls="lsd -la"
+alias ls='eza --icons'
+alias la='eza -la --icons --git'
+alias lt='eza --tree --level=2 --icons'
 alias v="nvim"
 alias cat="bat"
 

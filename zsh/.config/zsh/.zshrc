@@ -87,10 +87,6 @@ eval "$(zoxide init zsh)"
 # fzf - key bindings and fuzzy completion
 source <(fzf --zsh)
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
@@ -109,4 +105,6 @@ alias cl="clear"
 alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
 alias ls="lsd -la"
 alias v="nvim"
+
+[[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
 

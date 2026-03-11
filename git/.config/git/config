@@ -10,6 +10,7 @@
 	features = split-view
 	navigate = true
 	line-numbers = true
+	syntax-theme = Catppuccin Mocha
 
 [delta "split-view"]
 	side-by-side = true

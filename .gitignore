@@ -5,3 +5,5 @@ tmux/plugins/
 raycast/
 fzf
 history.txt
+zsh/.config/zsh/.zprofile.local
+zsh/.config/zsh/.zshrc.local

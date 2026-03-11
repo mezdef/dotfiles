@@ -13,6 +13,16 @@ revision_command = [
   "--config",
   "ui.diff-formatter=delta-non-split-view",
 ]
+file_command = [
+  "diff",
+  "--color",
+  "always",
+  "-r",
+  "$change_id",
+  "$file",
+  "--config",
+  "ui.diff-formatter=delta-non-split-view",
+]
 
 [ui]
 merge-tool = "nvimdiff"

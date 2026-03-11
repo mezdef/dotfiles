@@ -21,7 +21,6 @@ autoload -U compinit && compinit
 # Plugins
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# source $(brew --prefix)/share/lsd/lsd.plugin.zsh
 
 ################################################################################
 # Terminal Theme
@@ -105,6 +104,7 @@ alias cl="clear"
 alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
 alias ls="lsd -la"
 alias v="nvim"
+alias cat="bat"
 
 [[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
 

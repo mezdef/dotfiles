@@ -1,9 +1,5 @@
 #:schema https://docs.jj-vcs.dev/latest/config-schema.json
 
-[user]
-name = "Marc de Ferranti"
-email = "mezdef@gmail.com"
-
 [merge-tools.nvimdiff]
 program = "nvim"
 

@@ -37,6 +37,28 @@ diff-editor = ":builtin"
 "status shortcut" = { fg = "#cba6f7" }
 "status dimmed" = { fg = "#a6adc8" }
 
+[custom_commands.codediff]
+key = ["d"]
+lua = '''
+local change_id = context.change_id()
+if not change_id then
+    flash("No revision selected")
+    return
+end
+local is_wc, _ = jj("log", "--no-graph", "-r", change_id .. " & @", "-T", "commit_id", "--limit", "1")
+if is_wc and is_wc:gsub("%s+", "") ~= "" then
+    exec_shell("nvim -c 'CodeDiff'")
+else
+    local full_id, err = jj("log", "--no-graph", "-r", change_id, "-T", "commit_id", "--limit", "1")
+    if err then
+        flash("Failed to resolve commit: " .. err)
+        return
+    end
+    full_id = full_id:gsub("%s+", "")
+    exec_shell("nvim -c 'CodeDiff " .. full_id .. "^ " .. full_id .. "'")
+end
+'''
+
 [custom_commands.open_file]
 key = ["o"]
 lua = '''

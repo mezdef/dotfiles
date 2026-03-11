@@ -16,8 +16,8 @@ revision_command = [
 
 [ui]
 merge-tool = "nvimdiff"
-editor = "nvim"
-diff-editor = "nvim"
+editor = ":builtin"
+diff-editor = ":builtin"
 
 [ui.colors]
 # catppuccin mocha: mauve=#cba6f7, subtext0=#a6adc8, base=#1e1e2e

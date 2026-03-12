@@ -19,24 +19,11 @@ return {
         GitSignsChangeNr = { fg = colors.yellow },
         GitSignsDeleteNr = { fg = colors.red },
         GitSignsChangeLn = { bg = blend(colors.yellow, colors.base, 0.2) },
-        -- Set colors for diffview, applied via a hook
-        DiffviewNormal = { fg = colors.subtext0 },
-        DiffviewAdd = {
-          fg = colors.green,
-          bg = blend(colors.green, colors.base, 0.2),
-        },
-        DiffviewDelete = {
-          bg = blend(colors.red, colors.base, 0.15),
-          fg = colors.red,
-        },
-        DiffviewChange = {
-          -- fg = colors.yellow,
-          -- bg = blend(colors.yellow, colors.base, 0.2),
-        },
-        DiffviewText = {
-          fg = colors.yellow,
-          bg = blend(colors.yellow, colors.base, 0.25),
-        },
+        -- Diff highlights (used by codediff.nvim and built-in diff mode)
+        DiffAdd = { bg = blend(colors.green, colors.base, 0.2) },
+        DiffDelete = { bg = blend(colors.red, colors.base, 0.15) },
+        DiffChange = { bg = blend(colors.yellow, colors.base, 0.15) },
+        DiffText = { bg = blend(colors.yellow, colors.base, 0.3) },
         MiniMapNormal = { bg = "NONE" },
         MiniMapSymbolView = { bg = "NONE" },
         NormalCursor = { bg = colors.green, fg = colors.base },
@@ -45,7 +32,6 @@ return {
       }
     end,
     integrations = {
-      diffview = true, -- Enable the diffview integration
       cmp = true,
       gitsigns = true,
       nvimtree = true,

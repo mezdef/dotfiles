@@ -4,6 +4,7 @@
 program = "nvim"
 
 [preview]
+# Preview a revision's full diff in the side panel using delta (non-split)
 revision_command = [
   "show",
   "--color",
@@ -13,6 +14,8 @@ revision_command = [
   "--config",
   "ui.diff-formatter=delta-non-split-view",
 ]
+
+# Preview a single file's diff in the side panel using delta (non-split)
 file_command = [
   "diff",
   "--color",
@@ -37,6 +40,9 @@ diff-editor = ":builtin"
 "status shortcut" = { fg = "#cba6f7" }
 "status dimmed" = { fg = "#a6adc8" }
 
+# Open codediff for selected changeset (working copy vs parent, or commit vs its parent)
+# Working copy: opens in editable mode (single rev = diff against working tree)
+# Other revisions: opens in read-only mode (two revs = committed diff)
 [custom_commands.codediff]
 key = ["d"]
 lua = '''
@@ -45,26 +51,72 @@ if not change_id then
     flash("No revision selected")
     return
 end
+-- Check if the selected revision is the working copy
+local is_wc, _ = jj("log", "--no-graph", "-r", change_id .. " & @", "-T", "commit_id", "--limit", "1")
+if is_wc and is_wc:gsub("%s+", "") ~= "" then
+    -- Working copy: pass only the parent so codediff diffs against the working tree (editable)
+    local parent_id, err = jj("log", "--no-graph", "-r", change_id .. "-", "-T", "commit_id", "--limit", "1")
+    if err then
+        flash("Failed to resolve parent: " .. err)
+        return
+    end
+    parent_id = parent_id:gsub("%s+", "")
+    exec_shell("nvim -c 'CodeDiff " .. parent_id .. "'")
+else
+    -- Non-working copy: pass parent and commit for a read-only committed diff
+    local full_id, err = jj("log", "--no-graph", "-r", change_id, "-T", "commit_id", "--limit", "1")
+    if err then
+        flash("Failed to resolve commit: " .. err)
+        return
+    end
+    full_id = full_id:gsub("%s+", "")
+    exec_shell("nvim -c 'CodeDiff " .. full_id .. "^ " .. full_id .. "'")
+end
+'''
+
+# Open codediff for selected changeset against main/master
+# Auto-detects whether the repo uses "main" or "master" as the primary branch
+[custom_commands.codediff_main]
+key = ["D"]
+lua = '''
+local change_id = context.change_id()
+if not change_id then
+    flash("No revision selected")
+    return
+end
+-- Resolve the selected changeset to a git commit ID
 local full_id, err = jj("log", "--no-graph", "-r", change_id, "-T", "commit_id", "--limit", "1")
 if err then
     flash("Failed to resolve commit: " .. err)
     return
 end
 full_id = full_id:gsub("%s+", "")
-exec_shell("nvim -c 'CodeDiff " .. full_id .. "^ " .. full_id .. "'")
+-- Detect whether the repo uses main or master
+local main_check, _ = jj("log", "--no-graph", "-r", "main@origin", "-T", "commit_id", "--limit", "1")
+local branch = (main_check and main_check:gsub("%s+", "") ~= "") and "main@origin" or "master@origin"
+-- Resolve the base branch to a git commit ID
+local base_id, base_err = jj("log", "--no-graph", "-r", branch, "-T", "commit_id", "--limit", "1")
+if base_err then
+    flash("Failed to resolve " .. branch .. ": " .. base_err)
+    return
+end
+base_id = base_id:gsub("%s+", "")
+exec_shell("nvim -c 'CodeDiff " .. base_id .. " " .. full_id .. "'")
 '''
 
+# Open the selected file in nvim
 [custom_commands.open_file]
 key = ["o"]
 lua = '''
-  local file = context.file()
-  if not file then
-      flash("No file selected")
-      return
-  end
-  exec_shell("nvim " .. file)
+local file = context.file()
+if not file then
+    flash("No file selected")
+    return
+end
+exec_shell("nvim " .. file)
 '''
 
+# Copy the selected change ID to the system clipboard
 [custom_commands.copy_to_clipboard]
 key = ["Y"]
 lua = '''

@@ -17,3 +17,12 @@
 
 [delta "non-split-view"]
 	side-by-side = false
+
+[diff]
+	tool = codediff
+
+[difftool "codediff"]
+	cmd = nvim "$LOCAL" "$REMOTE" +"CodeDiff file $LOCAL $REMOTE"
+
+[difftool]
+	prompt = false

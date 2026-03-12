@@ -19,6 +19,10 @@ pager = "diffnav"
 [ui.diff]
 format = "git"
 
+[merge-tools.codediff]
+program = "nvim"
+diff-args = ["$left", "$right", "+CodeDiff file $left $right"]
+
 [merge-tools.delta-non-split-view]
 program = "delta"
 diff-args = [

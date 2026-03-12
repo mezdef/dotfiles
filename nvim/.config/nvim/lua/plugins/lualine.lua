@@ -75,7 +75,14 @@ return {
       },
       {
         function(self)
-          local filename = vim.fn.expand("%:t")
+          local filepath = vim.fn.expand("%:~:.")
+          local parts = vim.split(filepath, "/")
+          local filename
+          if #parts <= 3 then
+            filename = filepath
+          else
+            filename = table.concat({ "…", parts[#parts - 2], parts[#parts - 1], parts[#parts] }, "/")
+          end
           if filename == "" then
             return ""
           end

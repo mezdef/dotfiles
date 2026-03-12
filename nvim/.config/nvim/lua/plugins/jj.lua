@@ -1,11 +1,8 @@
 return {
   "nicolasgb/jj.nvim",
   dependencies = {
-    "folke/snacks.nvim", -- Optional, only needed if you use pickers
-
-    -- One of these two if you want to use them as your diff backend
+    "folke/snacks.nvim",
     "esmuellert/codediff.nvim",
-    "sindrets/diffview.nvim",
   },
 
   config = function()

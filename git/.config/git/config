@@ -11,6 +11,14 @@
 	navigate = true
 	line-numbers = true
 	syntax-theme = Catppuccin Mocha
+	wrap-max-lines = unlimited
+	minus-style = syntax "#3e2e40"
+	minus-emph-style = syntax "#5e3f53"
+	plus-style = syntax "#394545"
+	plus-emph-style = syntax "#4e6356"
+	line-numbers-minus-style = "#f38ba8"
+	line-numbers-plus-style = "#a6e3a1"
+	hunk-header-style = syntax bold
 
 [delta "split-view"]
 	side-by-side = true
@@ -26,3 +34,9 @@
 
 [difftool]
 	prompt = false
+
+[merge]
+	tool = codediff
+
+[mergetool "codediff"]
+	cmd = nvim "$MERGED" -c "CodeDiff merge \"$MERGED\""

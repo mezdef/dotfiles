@@ -2,7 +2,7 @@
 .zcompdump
 zsh/.zsh_history
 zsh/.config/zsh/.zsh_history
-tmux/plugins/
+tmux/.config/tmux/plugins/
 raycast/
 fzf
 history.txt

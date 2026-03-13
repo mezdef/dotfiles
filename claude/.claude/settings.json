@@ -78,7 +78,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "UserPromptSubmit": [
       {

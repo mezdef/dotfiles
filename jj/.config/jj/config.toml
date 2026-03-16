@@ -36,20 +36,20 @@ diff-args = [
 
 [colors]
 # Changeset
-change_id = { fg = "#cba6f7" }             # catppuccin.mauve
+change_id = { fg = "white" }
 commit_id = { fg = "magenta" }
 prefix = { bold = true }                   # Prefix for change and commit
 rest = { fg = "default", dim = true }      # Text after prefix
 author = { fg = "blue", dim = true }       # Author email
 committer = { fg = "blue", dim = false }   # Author email
 timestamp = { fg = "default", dim = true }
-"bookmark" = "red"
-"bookmarks" = "red"
-"local_bookmarks" = "red"
-"remote_bookmarks" = "red"
+"bookmark" = "#cba6f7"
+"bookmarks" = "#cba6f7"
+"local_bookmarks" = "#cba6f7"
+"remote_bookmarks" = "#cba6f7"
 
 "working_copy" = { bold = true }
-"working_copy change_id" = "#cba6f7"
+"working_copy change_id" = { fg = "#a6e3a1", bg = "#11111b" }
 "working_copy commit_id" = "magenta"
 "working_copy author" = "blue"
 "working_copy committer" = "blue"
@@ -66,7 +66,8 @@ timestamp = { fg = "default", dim = true }
 "working_copy divergent" = "bright magenta"
 "working_copy mutable divergent" = "bright red"
 "working_copy mutable divergent change_id" = "bright red"
-"working_copy conflict" = "bright red"
+"conflict" = { fg = "#11111b", bg = "red", bold = true }
+"working_copy conflict" = { fg = "#11111b", bg = "red", bold = true }
 "working_copy empty" = "yellow"
 "working_copy placeholder" = "bright red"
 "working_copy description placeholder" = "yellow"

@@ -104,7 +104,7 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
 alias cl="clear"
-alias rr='source ~/.config/zsh/.zshrc && rehash && compinit'
+alias rr='source ~/.zshenv && source $ZDOTDIR/.zprofile && source $ZDOTDIR/.zshrc && rehash'
 alias ls='eza --icons'
 alias la='eza -la --icons --git'
 alias lt='eza --tree --level=2 --icons'

@@ -39,6 +39,8 @@ diff-editor = ":builtin"
 "status title" = { fg = "#1e1e2e", bg = "#cba6f7", bold = true }
 "status shortcut" = { fg = "#cba6f7" }
 "status dimmed" = { fg = "#a6adc8" }
+# catppuccin mocha surface0=#313244
+"selected" = { bg = "#585b70" }
 
 # Open codediff for selected changeset (working copy vs parent, or commit vs its parent)
 # Working copy: opens in editable mode (single rev = diff against working tree)

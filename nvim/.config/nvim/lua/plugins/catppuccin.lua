@@ -9,6 +9,7 @@ return {
     custom_highlights = function(colors)
       local blend = require("catppuccin.utils.colors").blend
       return {
+        Normal = { fg = colors.subtext1 },
         Comment = { fg = colors.overlay1, italic = false }, -- Commented lines
         ["@comment"] = { fg = colors.overlay1, italic = false },
         CursorLine = { bg = colors.surface1 }, -- Current line highlight
@@ -30,6 +31,30 @@ return {
         SpellCap = { sp = blend(colors.pink, colors.base, 0.4), undercurl = true, fg = "NONE" },
         SpellLocal = { sp = blend(colors.pink, colors.base, 0.4), undercurl = true, fg = "NONE" },
         SpellRare = { sp = blend(colors.pink, colors.base, 0.4), undercurl = true, fg = "NONE" },
+        RenderMarkdownLink = { fg = colors.blue },
+        ["@markup.link"] = { fg = colors.blue },
+        ["@markup.link.label"] = { fg = colors.blue },
+        ["@markup.link.label.markdown_inline"] = { fg = colors.blue },
+        ["@markup.link.url"] = { fg = colors.blue },
+        RenderMarkdownBullet = { fg = colors.mauve },
+        RenderMarkdownUnchecked = { fg = colors.mauve },
+        RenderMarkdownChecked = { fg = colors.mauve },
+        RenderMarkdownTodo = { fg = colors.mauve },
+        RenderMarkdownH1 = { fg = colors.green },
+        RenderMarkdownH2 = { fg = colors.green },
+        RenderMarkdownH3 = { fg = colors.green },
+        ["@markup.heading.1.markdown"] = { fg = colors.text },
+        ["@markup.heading.2.markdown"] = { fg = colors.text },
+        ["@markup.heading.3.markdown"] = { fg = colors.text },
+        ["@markup.heading.4.markdown"] = { fg = colors.text },
+        ["@markup.heading.5.markdown"] = { fg = colors.text },
+        ["@markup.heading.6.markdown"] = { fg = colors.text },
+        RenderMarkdownH1Bg = { bg = colors.surface0 },
+        RenderMarkdownH2Bg = { bg = colors.surface0 },
+        RenderMarkdownH3Bg = { bg = colors.surface0 },
+        RenderMarkdownH4Bg = { bg = colors.surface0 },
+        RenderMarkdownH5Bg = { bg = colors.surface0 },
+        RenderMarkdownH6Bg = { bg = colors.surface0 },
         NormalCursor = { bg = colors.green, fg = colors.base },
         InsertCursor = { bg = colors.text, fg = colors.base },
         VisualCursor = { bg = colors.mauve, fg = colors.base },

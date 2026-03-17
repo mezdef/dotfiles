@@ -4,5 +4,9 @@ return {
   init = function()
     vim.g.maplocalleader = vim.g.mapleader
   end,
-  opts = {},
+  opts = {
+    list = {
+      smart_outdent = false,
+    },
+  },
 }

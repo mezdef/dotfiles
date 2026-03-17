@@ -7,11 +7,17 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
--- Disable spell (and word suggestions) in markdown; toggle with <leader>ms
+-- Disable completion popup in markdown; toggle with <leader>mc
+-- Disable spell in markdown (LazyVim enables it); toggle with <leader>ms
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
+    vim.b.completion = false
     vim.opt_local.spell = false
+    vim.keymap.set("n", "<leader>mc", function()
+      vim.b.completion = not vim.b.completion
+      vim.notify("Completion " .. (vim.b.completion and "enabled" or "disabled"), vim.log.levels.INFO)
+    end, { buffer = true, desc = "Toggle Completion" })
     vim.keymap.set("n", "<leader>ms", function()
       vim.opt_local.spell = not vim.opt_local.spell:get()
       vim.notify("Spell " .. (vim.opt_local.spell:get() and "enabled" or "disabled"), vim.log.levels.INFO)

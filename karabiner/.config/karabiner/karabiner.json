@@ -1,4 +1,8 @@
 {
+    "global": {
+        "delay_until_repeat_milliseconds": 150,
+        "key_repeat_interval_milliseconds": 15
+    },
     "profiles": [
         {
             "complex_modifications": {

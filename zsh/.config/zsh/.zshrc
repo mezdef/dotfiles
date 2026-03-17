@@ -110,6 +110,11 @@ alias la='eza -la --icons --git'
 alias lt='eza --tree --level=2 --icons'
 alias v="nvim"
 alias cat="bat"
+alias cc="claude"
+alias ta="tmux attach"
+alias td="tmux detach"
+alias tks="tmux kill-session"
+alias tls="tmux list-sessions"
 
 ################################################################################
 # Functions

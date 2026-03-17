@@ -3,7 +3,8 @@
     "allow": [
       "Bash(grep:*)",
       "Bash(jj config:*)",
-      "Bash(jj help:*)"
+      "Bash(jj help:*)",
+      "Bash(defaults read:*)"
     ]
   }
 }

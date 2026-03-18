@@ -115,21 +115,41 @@
             "type": "domain",
             "enforcement": "suggest",
             "priority": "high",
-            "description": "Create plans with proper naming, status workflow, and file locations",
+            "description": "Create plans with proper naming, format, and file locations",
             "promptTriggers": {
                 "keywords": [
                     "write a plan",
                     "create a plan",
                     "plan this",
                     "planning",
-                    "roadmap",
-                    "backlog",
                     "plan mode"
                 ],
                 "intentPatterns": [
                     "(write|create|make|draft).*?plan",
-                    "plan.*?(feature|task|work|implementation)",
-                    "move.*?plan.*(todo|active|done|backlog|draft|archived)"
+                    "plan.*?(feature|task|work|implementation)"
+                ]
+            }
+        },
+        "managing-plans": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Manage plan lifecycle: move between statuses, track progress, rename files, list plans",
+            "promptTriggers": {
+                "keywords": [
+                    "plan status",
+                    "move plan",
+                    "plan progress",
+                    "plan list",
+                    "backlog",
+                    "rename plan",
+                    "archive plan"
+                ],
+                "intentPatterns": [
+                    "move.*?plan.*(todo|active|done|backlog|draft|archived)",
+                    "(check|update|track).*?plan.*(status|progress)",
+                    "(list|show).*?plan",
+                    "(rename|archive|complete).*?plan"
                 ]
             }
         },

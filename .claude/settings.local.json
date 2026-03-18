@@ -4,7 +4,8 @@
       "Bash(grep:*)",
       "Bash(jj config:*)",
       "Bash(jj help:*)",
-      "Bash(defaults read:*)"
+      "Bash(defaults read:*)",
+      "Bash(find:*)"
     ]
   }
 }

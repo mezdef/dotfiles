@@ -1,10 +1,10 @@
 ---
 name: writing-plans
-description: AUTO-INVOKE when writing, creating, or updating a plan; when entering plan mode; when moving a plan between statuses; or when checking plan progress. Covers naming conventions, file location, status workflow, and plan format for this repo.
+description: AUTO-INVOKE when writing, creating, or drafting a plan. Covers naming conventions, file location, plan format template, and when-to-write guidance.
 disable-model-invocation: false
 ---
 
-# Plan Writing & Management
+# Plan Writing
 
 ## Location & Naming
 
@@ -12,33 +12,7 @@ disable-model-invocation: false
 
 **Filename format:** `YYYY-MM-DD-<feature-name>.md` (kebab-case, descriptive)
 - Good: `2026-02-19-jj-examine-skill.md`
-- Bad: `luminous-forging-pizza.md` ← **rename these immediately**
-
-**CRITICAL RULE:** When plan mode auto-generates a random filename, **rename it before exiting plan mode.**
-```bash
-mv ~/.claude/plans/draft/random-name.md ~/.claude/plans/draft/2026-02-19-feature-name.md
-```
-
-## Status Workflow
-
-| Status | Meaning |
-|--------|---------|
-| `backlog` | Ideas, not yet detailed |
-| `draft` | Being written, not finalized |
-| `todo` | Approved, ready to implement |
-| `active` | Currently being implemented |
-| `done` | Completed and verified |
-| `archived` | Old or superseded |
-
-**Flow:** draft → todo → active → done
-
-## Helper Scripts
-
-```bash
-plan-status.sh                    # Count plans per status
-plan-list.sh [status]             # List plans (all or filtered)
-plan-move.sh <filename> <status>  # Move plan to new status
-```
+- Bad: `luminous-forging-pizza.md`
 
 ## Standard Plan Format
 
@@ -77,16 +51,6 @@ Concrete description of the output. Scope boundaries.
 
 **Step quality bar:** Each step is 2-5 minutes. Exact file paths. Complete code, not "add validation". Exact commands with expected output.
 
-## Progress Tracking in Active Plans
-
-Mark steps as work progresses:
-```markdown
-## Steps
-- ✅ Step one — completed
-- 🔴 Step two — HIGH PRIORITY, in progress
-- Step three — pending
-```
-
 ## When to Write a Plan
 
 **Write a plan when:**
@@ -108,20 +72,8 @@ Offer execution choice:
 > 1. **Subagent-driven (this session)** — fresh subagent per task, review between each (`superpowers:subagent-driven-development`)
 > 2. **Parallel session** — open new session, use `superpowers:executing-plans`"
 
-Then move the plan to `todo` status and wait for approval before starting.
+Then use `/managing-plans` to move the plan to `todo` status and wait for approval before starting.
 
-## Lifecycle Commands
+## Plan Lifecycle
 
-```bash
-# Start a new plan
-plan-move.sh 2026-02-19-my-feature.md draft   # already in draft
-
-# Approve and queue
-plan-move.sh 2026-02-19-my-feature.md todo
-
-# Start implementation
-plan-move.sh 2026-02-19-my-feature.md active
-
-# Complete
-plan-move.sh 2026-02-19-my-feature.md done
-```
+For status management, progress tracking, renaming, and moving plans between statuses, see `/managing-plans`.

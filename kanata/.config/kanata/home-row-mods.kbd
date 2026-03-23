@@ -47,12 +47,12 @@
   ;; Space explicitly leaves typing layer (uppercase likely after space)
   .spc (multi (on-press release-vkey fast) spc)
 
-  ;; cmd+space → hyper+space (ctrl+opt+cmd+space) for Raycast/Spotlight
-  ;; bare space → exit typing layer + space
-  .spc-or-spotlight (fork (multi lctl lalt lmet spc) @.spc (lmet))
 )
 
 (deflayermap (base)
+  ;; Hyper key (defined in hyper.kbd)
+  caps @hyper
+
   ;; Home row mods — per-finger hold timeouts:
   ;;   shift (index): 160ms — fastest finger, most used modifier
   ;;   cmd (middle):  300ms
@@ -76,8 +76,8 @@
   v (multi v @.tp) b (multi b @.tp) n (multi n @.tp)
   m (multi m @.tp)
 
-  ;; Space: cmd+space → hyper+space (Raycast), bare space → exit typing layer
-  spc @.spc-or-spotlight
+  ;; Space exits typing layer
+  spc @.spc
 )
 
 (deflayermap (typing)

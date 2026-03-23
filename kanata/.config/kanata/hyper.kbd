@@ -1,11 +1,11 @@
 ;; Hyper Key
 ;;
 ;; Caps Lock → ctrl+opt+cmd held, escape tapped
+;;
+;; Uses tap-hold-press so hyper activates immediately when any other
+;; key is pressed (no waiting for release). Caps is never a regular
+;; letter so there's no false activation risk.
 
 (defalias
-  hyper (tap-hold 200 150 esc (multi lctl lalt lmet))
-)
-
-(deflayermap (base)
-  caps @hyper
+  hyper (tap-hold-press 200 100 esc (multi lctl lalt lmet))
 )

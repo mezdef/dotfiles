@@ -1,0 +1,16 @@
+;; Kanata configuration
+;; See individual files for details.
+
+(defcfg
+  process-unmapped-keys yes
+  log-layer-changes no
+  concurrent-tap-hold yes ;; allow multiple home row mods held simultaneously
+  live-reload yes ;; auto-reload when config files change
+)
+
+(defsrc
+  caps
+)
+
+(include hyper.kbd)
+(include home-row-mods.kbd)

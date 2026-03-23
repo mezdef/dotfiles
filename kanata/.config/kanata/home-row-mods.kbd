@@ -1,0 +1,87 @@
+;; Home Row Mods
+;;
+;; Layout:
+;;   Left hand:  a=ctrl  s=opt  d=cmd  f=shift
+;;   Right hand: ;=ctrl  l=opt  k=cmd  j=shift
+;;
+;; Based on: https://github.com/jtroo/kanata/discussions/1656
+;;
+;; Key ideas:
+;;   - Per-finger hold timeouts (fast index, slow pinky)
+;;   - Every letter tap triggers a typing layer (nomods) to prevent
+;;     cascading false modifier activations during fast typing
+;;   - hold-for-duration exits typing layer without requiring idle state
+;;   - Space explicitly exits typing layer (uppercase likely after space)
+;;   - homerowmodfiltered only for specific problematic bigrams
+
+(defvirtualkeys
+  fast (layer-while-held typing)
+)
+
+(defvar
+  ;; tap timeout — max time a key can be held and still count as a tap
+  tot 220
+)
+
+(deftemplate homerowmod (timeouttap timeouthold keytap keyhold)
+  (tap-hold $timeouttap $timeouthold
+    (multi $keytap @.tp)
+    $keyhold
+  )
+)
+
+;; Force specific problematic bigrams to become letters not mods
+(deftemplate homerowmodfiltered (timeouttap timeouthold keytap keyhold typinglist)
+  (tap-hold-release-keys $timeouttap $timeouthold
+    (multi $keytap @.tp)
+    $keyhold
+    $typinglist
+  )
+)
+
+(defalias
+  ;; Activate typing layer for 55ms (resets on each tap).
+  ;; Does not require idle state, works with caps-word.
+  .tp (hold-for-duration 55 fast)
+
+  ;; Space explicitly leaves typing layer (uppercase likely after space)
+  .spc (multi (on-press release-vkey fast) spc)
+
+  ;; cmd+space → hyper+space (ctrl+opt+cmd+space) for Raycast/Spotlight
+  ;; bare space → exit typing layer + space
+  .spc-or-spotlight (fork (multi lctl lalt lmet spc) @.spc (lmet))
+)
+
+(deflayermap (base)
+  ;; Home row mods — per-finger hold timeouts:
+  ;;   shift (index): 160ms — fastest finger, most used modifier
+  ;;   cmd (middle):  300ms
+  ;;   opt (ring):    400ms
+  ;;   ctrl (pinky):  450ms — slowest finger, least used as modifier
+  f (t! homerowmod $tot 160 f lsft)
+  j (t! homerowmod $tot 160 j rsft)
+  d (t! homerowmod $tot 300 d lmet)
+  k (t! homerowmod $tot 300 k rmet)
+  s (t! homerowmod $tot 400 s lalt)
+  l (t! homerowmod $tot 400 l ralt)
+  a (t! homerowmod $tot 450 a lctl)
+  ; (t! homerowmod $tot 450 ; rctl)
+
+  ;; Every letter triggers typing layer
+  q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)
+  r (multi r @.tp) t (multi t @.tp) y (multi y @.tp)
+  u (multi u @.tp) i (multi i @.tp) o (multi o @.tp)
+  p (multi p @.tp) g (multi g @.tp) h (multi h @.tp)
+  z (multi z @.tp) x (multi x @.tp) c (multi c @.tp)
+  v (multi v @.tp) b (multi b @.tp) n (multi n @.tp)
+  m (multi m @.tp)
+
+  ;; Space: cmd+space → hyper+space (Raycast), bare space → exit typing layer
+  spc @.spc-or-spotlight
+)
+
+(deflayermap (typing)
+  a a b b c c d d e e f f g g h h i i j j k k l l
+  m m n n o o p p q q r r s s t t u u v v w w x x
+  y y z z
+)

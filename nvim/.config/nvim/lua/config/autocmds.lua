@@ -7,6 +7,20 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+-- When opened with a directory, cd into it and open file picker instead of netrw
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    local arg = vim.fn.argv(0)
+    if arg and arg ~= "" and vim.fn.isdirectory(arg) == 1 then
+      vim.cmd("cd " .. vim.fn.fnameescape(arg))
+      vim.cmd("bwipeout")
+      vim.schedule(function()
+        Snacks.picker.files({ root = false, hidden = true })
+      end)
+    end
+  end,
+})
+
 -- Disable completion popup in markdown; toggle with <leader>mc
 -- Disable spell in markdown (LazyVim enables it); toggle with <leader>ms
 vim.api.nvim_create_autocmd("FileType", {

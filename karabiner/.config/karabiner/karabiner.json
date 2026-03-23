@@ -7,123 +7,277 @@
         {
             "complex_modifications": {
                 "parameters": {
-                    "basic.simultaneous_threshold_milliseconds": 50,
+                    "basic.simultaneous_threshold_milliseconds": 100,
                     "basic.to_if_alone_timeout_milliseconds": 300,
-                    "basic.to_if_held_down_threshold_milliseconds": 125
+                    "basic.to_if_held_down_threshold_milliseconds": 150
                 },
                 "rules": [
                     {
                         "description": "Home row mods - ctrl, opt, cmd, shift",
                         "manipulators": [
                             {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
                                             "key_code": "f"
+                                        },
+                                        {
+                                            "key_code": "caps_lock"
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "left_shift",
                                         "modifiers": [
-                                            "left_command",
+                                            "left_control",
                                             "left_option",
-                                            "left_control"
+                                            "left_command"
                                         ]
                                     }
                                 ],
-                                "type": "basic"
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "f"
+                                    },
+                                    {
+                                        "key_code": "escape"
+                                    }
+                                ]
                             },
                             {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
                                             "key_code": "j"
                                         },
                                         {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "semicolon"
+                                            "key_code": "caps_lock"
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_shift",
                                         "modifiers": [
-                                            "right_command",
-                                            "right_option",
-                                            "right_control"
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
                                         ]
                                     }
                                 ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ]
-                                },
-                                "to_if_held_down": [
+                                "to_if_alone": [
                                     {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_command",
-                                            "left_option"
-                                        ]
+                                        "key_code": "j"
+                                    },
+                                    {
+                                        "key_code": "escape"
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
+                                "description": "Hyper held + f → Hyper + Shift",
                                 "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
+                                    "key_code": "f",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
+                                        ]
+                                    }
                                 },
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "left_shift",
                                         "modifiers": [
-                                            "left_command",
-                                            "left_control"
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
+                                "description": "Hyper held + j → Hyper + Shift",
+                                "from": {
+                                    "key_code": "j",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "right_shift",
+                                        "modifiers": [
+                                            "left_control",
+                                            "left_option",
+                                            "left_command"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "s"
+                                        },
+                                        {
+                                            "key_code": "d"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_option",
+                                            "left_command",
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "s"
+                                        },
+                                        {
+                                            "key_code": "d"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_option",
+                                            "left_command"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "s"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_option",
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "d"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_command",
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -137,7 +291,18 @@
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
                                     {
                                         "key_code": "left_option",
                                         "modifiers": [
@@ -145,10 +310,184 @@
                                             "left_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "s"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "s"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_option"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "d"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_command"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "a"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "a"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_control",
+                                        "modifiers": [
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "s"
+                                        },
+                                        {
+                                            "key_code": "d"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "d"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_option",
+                                        "modifiers": [
+                                            "left_command"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "s"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "s"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_option",
+                                        "modifiers": [
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "d"
+                                        },
+                                        {
+                                            "key_code": "f"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "d"
+                                    },
+                                    {
+                                        "key_code": "f"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "left_command",
+                                        "modifiers": [
+                                            "left_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -159,21 +498,111 @@
                                         },
                                         {
                                             "key_code": "k"
+                                        },
+                                        {
+                                            "key_code": "j"
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to_if_alone": [
                                     {
-                                        "key_code": "right_shift",
+                                        "key_code": "semicolon"
+                                    },
+                                    {
+                                        "key_code": "l"
+                                    },
+                                    {
+                                        "key_code": "k"
+                                    },
+                                    {
+                                        "key_code": "j"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "right_control",
                                         "modifiers": [
                                             "right_option",
-                                            "right_control"
+                                            "right_command",
+                                            "right_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "semicolon"
+                                        },
+                                        {
+                                            "key_code": "l"
+                                        },
+                                        {
+                                            "key_code": "k"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "semicolon"
+                                    },
+                                    {
+                                        "key_code": "l"
+                                    },
+                                    {
+                                        "key_code": "k"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "right_control",
+                                        "modifiers": [
+                                            "right_option",
+                                            "right_command"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "simultaneous": [
+                                        {
+                                            "key_code": "semicolon"
+                                        },
+                                        {
+                                            "key_code": "l"
+                                        },
+                                        {
+                                            "key_code": "j"
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "key_code": "semicolon"
+                                    },
+                                    {
+                                        "key_code": "l"
+                                    },
+                                    {
+                                        "key_code": "j"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "right_control",
+                                        "modifiers": [
+                                            "right_option",
+                                            "right_shift"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -187,18 +616,29 @@
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to_if_alone": [
                                     {
-                                        "key_code": "right_shift",
-                                        "modifiers": [
-                                            "right_command",
-                                            "right_option"
-                                        ]
+                                        "key_code": "semicolon"
+                                    },
+                                    {
+                                        "key_code": "k"
+                                    },
+                                    {
+                                        "key_code": "j"
                                     }
                                 ],
-                                "type": "basic"
+                                "to": [
+                                    {
+                                        "key_code": "right_control",
+                                        "modifiers": [
+                                            "right_command",
+                                            "right_shift"
+                                        ]
+                                    }
+                                ]
                             },
                             {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -212,402 +652,29 @@
                                         }
                                     ]
                                 },
-                                "to_if_held_down": [
+                                "to_if_alone": [
                                     {
-                                        "key_code": "right_control",
+                                        "key_code": "l"
+                                    },
+                                    {
+                                        "key_code": "k"
+                                    },
+                                    {
+                                        "key_code": "j"
+                                    }
+                                ],
+                                "to": [
+                                    {
+                                        "key_code": "right_option",
                                         "modifiers": [
                                             "right_command",
-                                            "right_option"
+                                            "right_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "a"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "a"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "f"
-                                        },
-                                        {
-                                            "key_code": "a"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "f"
-                                    },
-                                    {
-                                        "key_code": "a"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "f"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "f"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_command",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "f"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "f"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "left_command",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -616,10 +683,7 @@
                                         {
                                             "key_code": "l"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
@@ -629,49 +693,17 @@
                                         "key_code": "l"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_control",
                                         "modifiers": [
                                             "right_option"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "semicolon"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "semicolon"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -680,10 +712,7 @@
                                         {
                                             "key_code": "k"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
@@ -693,113 +722,17 @@
                                         "key_code": "k"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_control",
                                         "modifiers": [
                                             "right_command"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "semicolon"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "semicolon"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -808,10 +741,7 @@
                                         {
                                             "key_code": "j"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
@@ -821,49 +751,46 @@
                                         "key_code": "j"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_control",
                                         "modifiers": [
                                             "right_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
-                                            "key_code": "j"
+                                            "key_code": "l"
                                         },
                                         {
-                                            "key_code": "semicolon"
+                                            "key_code": "k"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
-                                        "key_code": "j"
+                                        "key_code": "l"
                                     },
                                     {
-                                        "key_code": "semicolon"
+                                        "key_code": "k"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
-                                        "key_code": "right_control",
+                                        "key_code": "right_option",
                                         "modifiers": [
-                                            "right_shift"
+                                            "right_command"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -872,10 +799,7 @@
                                         {
                                             "key_code": "j"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
@@ -885,49 +809,17 @@
                                         "key_code": "j"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_option",
                                         "modifiers": [
                                             "right_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "j"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "j"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
+                                "type": "basic",
                                 "from": {
                                     "simultaneous": [
                                         {
@@ -936,10 +828,7 @@
                                         {
                                             "key_code": "j"
                                         }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
+                                    ]
                                 },
                                 "to_if_alone": [
                                     {
@@ -949,47 +838,14 @@
                                         "key_code": "j"
                                     }
                                 ],
-                                "to_if_held_down": [
+                                "to": [
                                     {
                                         "key_code": "right_command",
                                         "modifiers": [
                                             "right_shift"
                                         ]
                                     }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "j"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ],
-                                    "simultaneous_options": {
-                                        "key_down_order": "strict"
-                                    }
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "j"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "key_code": "right_command",
-                                        "modifiers": [
-                                            "right_shift"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
+                                ]
                             },
                             {
                                 "from": {
@@ -1270,8 +1126,7 @@
                                     "key_code": "caps_lock",
                                     "modifiers": {
                                         "optional": [
-                                            "left_shift",
-                                            "right_shift"
+                                            "any"
                                         ]
                                     }
                                 },

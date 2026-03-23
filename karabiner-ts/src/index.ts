@@ -17,7 +17,8 @@ import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { writeToProfile } from 'karabiner.ts'
 
-import { homeRowModsRule } from './rules/home-row-mods'
+// import { homeRowModsRule } from './rules/home-row-mods'
+import { homeRowModsRules } from './rules/home-row-mods-greg'
 import { spotlightRule } from './rules/spotlight'
 import { hyperKeyRule } from './rules/hyper-key'
 
@@ -30,7 +31,7 @@ const karabinerJsonPath = resolve(
 )
 
 const rules = [
-  homeRowModsRule,
+  ...homeRowModsRules,
   spotlightRule,
   hyperKeyRule,
 ]

@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "karabiner.ts": "^1.36.0",
+    "karabiner.ts-greg-mods": "^0.7.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

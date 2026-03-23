@@ -1,1191 +1,1190 @@
 {
-    "global": {
-        "delay_until_repeat_milliseconds": 150,
-        "key_repeat_interval_milliseconds": 15
-    },
-    "profiles": [
-        {
-            "complex_modifications": {
-                "parameters": {
-                    "basic.simultaneous_threshold_milliseconds": 100,
-                    "basic.to_if_alone_timeout_milliseconds": 300,
-                    "basic.to_if_held_down_threshold_milliseconds": 150
-                },
-                "rules": [
+  "global": {
+    "delay_until_repeat_milliseconds": 150,
+    "key_repeat_interval_milliseconds": 15
+  },
+  "profiles": [
+    {
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "Home row mods - ctrl, opt, cmd, shift",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
                     {
-                        "description": "Home row mods - ctrl, opt, cmd, shift",
-                        "manipulators": [
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "f"
-                                        },
-                                        {
-                                            "key_code": "caps_lock"
-                                        }
-                                    ]
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "left_shift",
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "f"
-                                    },
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "j"
-                                        },
-                                        {
-                                            "key_code": "caps_lock"
-                                        }
-                                    ]
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "right_shift",
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                ],
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "j"
-                                    },
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "description": "Hyper held + f → Hyper + Shift",
-                                "from": {
-                                    "key_code": "f",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "left_shift",
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "description": "Hyper held + j → Hyper + Shift",
-                                "from": {
-                                    "key_code": "j",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "right_shift",
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option",
-                                            "left_command",
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option",
-                                            "left_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option",
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_command",
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_command",
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "s"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "s"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "a"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "a"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_control",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "s"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "s"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_option",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "d"
-                                        },
-                                        {
-                                            "key_code": "f"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "d"
-                                    },
-                                    {
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "left_command",
-                                        "modifiers": [
-                                            "left_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_option",
-                                            "right_command",
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_option",
-                                            "right_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_option",
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_command",
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_command",
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "l"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "l"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_option"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "semicolon"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "semicolon"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_control",
-                                        "modifiers": [
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_command"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "l"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "l"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_option",
-                                        "modifiers": [
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "simultaneous": [
-                                        {
-                                            "key_code": "k"
-                                        },
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "k"
-                                    },
-                                    {
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to": [
-                                    {
-                                        "key_code": "right_command",
-                                        "modifiers": [
-                                            "right_shift"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "from": {
-                                    "key_code": "a"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "a"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "a"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "left_control"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "s"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "s"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "s"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "left_option"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "d"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "d"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "d"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "left_command"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "f"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "halt": true,
-                                            "key_code": "f"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "f"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "left_shift"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "semicolon"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "semicolon"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "semicolon"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "right_control"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "l"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "l"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "l"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "right_option"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "k"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "k"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "k"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "right_command"
-                                    }
-                                ],
-                                "type": "basic"
-                            },
-                            {
-                                "from": {
-                                    "key_code": "j"
-                                },
-                                "to_delayed_action": {
-                                    "to_if_canceled": [
-                                        {
-                                            "key_code": "j"
-                                        }
-                                    ],
-                                    "to_if_invoked": [
-                                        {
-                                            "key_code": "vk_none"
-                                        }
-                                    ]
-                                },
-                                "to_if_alone": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "j"
-                                    }
-                                ],
-                                "to_if_held_down": [
-                                    {
-                                        "halt": true,
-                                        "key_code": "right_shift"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
+                      "key_code": "f"
                     },
                     {
-                        "description": "⌘ + Spacebar → Hyper(⌃⌥⌘) + Spacebar | Mimic OSX default spotlight",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "spacebar",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_command"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "spacebar",
-                                        "lazy": false,
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option",
-                                            "left_command"
-                                        ],
-                                        "repeat": false
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
-                        "description": "Caps Lock → Hyper Key (⌃⌥⌘) | Escape if alone | Use fn + caps lock to enable caps lock",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "caps_lock",
-                                    "modifiers": {
-                                        "optional": [
-                                            "any"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "left_command",
-                                        "modifiers": [
-                                            "left_control",
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "to_if_alone": [
-                                    {
-                                        "key_code": "escape"
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
+                      "key_code": "caps_lock"
                     }
-                ]
-            },
-            "devices": [
-                {
-                    "identifiers": {
-                        "is_keyboard": true,
-                        "product_id": 2058,
-                        "vendor_id": 21057
-                    },
-                    "simple_modifications": [
-                        {
-                            "from": {
-                                "key_code": "left_command"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_option"
-                                }
-                            ]
-                        },
-                        {
-                            "from": {
-                                "key_code": "left_option"
-                            },
-                            "to": [
-                                {
-                                    "key_code": "left_command"
-                                }
-                            ]
-                        }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "f"
+                  },
+                  {
+                    "key_code": "escape"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_shift",
+                    "modifiers": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
                     ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "j"
+                    },
+                    {
+                      "key_code": "caps_lock"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "j"
+                  },
+                  {
+                    "key_code": "escape"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_shift",
+                    "modifiers": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "f",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_shift",
+                    "modifiers": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_shift",
+                    "modifiers": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "d"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_option",
+                      "left_command",
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "d"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "d"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_option",
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "d"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_command",
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "d"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_option",
+                    "modifiers": [
+                      "left_command",
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "s"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "s"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_option"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "d"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "d"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "a"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_control",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "d"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "d"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_option",
+                    "modifiers": [
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "s"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_option",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "d"
+                  },
+                  {
+                    "key_code": "f"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "left_command",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "k"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "k"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_option",
+                      "right_command",
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "k"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "k"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_option",
+                      "right_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_option",
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "k"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "k"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_command",
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "k"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "k"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_option",
+                    "modifiers": [
+                      "right_command",
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "l"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "l"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_option"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "k"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "k"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "semicolon"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "semicolon"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_control",
+                    "modifiers": [
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "k"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "k"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_option",
+                    "modifiers": [
+                      "right_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "l"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "l"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_option",
+                    "modifiers": [
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "k"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                },
+                "to_if_alone": [
+                  {
+                    "key_code": "k"
+                  },
+                  {
+                    "key_code": "j"
+                  }
+                ],
+                "to": [
+                  {
+                    "key_code": "right_command",
+                    "modifiers": [
+                      "right_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "a"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "left_control"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "a"
+                    }
+                  ]
                 }
-            ],
-            "name": "Default profile",
-            "selected": true,
-            "virtual_hid_keyboard": {
-                "keyboard_type_v2": "ansi"
-            }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "s"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "left_option"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "s"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "d"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "d"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "left_command"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "d"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "f"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "f"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "left_shift"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "f"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "semicolon"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "semicolon"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "right_control"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "semicolon"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "l"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "l"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "right_option"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "l"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "k"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "k"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "right_command"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "k"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j"
+                },
+                "to_if_alone": [
+                  {
+                    "halt": true,
+                    "key_code": "j"
+                  }
+                ],
+                "to_if_held_down": [
+                  {
+                    "halt": true,
+                    "key_code": "right_shift"
+                  }
+                ],
+                "to_delayed_action": {
+                  "to_if_invoked": [
+                    {
+                      "key_code": "vk_none"
+                    }
+                  ],
+                  "to_if_canceled": [
+                    {
+                      "key_code": "j"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "description": "⌘ + Spacebar → Hyper(⌃⌥⌘) + Spacebar | Mimic OSX default spotlight",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "spacebar",
+                  "modifiers": {
+                    "mandatory": [
+                      "left_command"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "lazy": false,
+                    "repeat": false,
+                    "key_code": "spacebar",
+                    "modifiers": [
+                      "left_control",
+                      "left_option",
+                      "left_command"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "Caps Lock → Hyper Key (⌃⌥⌘) | Escape if alone | Use fn + caps lock to enable caps lock",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_command",
+                    "modifiers": [
+                      "left_control",
+                      "left_option"
+                    ]
+                  }
+                ],
+                "to_if_alone": [
+                  {
+                    "key_code": "escape"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "parameters": {
+          "basic.to_if_alone_timeout_milliseconds": 300,
+          "basic.to_if_held_down_threshold_milliseconds": 150,
+          "basic.to_delayed_action_delay_milliseconds": 500,
+          "basic.simultaneous_threshold_milliseconds": 100,
+          "mouse_motion_to_scroll.speed": 100
         }
-    ]
+      },
+      "devices": [
+        {
+          "identifiers": {
+            "is_keyboard": true,
+            "product_id": 2058,
+            "vendor_id": 21057
+          },
+          "simple_modifications": [
+            {
+              "from": {
+                "key_code": "left_command"
+              },
+              "to": [
+                {
+                  "key_code": "left_option"
+                }
+              ]
+            },
+            {
+              "from": {
+                "key_code": "left_option"
+              },
+              "to": [
+                {
+                  "key_code": "left_command"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "name": "Default profile",
+      "selected": true,
+      "virtual_hid_keyboard": {
+        "keyboard_type_v2": "ansi"
+      }
+    }
+  ]
 }

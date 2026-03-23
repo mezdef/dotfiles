@@ -1,0 +1,14 @@
+{
+  "name": "karabiner-ts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsx src/index.ts",
+    "dry-run": "tsx src/index.ts --dry-run"
+  },
+  "devDependencies": {
+    "karabiner.ts": "^1.36.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

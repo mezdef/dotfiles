@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.marc.randomwallpaper.plist
+  Runs random-wallpaper.sh on login and every 24 hours (86400 seconds).
+  Change StartInterval to adjust frequency (e.g. 3600 = 1 hour).
+
+  Deploy:  cd ~/dotfiles && stow macos
+  Load:    launchctl load ~/Library/LaunchAgents/com.marc.randomwallpaper.plist
+  Unload:  launchctl unload ~/Library/LaunchAgents/com.marc.randomwallpaper.plist
+  Status:  launchctl list | grep randomwallpaper
+  Logs:    cat ~/Library/Logs/random-wallpaper.log
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.marc.randomwallpaper</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/marc.deferranti/.local/bin/random-wallpaper.sh</string>
+	</array>
+	<!-- Interval in seconds: 86400 = 24h, 3600 = 1h, 1800 = 30m -->
+	<key>StartInterval</key>
+	<integer>86400</integer>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/Users/marc.deferranti/Library/Logs/random-wallpaper.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/marc.deferranti/Library/Logs/random-wallpaper.log</string>
+</dict>
+</plist>

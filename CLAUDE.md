@@ -21,6 +21,21 @@ Key files:
 - `karabiner-ts/src/rules/hyper-key.ts` — caps lock → hyper
 - `karabiner-ts/src/rules/spotlight.ts` — cmd+space → hyper+space
 
+## Kanata (keyboard remapping)
+
+Replaces Karabiner for home row mods, hyper key, and spotlight remap. Config is `.kbd` files in `kanata/.config/kanata/`.
+
+**To edit:** modify `.kbd` files — `live-reload yes` picks up changes automatically.
+
+Key files:
+- `kanata/.config/kanata/kanata.kbd` — entry point, defcfg, includes
+- `kanata/.config/kanata/home-row-mods.kbd` — per-finger timing, typing layer, spotlight
+- `kanata/.config/kanata/hyper.kbd` — caps lock → hyper
+
+LaunchDaemon (`com.jtroo.kanata.plist`) is installed to `/Library/LaunchDaemons/` via `sudo ./kanata/scripts/install-daemon.sh`. The plist is version-controlled in `kanata/` but excluded from stow.
+
+See `kanata/README.md` for setup, daemon management, and rollback.
+
 ## Ghostty (terminal)
 
 Config: `ghostty/.config/ghostty/config`. Includes keybind remaps for tmux compatibility (ctrl+/, ctrl+\, ctrl+backspace send specific byte sequences).

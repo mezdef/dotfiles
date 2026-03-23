@@ -1,0 +1,11 @@
+;; Hyper Key
+;;
+;; Caps Lock → ctrl+opt+cmd held, escape tapped
+
+(defalias
+  hyper (tap-hold 200 150 esc (multi lctl lalt lmet))
+)
+
+(deflayermap (base)
+  caps @hyper
+)

@@ -7,7 +7,9 @@
       "Bash(defaults read:*)",
       "Bash(find:*)",
       "WebSearch",
-      "WebFetch(domain:karabiner.ts.evanliu.dev)"
+      "WebFetch(domain:karabiner.ts.evanliu.dev)",
+      "Bash(jj cat:*)",
+      "Bash(stow kanata:*)"
     ]
   }
 }

@@ -2,7 +2,7 @@ return {
   "yousefhadder/markdown-plus.nvim",
   ft = "markdown",
   init = function()
-    vim.g.maplocalleader = vim.g.mapleader
+    vim.g.maplocalleader = vim.g.maplocalleader or "\\"
   end,
   opts = {
     list = {

@@ -5,7 +5,6 @@
   process-unmapped-keys yes
   log-layer-changes no
   concurrent-tap-hold yes ;; allow multiple home row mods held simultaneously
-  live-reload yes ;; auto-reload when config files change
 )
 
 (defsrc

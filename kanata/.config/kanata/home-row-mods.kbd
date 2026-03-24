@@ -81,6 +81,11 @@
 
   ;; Space exits typing layer
   spc @.spc
+
+  ;; Fix ISO/ANSI: virtual HID interprets grv as § on ISO layout
+  ;; Swap grv↔102d so backtick outputs correctly
+  grv 102d
+  102d grv
 )
 
 (deflayermap (typing)
@@ -89,4 +94,6 @@
   y y z z
   caps @hyper
   spc @.spc
+  grv 102d
+  102d grv
 )

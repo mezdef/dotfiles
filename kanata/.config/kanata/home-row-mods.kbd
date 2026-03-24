@@ -54,18 +54,18 @@
   caps @hyper
 
   ;; Home row mods — per-finger hold timeouts:
-  ;;   shift (index): 160ms — fastest finger, most used modifier
-  ;;   cmd (middle):  300ms
-  ;;   opt (ring):    400ms
-  ;;   ctrl (pinky):  450ms — slowest finger, least used as modifier
+  ;;   index (shift): 160ms — fastest, most natural hold
+  ;;   pinky (ctrl):  200ms — heavily used (tmux, shortcuts)
+  ;;   middle (cmd):  350ms — slower finger, more false-activation prone
+  ;;   ring (opt):    400ms — slowest, least used
   f (t! homerowmod $tot 160 f lsft)
   j (t! homerowmod $tot 160 j rsft)
-  d (t! homerowmod $tot 300 d lmet)
-  k (t! homerowmod $tot 300 k rmet)
+  a (t! homerowmod $tot 200 a lctl)
+  ; (t! homerowmod $tot 200 ; rctl)
+  d (t! homerowmod $tot 350 d lmet)
+  k (t! homerowmod $tot 350 k rmet)
   s (t! homerowmod $tot 400 s lalt)
   l (t! homerowmod $tot 400 l ralt)
-  a (t! homerowmod $tot 450 a lctl)
-  ; (t! homerowmod $tot 450 ; rctl)
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)

@@ -9,13 +9,14 @@
 
   ;; Home row mods — per-finger hold timeouts:
   ;;   index (shift): 160ms — fastest, most natural hold
-  ;;   pinky (ctrl):  200ms — heavily used (tmux, shortcuts)
+  ;;   pinky (ctrl):  300ms — heavily used, but pinky is slow and
+  ;;                          a/; start many words (base, as, ask)
   ;;   middle (cmd):  350ms — slower finger, more false-activation prone
   ;;   ring (opt):    400ms — slowest, least used
   f (t! homerowmod $tot 160 f lsft)
   j (t! homerowmod $tot 160 j rsft)
-  a (t! homerowmod $tot 200 a lctl)
-  ; (t! homerowmod $tot 200 ; rctl)
+  a (t! homerowmod $tot 300 a lctl)
+  ; (t! homerowmod $tot 300 ; rctl)
   d (t! homerowmod $tot 350 d lmet)
   k (t! homerowmod $tot 350 k rmet)
   s (t! homerowmod $tot 400 s lalt)

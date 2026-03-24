@@ -9,7 +9,10 @@
       "WebSearch",
       "WebFetch(domain:karabiner.ts.evanliu.dev)",
       "Bash(jj cat:*)",
-      "Bash(stow kanata:*)"
+      "Bash(stow kanata:*)",
+      "Bash(sesh --version)",
+      "Bash(brew list:*)",
+      "Bash(gh api:*)"
     ]
   }
 }

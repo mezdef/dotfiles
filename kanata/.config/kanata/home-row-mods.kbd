@@ -40,9 +40,12 @@
 )
 
 (defalias
-  ;; Activate typing layer for 55ms (resets on each tap).
-  ;; Does not require idle state, works with caps-word.
-  .tp (hold-for-duration 55 fast)
+  ;; Activate typing layer (nomods) after each tap. Timer resets on
+  ;; every tap, so rapid repeated keys (jjjj, kkkk for vim) stay on
+  ;; the typing layer and bypass tap-hold checks entirely.
+  ;; 80ms balances rapid repeated keys (jjjj for vim) with avoiding
+  ;; unintended key repeat on the plain typing layer.
+  .tp (hold-for-duration 80 fast)
 
   ;; Space explicitly leaves typing layer (uppercase likely after space)
   .spc (multi (on-press release-vkey fast) spc)
@@ -84,4 +87,6 @@
   a a b b c c d d e e f f g g h h i i j j k k l l
   m m n n o o p p q q r r s s t t u u v v w w x x
   y y z z
+  caps @hyper
+  spc @.spc
 )

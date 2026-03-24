@@ -2,10 +2,10 @@
 ;;
 ;; Caps Lock → ctrl+opt+cmd held, escape tapped
 ;;
-;; Uses tap-hold-press so hyper activates immediately when any other
-;; key is pressed (no waiting for release). Caps is never a regular
-;; letter so there's no false activation risk.
+;; Uses tap-hold-press with generous hold timeout. The hold activates
+;; immediately when another key is pressed (tap-hold-press), so the
+;; 200ms hold timeout only matters for solo caps holds.
 
 (defalias
-  hyper (tap-hold-press 200 100 esc (multi lctl lalt lmet))
+  hyper (tap-hold-press 300 200 esc (multi lctl lalt lmet))
 )

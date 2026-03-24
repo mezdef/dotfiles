@@ -15,3 +15,4 @@
 
 (include hyper.kbd)
 (include home-row-mods.kbd)
+(include layers.kbd)

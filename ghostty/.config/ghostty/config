@@ -14,3 +14,4 @@ macos-option-as-alt = true
 
 keybind = ctrl+backspace=text:\x11
 keybind = ctrl+\=text:\x1f
+keybind = ctrl+/=text:\x1b[47;5u

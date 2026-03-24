@@ -1,0 +1,59 @@
+;; Layer mappings
+;;
+;; All deflayermap blocks must be in one file per layer name.
+;; Aliases referenced here are defined in hyper.kbd and home-row-mods.kbd.
+
+(deflayermap (base)
+  ;; Hyper key (defined in hyper.kbd)
+  caps @hyper
+
+  ;; Home row mods — per-finger hold timeouts:
+  ;;   index (shift): 160ms — fastest, most natural hold
+  ;;   pinky (ctrl):  200ms — heavily used (tmux, shortcuts)
+  ;;   middle (cmd):  350ms — slower finger, more false-activation prone
+  ;;   ring (opt):    400ms — slowest, least used
+  f (t! homerowmod $tot 160 f lsft)
+  j (t! homerowmod $tot 160 j rsft)
+  a (t! homerowmod $tot 200 a lctl)
+  ; (t! homerowmod $tot 200 ; rctl)
+  d (t! homerowmod $tot 350 d lmet)
+  k (t! homerowmod $tot 350 k rmet)
+  s (t! homerowmod $tot 400 s lalt)
+  l (t! homerowmod $tot 400 l ralt)
+
+  ;; Every letter triggers typing layer
+  q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)
+  r (multi r @.tp) t (multi t @.tp) y (multi y @.tp)
+  u (multi u @.tp) i (multi i @.tp) o (multi o @.tp)
+  p (multi p @.tp) g (multi g @.tp) h (multi h @.tp)
+  z (multi z @.tp) x (multi x @.tp) c (multi c @.tp)
+  v (multi v @.tp) b (multi b @.tp) n (multi n @.tp)
+  m (multi m @.tp)
+
+  ;; Space exits typing layer
+  spc @.spc
+
+  ;; Fix ISO/ANSI: virtual HID interprets grv as § on ISO layout
+  grv 102d
+  102d grv
+
+  ;; Media keys (matching MacBook F-key layout)
+  f1  brdn
+  f2  brup
+  f7  prev
+  f8  pp
+  f9  next
+  f10 mute
+  f11 voldwn
+  f12 volu
+)
+
+(deflayermap (typing)
+  a a b b c c d d e e f f g g h h i i j j k k l l
+  m m n n o o p p q q r r s s t t u u v v w w x x
+  y y z z
+  caps @hyper
+  spc @.spc
+  grv 102d
+  102d grv
+)

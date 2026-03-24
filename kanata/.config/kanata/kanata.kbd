@@ -7,8 +7,10 @@
   concurrent-tap-hold yes ;; allow multiple home row mods held simultaneously
 )
 
+;; 102d (ISO non-US backslash) included in defsrc so kanata can
+;; remap it to grv (backtick) — fixes Karabiner virtual HID ISO quirk
 (defsrc
-  caps
+  caps grv 102d
 )
 
 (include hyper.kbd)

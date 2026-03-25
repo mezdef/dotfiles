@@ -28,10 +28,11 @@ SESSION_COLOR=$(hex_fg "${_green:-a6e3a1}")
 WINDOW_COLOR=$(hex_fg "${_mauve:-cba6f7}")
 
 # Hidden first field format: TYPE:session:window_index:pane_index
-# Uses names/indices so no $ characters end up in fzf placeholders
-SESSION_FORMAT='S:#{session_name} #{session_name}'
-WINDOW_FORMAT='W:#{session_name}:#{window_index} #{session_name} | #{?#{==:#{window_name},Window},#I,#{window_name}}'
-PANE_FORMAT='P:#{session_name}:#{window_index}.#{pane_index} #{session_name} | #{?#{==:#{window_name},Window},#I,#{window_name}} | #{pane_current_command}'
+# Tab-delimited so session names with spaces don't break {1}
+TAB=$'\t'
+SESSION_FORMAT="S:#{session_name}${TAB}#{session_name}"
+WINDOW_FORMAT="W:#{session_name}:#{window_index}${TAB}#{session_name} | #{?#{==:#{window_name},Window},#I,#{window_name}}"
+PANE_FORMAT="P:#{session_name}:#{window_index}.#{pane_index}${TAB}#{session_name} | #{?#{==:#{window_name},Window},#I,#{window_name}} | #{pane_current_command}"
 
 function vercomp() {
   IFS='.' read -r -a ver1 <<<"$1"
@@ -54,45 +55,50 @@ function pane_icon() {
 }
 
 function list_sessions() {
-  local current="$1"; shift
+  local current="$1"
+  shift
   tmux list-sessions -F "${SESSION_FORMAT}" -f "#{==:#{session_name},${current}}" | while IFS= read -r line; do
-    local id="${line%% *}" rest="${line#* }"
-    echo "${id} ${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
+    local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
+    echo "${id}${TAB}${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
   done
   for s in "$@"; do
     tmux list-sessions -F "${SESSION_FORMAT}" -f "#{==:#{session_name},${s}}" | while IFS= read -r line; do
-      local id="${line%% *}" rest="${line#* }"
-      echo "${id} ${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
+      local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
+      echo "${id}${TAB}${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
     done
   done
 }
 
 function list_windows() {
-  local current="$1"; shift
+  local current="$1"
+  shift
   tmux list-windows -F "${WINDOW_FORMAT}" -t "=${current}" | while IFS= read -r line; do
-    local id="${line%% *}" rest="${line#* }"
-    echo "${id} ${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
+    local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
+    echo "${id}${TAB}${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
   done
   for s in "$@"; do
     tmux list-windows -F "${WINDOW_FORMAT}" -t "=${s}" | while IFS= read -r line; do
-      local id="${line%% *}" rest="${line#* }"
-      echo "${id} ${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
+      local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
+      echo "${id}${TAB}${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
     done
   done
 }
 
 function list_panes() {
-  local current="$1"; shift
+  local current="$1"
+  shift
   tmux list-panes -sF "${PANE_FORMAT}" -t "=${current}" | while IFS= read -r line; do
-    local id="${line%% *}" rest="${line#* }" cmd="${line##* }"
-    local icon; icon=$(pane_icon "${cmd}")
-    echo "${id} ${icon} ${rest}"
+    local id="${line%%${TAB}*}" rest="${line#*${TAB}}" cmd="${line##* }"
+    local icon
+    icon=$(pane_icon "${cmd}")
+    echo "${id}${TAB}${icon} ${rest}"
   done
   for s in "$@"; do
     tmux list-panes -sF "${PANE_FORMAT}" -t "=${s}" | while IFS= read -r line; do
-      local id="${line%% *}" rest="${line#* }" cmd="${line##* }"
-      local icon; icon=$(pane_icon "${cmd}")
-      echo "${id} ${icon} ${rest}"
+      local id="${line%%${TAB}*}" rest="${line#*${TAB}}" cmd="${line##* }"
+      local icon
+      icon=$(pane_icon "${cmd}")
+      echo "${id}${TAB}${icon} ${rest}"
     done
   done
 }
@@ -117,21 +123,22 @@ function resolve_target() {
   local type="${raw%%:*}"
   local rest="${raw#*:}"
   case "${type}" in
-    S) echo "=${rest}" ;;
-    W) echo "=${rest%%:*}:${rest#*:}" ;;
-    P) echo "=${rest}" ;;
+  S) echo "=${rest}" ;;
+  W) echo "=${rest%%:*}:${rest#*:}" ;;
+  P) echo "=${rest}" ;;
   esac
 }
 
 function kill_target() {
   local raw="$1"
   local type="${raw%%:*}"
+  local rest="${raw#*:}"
   local target
   target=$(resolve_target "${raw}")
   case "${type}" in
-    S) tmux kill-session -t "${target}" ;;
-    W) tmux kill-window -t "${target}" ;;
-    P) tmux kill-pane -t "${target}" ;;
+  S) tmux kill-session -t "${target}" && tmux display-message "Killed session: ${rest}" ;;
+  W) tmux kill-window -t "${target}" && tmux display-message "Killed window: ${rest}" ;;
+  P) tmux kill-pane -t "${target}" && tmux display-message "Killed pane: ${rest}" ;;
   esac
 }
 
@@ -143,11 +150,15 @@ function rename_target() {
 
   local label current_name
   case "${type}" in
-    S) label="session"
-       current_name=$(tmux display-message -p -t "${target}" '#{session_name}' 2>/dev/null) ;;
-    W) label="window"
-       current_name=$(tmux display-message -p -t "${target}" '#{window_name}' 2>/dev/null) ;;
-    *) return ;;
+  S)
+    label="session"
+    current_name=$(tmux display-message -p -t "${target}" '#{session_name}' 2>/dev/null)
+    ;;
+  W)
+    label="window"
+    current_name=$(tmux display-message -p -t "${target}" '#{window_name}' 2>/dev/null)
+    ;;
+  *) return ;;
   esac
 
   # Clear previous output then prompt
@@ -157,29 +168,71 @@ function rename_target() {
   read -r name
   [[ -z "${name}" ]] && return
   case "${type}" in
-    S) tmux rename-session -t "${target}" "${name}" ;;
-    W) tmux rename-window -t "${target}" "${name}" ;;
+  S) tmux rename-session -t "${target}" "${name}" && tmux display-message "Renamed session: ${current_name} → ${name}" ;;
+  W) tmux rename-window -t "${target}" "${name}" && tmux display-message "Renamed window: ${current_name} → ${name}" ;;
   esac
 }
 
 function preview_target() {
   local raw="$1" lines="${2:-30}"
   local type="${raw%%:*}"
-  local target
-  target=$(resolve_target "${raw}")
-  # For sessions/windows, capture the active pane in that session/window
-  tmux capture-pane -ep -S "-${lines}" -t "${target}" 2>/dev/null | \
-    awk '{a[NR]=$0} END{for(i=NR;i>0;i--) if(a[i]~/[^ \t]/){for(j=1;j<=i;j++) print a[j]; exit}}' | \
-    tail -n "${lines}"
+  case "${type}" in
+  Z)
+    # Zoxide path — show directory listing
+    local dir="${raw#Z:}"
+    ls -la "${dir}" 2>/dev/null
+    ;;
+  *)
+    local target
+    target=$(resolve_target "${raw}")
+    tmux capture-pane -ep -S "-${lines}" -t "${target}" 2>/dev/null |
+      awk '{a[NR]=$0} END{for(i=NR;i>0;i--) if(a[i]~/[^ \t]/){for(j=1;j<=i;j++) print a[j]; exit}}' |
+      tail -n "${lines}"
+    ;;
+  esac
+}
+
+function generate_zoxide_list() {
+  local _blue
+  _blue=$(tmux show-option -gqv @thm_blue 2>/dev/null | tr -d '#')
+  local ZOXIDE_COLOR
+  ZOXIDE_COLOR=$(hex_fg "${_blue:-89b4fa}")
+  local ZOXIDE_ICON=" "
+
+  local home
+  home=$(eval echo ~)
+  zoxide query -l 2>/dev/null | while IFS= read -r dir; do
+    local display="${dir/$home/\~}"
+    echo "Z:${dir}${TAB}${ZOXIDE_COLOR}${ZOXIDE_ICON}${RESET} ${display}"
+  done
 }
 
 # Handle subcommands (called by fzf binds)
 case "${1}" in
-  --list) generate_list; exit 0 ;;
-  --kill) kill_target "$2"; exit 0 ;;
-  --rename) rename_target "$2"; exit 0 ;;
-  --resolve) resolve_target "$2"; exit 0 ;;
-  --preview) preview_target "$2" "$3"; exit 0 ;;
+--list)
+  generate_list
+  exit 0
+  ;;
+--zoxide)
+  generate_zoxide_list
+  exit 0
+  ;;
+--kill)
+  kill_target "$2"
+  exit 0
+  ;;
+--rename)
+  rename_target "$2"
+  exit 0
+  ;;
+--resolve)
+  resolve_target "$2"
+  exit 0
+  ;;
+--preview)
+  preview_target "$2" "$3"
+  exit 0
+  ;;
 esac
 
 function select_pane() {
@@ -188,11 +241,15 @@ function select_pane() {
 
   local -a fzf_args=(
     --ansi --exit-0 --tiebreak=index
+    --delimiter "\t"
     --tmux "${FZF_WINDOW_POSITION}"
     --with-nth=2..
-    --header "  C-d kill  C-r rename"
+    --header "  C-d kill  C-r rename  C-f zoxide  C-b back  ? preview"
     --bind "ctrl-d:execute-silent(${SCRIPT_PATH} --kill {1})+reload(${SCRIPT_PATH} --list)"
     --bind "ctrl-r:execute(${SCRIPT_PATH} --rename {1})+clear-query+reload(${SCRIPT_PATH} --list)"
+    --bind "ctrl-f:change-prompt(  Zoxide: )+reload(${SCRIPT_PATH} --zoxide)+clear-query"
+    --bind "ctrl-b:change-prompt(  Search: )+reload(${SCRIPT_PATH} --list)+clear-query"
+    --bind "?:toggle-preview"
   )
 
   # Border styling based on fzf version
@@ -217,20 +274,33 @@ function select_pane() {
     )
   fi
 
-  local selection target_raw target
-  selection=$(generate_list | fzf "${fzf_args[@]}")
+  local fzf_output query selection target_raw target
+  fzf_output=$(generate_list | fzf --print-query "${fzf_args[@]}")
 
-  target_raw=$(echo "${selection}" | awk '{print $1}')
+  query=$(echo "${fzf_output}" | sed -n '1p')
+  selection=$(echo "${fzf_output}" | sed -n '2p')
+  target_raw=$(echo "${selection}" | awk -F'\t' '{print $1}')
 
-  if [[ -z "${target_raw}" ]]; then
+  if [[ -n "${target_raw}" && "${target_raw}" == Z:* ]]; then
+    # Zoxide path — create session at directory
+    local dir="${target_raw#Z:}"
+    local session_name="${dir##*/}"
+    # If session already exists, just switch to it
+    if tmux has-session -t "=${session_name}" 2>/dev/null; then
+      tmux switch-client -t "=${session_name}"
+    else
+      tmux new-session -d -s "${session_name}" -c "${dir}" && tmux switch-client -t "=${session_name}" && tmux display-message "Created session: ${session_name}"
+    fi
+  elif [[ -n "${target_raw}" ]]; then
+    # Item selected — switch to it
+    target=$(resolve_target "${target_raw}")
+    tmux switch-client -t "${target}" 2>/dev/null
+  elif [[ -n "${query}" ]]; then
+    # No match — create new session with query as name
+    tmux new-session -d -s "${query}" && tmux switch-client -t "=${query}" && tmux display-message "Created session: ${query}"
+  else
     tmux switch-client -t "${current_pane}"
-    return
   fi
-
-  target=$(resolve_target "${target_raw}")
-  tmux switch-client -t "${target}" 2>/dev/null || \
-    tmux command-prompt -b -p "Press ENTER to create a new window [${selection}]" \
-      "new-window -n '%%'"
 }
 
 select_pane

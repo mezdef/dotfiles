@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.marc.reapplywallpaper.plist
+  Re-applies current wallpaper when display configuration changes (monitor connect/disconnect).
+
+  Deploy:  cd ~/dotfiles && stow macos
+  Load:    launchctl load ~/Library/LaunchAgents/com.marc.reapplywallpaper.plist
+  Unload:  launchctl unload ~/Library/LaunchAgents/com.marc.reapplywallpaper.plist
+  Status:  launchctl list | grep reapplywallpaper
+  Logs:    cat ~/Library/Logs/reapply-wallpaper.log
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.marc.reapplywallpaper</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/marc.deferranti/.local/bin/reapply-wallpaper.sh</string>
+	</array>
+	<key>WatchPaths</key>
+	<array>
+		<string>/Library/Preferences/com.apple.windowserver.displays.plist</string>
+	</array>
+	<!-- Throttle: don't re-run more than once every 5 seconds -->
+	<key>ThrottleInterval</key>
+	<integer>5</integer>
+	<key>StandardOutPath</key>
+	<string>/Users/marc.deferranti/Library/Logs/reapply-wallpaper.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/marc.deferranti/Library/Logs/reapply-wallpaper.log</string>
+</dict>
+</plist>

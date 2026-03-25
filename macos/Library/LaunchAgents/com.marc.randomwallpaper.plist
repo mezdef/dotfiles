@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
   com.marc.randomwallpaper.plist
-  Runs random-wallpaper.sh on login and daily at 9am.
+  Runs random-wallpaper.sh on login and daily at 7am.
   Missed runs fire when Mac wakes from sleep.
 
   Deploy:  cd ~/dotfiles && stow macos
@@ -20,11 +20,11 @@
 	<array>
 		<string>/Users/marc.deferranti/.local/bin/random-wallpaper.sh</string>
 	</array>
-	<!-- Run daily at 9am. Missed runs fire when Mac wakes. -->
+	<!-- Run daily at 7am. Missed runs fire when Mac wakes. -->
 	<key>StartCalendarInterval</key>
 	<dict>
 		<key>Hour</key>
-		<integer>9</integer>
+		<integer>7</integer>
 		<key>Minute</key>
 		<integer>0</integer>
 	</dict>

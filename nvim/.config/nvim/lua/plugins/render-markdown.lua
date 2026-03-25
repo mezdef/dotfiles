@@ -6,11 +6,16 @@ return {
   ---@type render.md.UserConfig
   opts = {
     bullet = {
-      icons = { '-', '+', '*', '-' },
+      icons = { '•', '‣', '▪', '⬠' },
     },
     heading = {
       icons = { '# ', '## ', '### ', '#### ', '##### ', '###### ' },
       setext = false,
+      backgrounds = {},
+    },
+    code = {
+      style = 'full',
+      highlight = 'RenderMarkdownCode',
     },
   },
 }

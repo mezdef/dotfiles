@@ -17,6 +17,7 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Fast keyboard repeat rate, but delay long enough to not conflict
-# with home row mod hold timeouts (shift=160ms, cmd=300ms)
+# with home row mod hold timeouts (shift=160ms, cmd=350ms)
+# InitialKeyRepeat 20 = ~333ms before repeat starts
 defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+defaults write NSGlobalDomain InitialKeyRepeat -int 20

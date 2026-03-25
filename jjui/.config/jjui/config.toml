@@ -39,14 +39,22 @@ diff-editor = ":builtin"
 "status title" = { fg = "#1e1e2e", bg = "#cba6f7", bold = true }
 "status shortcut" = { fg = "#cba6f7" }
 "status dimmed" = { fg = "#a6adc8" }
-# catppuccin mocha surface0=#313244
-"selected" = { bg = "#585b70" }
+"revset title" = { fg = "#a6adc8", dim = true }
+"revset text" = { fg = "#a6adc8", dim = true }
+# catppuccin mocha surface1=#45475a
+"selected" = { bg = "#45475a", bold = false }
+"revisions details selected" = { bg = "#45475a" }
+"revisions details added" = { fg = "#a6e3a1" }
+"revisions details modified" = { fg = "#f9e2af" }
+"revisions details deleted" = { fg = "#f38ba8" }
+"revisions details renamed" = { fg = "#94e2d5" }
+"revisions details copied" = { fg = "#a6e3a1" }
 
 # Open codediff for selected changeset (working copy vs parent, or commit vs its parent)
 # Working copy: opens in editable mode (single rev = diff against working tree)
 # Other revisions: opens in read-only mode (two revs = committed diff)
-[custom_commands.codediff]
-key = ["d"]
+[[actions]]
+name = "codediff"
 lua = '''
 local change_id = context.change_id()
 if not change_id then
@@ -78,8 +86,8 @@ end
 
 # Open codediff for selected changeset against main/master
 # Auto-detects whether the repo uses "main" or "master" as the primary branch
-[custom_commands.codediff_main]
-key = ["D"]
+[[actions]]
+name = "codediff_main"
 lua = '''
 local change_id = context.change_id()
 if not change_id then
@@ -107,8 +115,8 @@ exec_shell("nvim -c 'CodeDiff " .. base_id .. " " .. full_id .. "'")
 '''
 
 # Open the selected file in nvim
-[custom_commands.open_file]
-key = ["o"]
+[[actions]]
+name = "open_file"
 lua = '''
 local file = context.file()
 if not file then
@@ -119,8 +127,8 @@ exec_shell("nvim " .. file)
 '''
 
 # Copy the selected change ID to the system clipboard
-[custom_commands.copy_to_clipboard]
-key = ["Y"]
+[[actions]]
+name = "copy_to_clipboard"
 lua = '''
 local change_id = context.change_id()
 if change_id then
@@ -130,3 +138,28 @@ if change_id then
 end
 flash("No item selected to copy")
 '''
+
+# Bindings
+[[bindings]]
+action = "codediff"
+key = ["d"]
+scope = "revisions"
+desc = "Open codediff"
+
+[[bindings]]
+action = "codediff_main"
+key = ["D"]
+scope = "revisions"
+desc = "Open codediff vs main"
+
+[[bindings]]
+action = "open_file"
+key = ["o"]
+scope = "revisions.details"
+desc = "Open file in nvim"
+
+[[bindings]]
+action = "copy_to_clipboard"
+key = ["Y"]
+scope = "revisions"
+desc = "Copy change ID"

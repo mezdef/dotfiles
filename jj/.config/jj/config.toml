@@ -36,29 +36,38 @@ diff-args = [
 
 [colors]
 # Changeset
-change_id = { fg = "white" }
-commit_id = { fg = "magenta" }
-prefix = { bold = true }                   # Prefix for change and commit
-rest = { fg = "default", dim = true }      # Text after prefix
-author = { fg = "blue", dim = true }       # Author email
-committer = { fg = "blue", dim = false }   # Author email
-timestamp = { fg = "default", dim = true }
-"bookmark" = "#cba6f7"
-"bookmarks" = "#cba6f7"
-"local_bookmarks" = "#cba6f7"
-"remote_bookmarks" = "#cba6f7"
+"change_id prefix" = { fg = "#b4befe", bold = true }
+"change_id rest" = { fg = "#b4befe", dim = true }
+"commit_id prefix" = { fg = "#b4befe", bold = true }
+"commit_id rest" = { fg = "#b4befe", dim = true }
+author = { fg = "#bac2de" }
+committer = { fg = "#cdd6f4" }
+timestamp = { fg = "#a6adc8" }
+description = { fg = "#7f849c" }
+"description placeholder" = { fg = "#fab387" }
+"empty" = { fg = "#fab387" }
+"empty description placeholder" = { fg = "#fab387" }
+"bookmark" = "#a6e3a1"
+"bookmarks" = "#a6e3a1"
+"local_bookmarks" = { fg = "#a6e3a1", dim = true }
+"remote_bookmarks" = "#89dceb"
+"working_copies" = { fg = "#f5c2e7", dim = true }
+"working_copy working_copies" = { fg = "#f5c2e7", dim = false }
 
 "working_copy" = { bold = true }
-"working_copy change_id" = { fg = "#a6e3a1", bg = "#11111b" }
-"working_copy commit_id" = "magenta"
-"working_copy author" = "blue"
-"working_copy committer" = "blue"
-"working_copy timestamp" = "default"
-"working_copy working_copies" = "bright green"
-"working_copy bookmark" = "bright magenta"
-"working_copy bookmarks" = "bright magenta"
-"working_copy local_bookmarks" = "bright magenta"
-"working_copy remote_bookmarks" = "bright magenta"
+"node working_copy" = { fg = "#a6e3a1", bold = true }
+"working_copy change_id prefix" = { fg = "#1e1e2e", bg = "#a6e3a1", bold = true }
+"working_copy change_id rest" = { fg = "#45475a", bg = "#a6e3a1", bold = false, dim = false }
+"working_copy commit_id prefix" = { bold = true }
+"working_copy commit_id rest" = { dim = true }
+"working_copy author" = { bold = true }
+"working_copy committer" = { bold = true }
+"working_copy timestamp" = { bold = true }
+"working_copy description" = { fg = "#a6e3a1", bold = false, dim = false }
+"working_copy bookmark" = "#a6e3a1"
+"working_copy bookmarks" = "#a6e3a1"
+"working_copy local_bookmarks" = { fg = "#a6e3a1", dim = true }
+"working_copy remote_bookmarks" = "#89dceb"
 "working_copy tag" = "bright magenta"
 "working_copy tags" = "bright magenta"
 "working_copy git_ref" = "bright green"
@@ -68,10 +77,10 @@ timestamp = { fg = "default", dim = true }
 "working_copy mutable divergent change_id" = "bright red"
 "conflict" = { fg = "#11111b", bg = "red", bold = true }
 "working_copy conflict" = { fg = "#11111b", bg = "red", bold = true }
-"working_copy empty" = "yellow"
-"working_copy placeholder" = "bright red"
-"working_copy description placeholder" = "yellow"
-"working_copy empty description placeholder" = "yellow"
+"working_copy empty" = { fg = "#f9e2af", bold = false }
+"working_copy placeholder" = { fg = "#f9e2af", bold = false }
+"working_copy description placeholder" = { fg = "#f9e2af", bold = false }
+"working_copy empty description placeholder" = { fg = "#f9e2af", bold = false }
 
 "diff header" = "yellow"
 "diff empty" = "cyan"

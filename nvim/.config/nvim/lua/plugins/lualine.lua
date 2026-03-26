@@ -2,6 +2,7 @@ return {
   "nvim-lualine/lualine.nvim",
   opts = function(_, opts)
     local colors = require("catppuccin.palettes").get_palette("mocha")
+    local icons = LazyVim.config.icons
 
     local mode_colors = {
       n = colors.green,
@@ -9,7 +10,7 @@ return {
       v = colors.mauve,
       V = colors.mauve,
       ["\22"] = colors.mauve, -- ctrl-v block visual
-      c = colors.peach,
+      c = colors.red,
       R = colors.red,
     }
 
@@ -19,7 +20,7 @@ return {
 
     opts.options = opts.options or {}
     opts.options.section_separators = { left = "", right = "" }
-    opts.options.component_separators = { left = "›", right = "‹" }
+    opts.options.component_separators = { left = "", right = "" }
 
     opts.sections.lualine_a = {
       {
@@ -34,66 +35,49 @@ return {
 
     opts.sections.lualine_b = {
       {
-        "branch",
+        function()
+          local branch = vim.b.gitsigns_head or ""
+          if branch ~= "" then
+            return " " .. branch
+          end
+          local gs = vim.b.gitsigns_status_dict
+          if gs then
+            local parts = {}
+            if (gs.added or 0) > 0 then table.insert(parts, icons.git.added .. gs.added) end
+            if (gs.changed or 0) > 0 then table.insert(parts, icons.git.modified .. gs.changed) end
+            if (gs.removed or 0) > 0 then table.insert(parts, icons.git.removed .. gs.removed) end
+            if #parts > 0 then
+              return table.concat(parts, " ")
+            end
+          end
+          return ""
+        end,
         color = function()
           return { bg = colors.surface1, fg = mode_color() }
         end,
       },
-    }
-
-    local icons = LazyVim.config.icons
-
-    opts.sections.lualine_c = {
       {
         function()
-          local root = LazyVim.root.get({ normalize = true })
-          local cwd = LazyVim.root.cwd()
-          if root == cwd then
-            return ""
-          end
-          return " " .. vim.fs.basename(root)
-        end,
-        cond = function()
-          return LazyVim.root.get({ normalize = true }) ~= LazyVim.root.cwd()
-        end,
-        color = { fg = colors.blue },
-      },
-      -- {
-      --   "diagnostics",
-      --   symbols = {
-      --     error = icons.diagnostics.Error,
-      --     warn = icons.diagnostics.Warn,
-      --     info = icons.diagnostics.Info,
-      --     hint = icons.diagnostics.Hint,
-      --   },
-      -- },
-      {
-        "filetype",
-        icon_only = true,
-        separator = "",
-        padding = { left = 0, right = 0 },
-      },
-      {
-        function(self)
-          local filepath = vim.fn.expand("%:~:.")
-          local parts = vim.split(filepath, "/")
-          local filename
-          if #parts <= 3 then
-            filename = filepath
-          else
-            filename = table.concat({ "…", parts[#parts - 2], parts[#parts - 1], parts[#parts] }, "/")
-          end
+          local filename = vim.fn.expand("%:t")
           if filename == "" then
-            return ""
+            return "[No Name]"
           end
           if vim.bo.modified then
-            return LazyVim.lualine.format(self, filename .. "", "MatchParen")
+            return filename .. " ●"
           end
-          return LazyVim.lualine.format(self, filename, "Bold")
+          return filename
         end,
-        padding = { left = 0, right = 1 },
+        color = function()
+          if vim.bo.modified then
+            return { fg = colors.yellow }
+          end
+          return { fg = colors.subtext0 }
+        end,
+        padding = { left = 1, right = 1 },
       },
     }
+
+    opts.sections.lualine_c = {}
 
     opts.sections.lualine_x = {
       Snacks.profiler.status(),
@@ -160,6 +144,23 @@ return {
     }
 
     opts.sections.lualine_y = {
+      {
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+          local ft = vim.bo[buf].filetype
+          if ft == "" then
+            return "? none"
+          end
+          local has_lsp = #vim.lsp.get_clients({ bufnr = buf }) > 0
+          if has_lsp then
+            local icon = require("mini.icons").get("filetype", ft)
+            return icon .. " " .. ft
+          end
+          return "? " .. ft
+        end,
+        color = { fg = colors.subtext0 },
+        padding = { left = 1, right = 1 },
+      },
       {
         "progress",
         separator = " ",

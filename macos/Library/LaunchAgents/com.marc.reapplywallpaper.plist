@@ -22,9 +22,9 @@
 	<array>
 		<string>/Library/Preferences/com.apple.windowserver.displays.plist</string>
 	</array>
-	<!-- Throttle: don't re-run more than once every 5 seconds -->
+	<!-- Throttle: don't re-run more than once every 10 seconds -->
 	<key>ThrottleInterval</key>
-	<integer>5</integer>
+	<integer>10</integer>
 	<key>StandardOutPath</key>
 	<string>/Users/marc.deferranti/Library/Logs/reapply-wallpaper.log</string>
 	<key>StandardErrorPath</key>

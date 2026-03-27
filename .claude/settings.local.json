@@ -12,7 +12,8 @@
       "Bash(stow kanata:*)",
       "Bash(sesh --version)",
       "Bash(brew list:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Read(//Library/Logs/Kanata/**)"
     ]
   }
 }

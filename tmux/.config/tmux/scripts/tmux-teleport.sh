@@ -29,13 +29,12 @@ ZOXIDE_ICON=""
 RESET=$'\033[0m'
 hex_fg() { printf '\033[38;2;%d;%d;%dm' "0x${1:0:2}" "0x${1:2:2}" "0x${1:4:2}"; }
 
-SESSION_COLOR=$(hex_fg "$(tmux show-option -gqv @thm_green 2>/dev/null | tr -d '#')")
-WINDOW_COLOR=$(hex_fg "$(tmux show-option -gqv @thm_mauve 2>/dev/null | tr -d '#')")
-ZOXIDE_COLOR=$(hex_fg "$(tmux show-option -gqv @thm_blue 2>/dev/null | tr -d '#')")
-# Fallbacks if theme vars are empty
-[[ -z "$(tmux show-option -gqv @thm_green 2>/dev/null)" ]] && SESSION_COLOR=$(hex_fg "a6e3a1")
-[[ -z "$(tmux show-option -gqv @thm_mauve 2>/dev/null)" ]] && WINDOW_COLOR=$(hex_fg "cba6f7")
-[[ -z "$(tmux show-option -gqv @thm_blue 2>/dev/null)" ]]  && ZOXIDE_COLOR=$(hex_fg "89b4fa")
+_green=$(tmux show-option -gqv @thm_green 2>/dev/null | tr -d '#')
+_mauve=$(tmux show-option -gqv @thm_mauve 2>/dev/null | tr -d '#')
+_blue=$(tmux show-option -gqv @thm_blue 2>/dev/null | tr -d '#')
+SESSION_COLOR=$(hex_fg "${_green:-a6e3a1}")
+WINDOW_COLOR=$(hex_fg "${_mauve:-cba6f7}")
+ZOXIDE_COLOR=$(hex_fg "${_blue:-89b4fa}")
 
 # ─── Output Format ───────────────────────────────────────────────
 # Each line is: TARGET_ID<TAB>ICON DISPLAY_TEXT
@@ -77,6 +76,17 @@ function pane_icon() {
   fi
 }
 
+# Pre-resolve icons for all unique pane commands (avoids per-pane subprocess)
+declare -A ICON_CACHE
+function build_icon_cache() {
+  local cmds
+  cmds=$(tmux list-panes -aF '#{pane_current_command}' | sort -u)
+  while IFS= read -r cmd; do
+    [[ -z "$cmd" ]] && continue
+    ICON_CACHE["$cmd"]=$(pane_icon "$cmd")
+  done <<< "$cmds"
+}
+
 # Convert target ID to a tmux -t target string
 function resolve_target() {
   local raw="$1" type="${1%%:*}" rest="${1#*:}"
@@ -94,58 +104,66 @@ function resolve_target() {
 
 function list_sessions() {
   local current="$1"; shift
-  tmux list-sessions -F "${SESSION_FORMAT}" -f "#{==:#{session_name},${current}}" | while IFS= read -r line; do
+  local all_lines current_line=() other_lines=()
+  while IFS= read -r line; do
+    local name="${line%%${TAB}*}"; name="${name#S:}"
+    if [[ "$name" == "$current" ]]; then
+      current_line+=("$line")
+    else
+      other_lines+=("$line")
+    fi
+  done < <(tmux list-sessions -F "${SESSION_FORMAT}")
+  for line in "${current_line[@]}" "${other_lines[@]}"; do
     local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
     echo "${id}${TAB}${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
-  done
-  for s in "$@"; do
-    tmux list-sessions -F "${SESSION_FORMAT}" -f "#{==:#{session_name},${s}}" | while IFS= read -r line; do
-      local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
-      echo "${id}${TAB}${SESSION_COLOR}${SESSION_ICON}${RESET} ${rest}"
-    done
   done
 }
 
 function list_windows() {
   local current="$1" current_window="$2"; shift 2
-  # Current window first
-  tmux list-windows -F "${WINDOW_FORMAT}" -t "=${current}" -f "#{==:#{window_index},${current_window}}" | while IFS= read -r line; do
+  local current_win_lines=() current_other_lines=() other_session_lines=()
+  while IFS= read -r line; do
+    local id="${line%%${TAB}*}"
+    # id is W:session_name:window_index
+    local session_and_win="${id#W:}"
+    local session="${session_and_win%%:*}"
+    local win="${session_and_win##*:}"
+    if [[ "$session" == "$current" && "$win" == "$current_window" ]]; then
+      current_win_lines+=("$line")
+    elif [[ "$session" == "$current" ]]; then
+      current_other_lines+=("$line")
+    else
+      other_session_lines+=("$line")
+    fi
+  done < <(tmux list-windows -aF "${WINDOW_FORMAT}")
+  for line in "${current_win_lines[@]}" "${current_other_lines[@]}" "${other_session_lines[@]}"; do
     local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
     echo "${id}${TAB}${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
-  done
-  # Other windows in current session
-  tmux list-windows -F "${WINDOW_FORMAT}" -t "=${current}" -f "#{!=:#{window_index},${current_window}}" | while IFS= read -r line; do
-    local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
-    echo "${id}${TAB}${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
-  done
-  for s in "$@"; do
-    tmux list-windows -F "${WINDOW_FORMAT}" -t "=${s}" | while IFS= read -r line; do
-      local id="${line%%${TAB}*}" rest="${line#*${TAB}}"
-      echo "${id}${TAB}${WINDOW_COLOR}${WINDOW_ICON}${RESET} ${rest}"
-    done
   done
 }
 
 function list_panes() {
   local current="$1" current_window="$2"; shift 2
-  # Current window's panes first
-  tmux list-panes -F "${PANE_FORMAT}" -t "=${current}:${current_window}" | while IFS= read -r line; do
+  local current_win_lines=() current_other_lines=() other_session_lines=()
+  while IFS= read -r line; do
+    local id="${line%%${TAB}*}"
+    # id is P:session_name:window_index.pane_index
+    local session_and_rest="${id#P:}"
+    local session="${session_and_rest%%:*}"
+    local win_pane="${session_and_rest#*:}"
+    local win="${win_pane%%.*}"
+    if [[ "$session" == "$current" && "$win" == "$current_window" ]]; then
+      current_win_lines+=("$line")
+    elif [[ "$session" == "$current" ]]; then
+      current_other_lines+=("$line")
+    else
+      other_session_lines+=("$line")
+    fi
+  done < <(tmux list-panes -aF "${PANE_FORMAT}")
+  for line in "${current_win_lines[@]}" "${current_other_lines[@]}" "${other_session_lines[@]}"; do
     local id="${line%%${TAB}*}" rest="${line#*${TAB}}" cmd="${line##* }"
-    local icon; icon=$(pane_icon "${cmd}")
+    local icon="${ICON_CACHE[${cmd}]:-}"
     echo "${id}${TAB}${icon} ${rest}"
-  done
-  # Other panes in current session (exclude current window)
-  tmux list-panes -sF "${PANE_FORMAT}" -t "=${current}" -f "#{!=:#{window_index},${current_window}}" | while IFS= read -r line; do
-    local id="${line%%${TAB}*}" rest="${line#*${TAB}}" cmd="${line##* }"
-    local icon; icon=$(pane_icon "${cmd}")
-    echo "${id}${TAB}${icon} ${rest}"
-  done
-  for s in "$@"; do
-    tmux list-panes -sF "${PANE_FORMAT}" -t "=${s}" | while IFS= read -r line; do
-      local id="${line%%${TAB}*}" rest="${line#*${TAB}}" cmd="${line##* }"
-      local icon; icon=$(pane_icon "${cmd}")
-      echo "${id}${TAB}${icon} ${rest}"
-    done
   done
 }
 
@@ -160,6 +178,8 @@ function generate_list() {
 
   local other_sessions
   mapfile -t other_sessions < <(tmux list-sessions -F '#{session_name}' | grep -vxF "${current_session}" | sort)
+
+  build_icon_cache
 
   list_sessions "${current_session}" "${other_sessions[@]}"
   list_windows "${current_session}" "${current_window}" "${other_sessions[@]}"

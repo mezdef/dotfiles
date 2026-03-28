@@ -20,7 +20,11 @@
 
 (defvar
   ;; tap timeout — max time a key can be held and still count as a tap
-  tot 220
+  tot 175
+
+  ;; Hand key lists for achordion (same-hand = tap, opposite-hand = hold)
+  left-hand-keys (q w e r t a s d f g z x c v b)
+  right-hand-keys (y u i o p h j k l ; n m , . /)
 )
 
 (deftemplate homerowmod (timeouttap timeouthold keytap keyhold)

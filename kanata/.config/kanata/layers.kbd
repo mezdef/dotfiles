@@ -13,8 +13,9 @@
   ;;                          a/; start many words (base, as, ask)
   ;;   middle (cmd):  350ms — slower finger, more false-activation prone
   ;;   ring (opt):    400ms — slowest, least used
-  f (t! homerowmod $tot 160 f lsft)
-  j (t! homerowmod $tot 160 j rsft)
+  ;; f/j shift temporarily disabled — too many misfires
+  f (multi f @.tp)
+  j (multi j @.tp)
   a (t! homerowmod $tot 300 a lctl)
   ; (t! homerowmod $tot 300 ; rctl)
   d (t! homerowmod $tot 350 d lmet)

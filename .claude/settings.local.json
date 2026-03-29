@@ -13,7 +13,9 @@
       "Bash(sesh --version)",
       "Bash(brew list:*)",
       "Bash(gh api:*)",
-      "Read(//Library/Logs/Kanata/**)"
+      "Read(//Library/Logs/Kanata/**)",
+      "Bash(~/zsh-bench/zsh-bench 2>&1)",
+      "Bash(fzf --zsh)"
     ]
   }
 }

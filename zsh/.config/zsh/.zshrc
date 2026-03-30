@@ -1,8 +1,12 @@
+# .zshrc — sourced for interactive shells.
+# Main config: history, plugins, prompt, tools, aliases.
+# Machine-specific overrides go in .zshrc.local (git-ignored).
+# See .zshenv for the full file map.
+
 ################################################################################
-# Misc
+# History
 ################################################################################
 
-# History
 HISTFILE=~/.cache/zsh/.zsh_history
 export SAVEHIST=1000000
 export HISTSIZE=$SAVEHIST
@@ -16,87 +20,84 @@ setopt hist_find_no_dups
 setopt hist_ignore_all_dups
 setopt share_history
 
-autoload -U compinit && compinit
+################################################################################
+# Init Caching
+################################################################################
 
+# Runs a command once and caches its stdout to ~/.cache/zsh/<name>.
+# Subsequent shells source the cached file instead of forking the command.
+# Saves ~10ms per cached tool (starship, carapace, zoxide, fzf each fork on init).
+# Clear caches with: rm ~/.cache/zsh/*.zsh (or use the `rr` alias).
+_cache_init() {
+  local cache="$HOME/.cache/zsh/$1"; shift
+  if [[ ! -f "$cache" || ! -s "$cache" ]]; then
+    mkdir -p "${cache:h}"
+    "$@" > "$cache"
+  fi
+  source "$cache"
+}
+
+# Regenerate completion dump at most once per day (-C skips security check).
+# Full compinit runs ~15ms; cached compinit -C runs ~3ms.
+autoload -U compinit
+if [[ -n $ZDOTDIR/.zcompdump(#qN.mh+24) ]]; then
+  compinit -d "$ZDOTDIR/.zcompdump"
+else
+  compinit -C -d "$ZDOTDIR/.zcompdump"
+fi
+
+################################################################################
 # Plugins
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-################################################################################
-# Terminal Theme
 ################################################################################
 
-# Starship
-eval "$(starship init zsh)"
-export STARSHIP_CONFIG=~/.config/starship/starship.toml
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# zsh-patina: Rust-daemon syntax highlighter, replaces zsh-syntax-highlighting.
+# ~5ms lower input_lag (1.9ms vs 7ms) due to async daemon architecture.
+_cache_init zsh-patina.zsh /opt/homebrew/bin/zsh-patina activate
 
 ################################################################################
-# VIM Settings for Terminal
+# Prompt & Vi Mode
 ################################################################################
 
-# Catppuccin mocha colors (for cursor)
-CATPPUCCIN_TEXT="#cdd6f4"
-CATPPUCCIN_GREEN="#a6e3a1"
+source "$ZDOTDIR/theme.zsh"
+source "$ZDOTDIR/prompt.zsh" # prompt symbol, directory, cmd duration, vi cursor colors
 
-# vi mode
+# Vi mode with instant mode switching
 bindkey -v
 export KEYTIMEOUT=1
 
-# Change cursor shape for different vi modes.
-function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne "\e[1 q\e]12;${CATPPUCCIN_GREEN}\a"  # block, blue (normal mode)
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a"  # block, white (insert mode)
-  fi
-  zle reset-prompt
-}
-zle -N zle-keymap-select
-zle-line-init() {
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a"
-}
-zle -N zle-line-init
-echo -ne "\e[1 q\e]12;${CATPPUCCIN_TEXT}\a" # Block cursor, white on startup.
-preexec() { echo -ne '\e[1 q\e]12;${CATPPUCCIN_TEXT}\a' ;} # Reset to insert mode cursor before each command.
-
 ################################################################################
-# Git
+# Environment
 ################################################################################
 
 export EDITOR="nvim"
 export GIT_EDITOR="nvim"
 
 ################################################################################
-# Libraries
+# Tools (all use _cache_init to avoid fork-on-startup cost)
 ################################################################################
 
-# Carapace
-CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
+# Carapace — multi-shell completion engine
+CARAPACE_BRIDGES='zsh,bash,inshellisense'
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-source <(carapace _carapace)
+_cache_init carapace.zsh carapace _carapace
 
-# Eza - better ls
 export EZA_ICONS_AUTO=always
 
-# Zoxide - Better CD
-eval "$(zoxide init zsh)"
+_cache_init zoxide.zsh zoxide init zsh
+_cache_init fzf.zsh fzf --zsh
 
-# fzf - key bindings and fuzzy completion
-source <(fzf --zsh)
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+# Bun completions — lazy-loaded because the file is ~1000 lines and only
+# needed when you actually tab-complete a bun command.
+if [[ -s "$HOME/.bun/_bun" ]]; then
+  _bun_lazy() { unfunction _bun_lazy; source "$HOME/.bun/_bun"; _bun "$@"; }
+  compdef _bun_lazy bun
+fi
 
 ################################################################################
 # Aliases
 ################################################################################
 
-# Dirs
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -104,7 +105,7 @@ alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
 alias cl="clear"
-alias rr='source ~/.zshenv && source $ZDOTDIR/.zprofile && source $ZDOTDIR/.zshrc && rehash'
+alias rr='rm -f ~/.cache/zsh/*.zsh; source ~/.zshenv && source $ZDOTDIR/.zprofile && source $ZDOTDIR/.zshrc && rehash'
 alias ls='eza --icons'
 alias la='eza -la --icons --git'
 alias lt='eza --tree --level=2 --icons'
@@ -120,35 +121,6 @@ alias tls="tmux list-sessions"
 # Functions
 ################################################################################
 
-# Create a jj workspace with a colocated git worktree so tools like codediff
-# that rely on git can resolve commits in the workspace.
-# Usage: jjw <path> [jj workspace add args...]
-jjw() {
-  local dest="$1"
-  if [[ -z "$dest" ]]; then
-    echo "Usage: jjw <path> [jj workspace add args...]"
-    return 1
-  fi
-  shift
-
-  # Find the git dir for the current repo
-  local git_dir
-  git_dir="$(git rev-parse --git-dir 2>/dev/null)" || {
-    echo "Error: not in a git repository (colocated jj repo required)"
-    return 1
-  }
-  git_dir="$(cd "$(dirname "$git_dir")" && pwd)/$(basename "$git_dir")"
-
-  local ws_name="${dest:t}"
-
-  jj workspace add "$dest" "$@" || return 1
-  git worktree add --detach "$dest" || {
-    echo "Warning: git worktree add failed — codediff may not work in this workspace"
-    return 1
-  }
-
-  echo "Workspace '$ws_name' created at $dest (jj + git worktree)"
-}
+source "$ZDOTDIR/jj.zsh" # jjw workspace helper
 
 [[ -f "$ZDOTDIR/.zshrc.local" ]] && source "$ZDOTDIR/.zshrc.local"
-

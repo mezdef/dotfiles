@@ -1,6 +1,10 @@
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
+
+-- Move macro recording to Q to prevent accidental triggers
+vim.keymap.set("n", "q", "<Nop>", { desc = "Disable accidental macro recording" })
+vim.keymap.set("n", "Q", "q", { desc = "Record macro" })
 vim.keymap.set("n", "<leader>q", function()
   require("quicker").toggle()
 end, {

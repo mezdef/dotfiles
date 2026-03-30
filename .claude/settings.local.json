@@ -15,7 +15,10 @@
       "Bash(gh api:*)",
       "Read(//Library/Logs/Kanata/**)",
       "Bash(~/zsh-bench/zsh-bench 2>&1)",
-      "Bash(fzf --zsh)"
+      "Bash(fzf --zsh)",
+      "Bash(carapace _carapace)",
+      "Bash(starship init:*)",
+      "Bash(zoxide init:*)"
     ]
   }
 }

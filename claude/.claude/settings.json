@@ -8,6 +8,7 @@
       "Write",
       "NotebookEdit",
       "mcp__linear__*",
+      "mcp__playwright__*",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(jj status:*)",

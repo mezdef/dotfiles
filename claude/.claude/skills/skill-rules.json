@@ -193,6 +193,100 @@
                 ]
             }
         },
+        "query-logs-production": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Query Vercel production logs — ONLY when user explicitly says production/prod/live/vercel",
+            "promptTriggers": {
+                "keywords": [
+                    "production logs",
+                    "prod logs",
+                    "vercel logs",
+                    "production error",
+                    "prod error",
+                    "live error",
+                    "live traffic"
+                ],
+                "intentPatterns": [
+                    "(production|prod|live|vercel).*?(log|error|issue)",
+                    "(check|query|investigate).*?(production|prod|live|vercel)"
+                ]
+            }
+        },
+        "query-db-production": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Query production read replica — ONLY when user explicitly says production/prod/live",
+            "promptTriggers": {
+                "keywords": [
+                    "production data",
+                    "prod database",
+                    "prod data",
+                    "query production",
+                    "live data",
+                    "read replica",
+                    "check prod"
+                ],
+                "intentPatterns": [
+                    "(production|prod|live).*?(data|database|db|issue|bug)",
+                    "(investigate|check|query).*?(production|prod|live)",
+                    "(read replica|read-replica).*?(query|check)"
+                ]
+            }
+        },
+        "query-logs-development": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Query local development logs for debugging and verifying changes",
+            "promptTriggers": {
+                "keywords": [
+                    "dev logs",
+                    "check logs",
+                    "development error",
+                    "dev server",
+                    "local error",
+                    "console output",
+                    "check dev",
+                    "verify changes",
+                    "compilation error",
+                    "check for errors"
+                ],
+                "intentPatterns": [
+                    "(check|query|search|look at).*?(dev|local|development).*?(log|error|output)",
+                    "(dev|local|development).*?(log|error|server|output)",
+                    "(verify|check|confirm).*?(change|work|fix)",
+                    "(compilation|runtime|server).*?error"
+                ]
+            }
+        },
+        "browser-dev": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Playwright MCP browser automation for verifying UI changes and debugging client-side issues",
+            "promptTriggers": {
+                "keywords": [
+                    "browser",
+                    "UI check",
+                    "client error",
+                    "console error",
+                    "screenshot",
+                    "visual check",
+                    "network request",
+                    "does it look",
+                    "render",
+                    "hydration"
+                ],
+                "intentPatterns": [
+                    "(check|verify|test).*?(browser|UI|visual|render|client)",
+                    "(screenshot|console|network).*?(error|log|request)",
+                    "does.*(look|render|display|show)"
+                ]
+            }
+        },
         "writing-code-quick": {
             "type": "domain",
             "enforcement": "suggest",

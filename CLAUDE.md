@@ -25,7 +25,7 @@ Key files:
 
 Replaces Karabiner for home row mods, hyper key, and spotlight remap. Config is `.kbd` files in `kanata/.config/kanata/`.
 
-**To edit:** modify `.kbd` files — `live-reload yes` picks up changes automatically.
+**To edit:** modify `.kbd` files, then restart kanata: `sudo launchctl kickstart -k system/com.jtroo.kanata`
 
 Key files:
 - `kanata/.config/kanata/kanata.kbd` — entry point, defcfg, includes

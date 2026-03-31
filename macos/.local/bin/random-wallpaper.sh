@@ -5,11 +5,31 @@
 #   random-wallpaper.sh [wallpaper_dir]
 #
 # Arguments:
-#   wallpaper_dir  Path to folder of images (default: ~/Library/CloudStorage/Dropbox/Resorces/wallpaper)
+#   wallpaper_dir  Path to folder of images (default: ~/Library/CloudStorage/Dropbox/Resources/wallpaper)
 #
 # Supported formats: jpg, jpeg, png, heic, webp
 #
-# Scheduled via launchd (com.marc.randomwallpaper.plist).
+# Goals:
+#   1. Shuffle wallpaper daily — one random image from the wallpaper folder.
+#   2. Same image on every screen and desktop — macOS's built-in wallpaper shuffle
+#      picks a different image per screen/Space, which we don't want.
+#   3. Newly connected screens match — when a monitor is plugged in (or wakes from
+#      a dock), it should show the same daily wallpaper, not revert to an old one.
+#
+# Architecture:
+#   This shell script handles the Dropbox mount wait (cloud storage may not be
+#   available at login), then delegates to random-wallpaper.swift for the actual
+#   wallpaper setting. Swift is needed because:
+#     - NSWorkspace API (only way to set wallpaper on connected screens) requires AppKit
+#     - Direct plist manipulation (needed for disconnected monitors and Spaces) requires
+#       Foundation's PropertyListSerialization for binary plist read/write
+#   See random-wallpaper.swift for details on the two-phase approach.
+#
+# Companion: reapply-wallpaper.sh handles goal #3 — re-applies the current wallpaper
+# when monitors are connected/disconnected (triggered by display config changes via
+# launchd WatchPaths).
+#
+# Scheduled via launchd (com.marc.randomwallpaper.plist) — runs at login and daily at 7am.
 # Logs to ~/Library/Logs/random-wallpaper.log when run by launchd.
 #
 # Deploy:
@@ -21,7 +41,8 @@
 #   launchctl unload ~/Library/LaunchAgents/com.marc.randomwallpaper.plist  # stop
 set -euo pipefail
 
-WALLPAPER_DIR="${1:-$HOME/Library/CloudStorage/Dropbox/Resorces/wallpaper}"
+WALLPAPER_DIR="${1:-$HOME/Library/CloudStorage/Dropbox/Resources/wallpaper}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Wait for Dropbox CloudStorage to mount (up to 2 minutes)
 retries=24
@@ -36,123 +57,6 @@ if [[ ! -d "$WALLPAPER_DIR" ]]; then
   exit 1
 fi
 
-# Use Swift to set wallpaper on connected screens via NSWorkspace AND update the
-# wallpaper plist for ALL known displays (including disconnected monitors).
-# NSWorkspace alone only affects connected screens — disconnected monitors read
-# from ~/Library/Application Support/com.apple.wallpaper/Store/Index.plist.
-wallpaper=$(WALLPAPER_DIR="$WALLPAPER_DIR" swift -e '
-import AppKit
-import Foundation
-
-let dir = ProcessInfo.processInfo.environment["WALLPAPER_DIR"]!
-let url = URL(fileURLWithPath: dir)
-let exts: Set = ["jpg", "jpeg", "png", "heic", "webp"]
-let files = try FileManager.default
-    .contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-    .filter { exts.contains($0.pathExtension.lowercased()) }
-
-guard !files.isEmpty else { fputs("no image files found\n", stderr); exit(1) }
-
-let picked = files[Int.random(in: 0..<files.count)]
-
-// 1. Set connected screens immediately via NSWorkspace
-let ws = NSWorkspace.shared
-for screen in NSScreen.screens {
-    try ws.setDesktopImageURL(picked, for: screen, options: [:])
-}
-
-// Wait for wallpaper agent to finish writing its plist update from NSWorkspace
-Thread.sleep(forTimeInterval: 1.0)
-
-// 2. Update the wallpaper plist for ALL displays (including disconnected)
-let plistPath = NSHomeDirectory() + "/Library/Application Support/com.apple.wallpaper/Store/Index.plist"
-let plistURL = URL(fileURLWithPath: plistPath)
-
-if let plistData = try? Data(contentsOf: plistURL),
-   var plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any] {
-
-    // Build Configuration binary plist for the new image
-    let config: [String: Any] = [
-        "type": "imageFile",
-        "url": ["relative": "file://" + picked.path]
-    ]
-    let configData = try PropertyListSerialization.data(fromPropertyList: config, format: .binary, options: 0)
-
-    // Find existing EncodedOptionValues (placement/color settings) to preserve
-    func findOptions(in plist: [String: Any]) -> Data? {
-        guard let displays = plist["Displays"] as? [String: Any] else { return nil }
-        for (_, val) in displays {
-            guard let d = val as? [String: Any],
-                  let desktop = d["Desktop"] as? [String: Any],
-                  let content = desktop["Content"] as? [String: Any],
-                  let opts = content["EncodedOptionValues"] as? Data,
-                  opts.count > 0 else { continue }
-            return opts
-        }
-        return nil
-    }
-    let options = findOptions(in: plist)
-
-    // Replace Desktop wallpaper in a Content dict
-    func updateContent(_ content: inout [String: Any]) {
-        guard var choices = content["Choices"] as? [[String: Any]], !choices.isEmpty else { return }
-        choices[0]["Configuration"] = configData
-        choices[0]["Provider"] = "com.apple.wallpaper.choice.image"
-        content["Choices"] = choices
-        if let options { content["EncodedOptionValues"] = options }
-    }
-
-    // Update Displays
-    if var displays = plist["Displays"] as? [String: Any] {
-        for (uuid, val) in displays {
-            guard var d = val as? [String: Any],
-                  var desktop = d["Desktop"] as? [String: Any],
-                  var content = desktop["Content"] as? [String: Any] else { continue }
-            updateContent(&content)
-            desktop["Content"] = content; d["Desktop"] = desktop; displays[uuid] = d
-        }
-        plist["Displays"] = displays
-    }
-
-    // Update Spaces (per-space default + per-space per-display)
-    if var spaces = plist["Spaces"] as? [String: Any] {
-        for (spaceUUID, spaceVal) in spaces {
-            guard var space = spaceVal as? [String: Any] else { continue }
-            if var def = space["Default"] as? [String: Any],
-               var desktop = def["Desktop"] as? [String: Any],
-               var content = desktop["Content"] as? [String: Any] {
-                updateContent(&content)
-                desktop["Content"] = content; def["Desktop"] = desktop; space["Default"] = def
-            }
-            if var spaceDisplays = space["Displays"] as? [String: Any] {
-                for (dUUID, dVal) in spaceDisplays {
-                    guard var d = dVal as? [String: Any],
-                          var desktop = d["Desktop"] as? [String: Any],
-                          var content = desktop["Content"] as? [String: Any] else { continue }
-                    updateContent(&content)
-                    desktop["Content"] = content; d["Desktop"] = desktop; spaceDisplays[dUUID] = d
-                }
-                space["Displays"] = spaceDisplays
-            }
-            spaces[spaceUUID] = space
-        }
-        plist["Spaces"] = spaces
-    }
-
-    // Update SystemDefault
-    if var sysDefault = plist["SystemDefault"] as? [String: Any],
-       var desktop = sysDefault["Desktop"] as? [String: Any],
-       var content = desktop["Content"] as? [String: Any] {
-        updateContent(&content)
-        desktop["Content"] = content; sysDefault["Desktop"] = desktop
-        plist["SystemDefault"] = sysDefault
-    }
-
-    let outData = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
-    try outData.write(to: plistURL, options: .atomic)
-}
-
-print(picked.path)
-')
+wallpaper=$(WALLPAPER_DIR="$WALLPAPER_DIR" swift "$SCRIPT_DIR/random-wallpaper.swift")
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') Setting wallpaper: $wallpaper"

@@ -22,6 +22,7 @@ command -v fzf >/dev/null 2>&1 || { echo "fzf not found"; exit 1; }
 
 # ─── Configuration ────────────────────────────────────────────────
 
+TOGGLE_KEY="ctrl-p"  # fzf key to dismiss popup (should match tmux bind)
 PREVIEW_PANE=true
 # Popup dimensions controlled by display-popup in tmux.conf (not fzf --tmux)
 # to avoid the bell that run-shell triggers on completion.
@@ -321,6 +322,11 @@ function preview_target() {
 # ─── Subcommands ─────────────────────────────────────────────────
 # Called by fzf binds via execute-silent/execute/reload.
 
+# Parse --toggle-key before subcommands so it can be combined with normal invocation
+if [[ "${1:-}" == "--toggle-key" ]]; then
+  TOGGLE_KEY="$2"; shift 2
+fi
+
 case "${1:-}" in
   --list)    generate_list; exit 0 ;;
   --zoxide)  generate_zoxide_list; exit 0 ;;
@@ -341,7 +347,7 @@ function main() {
     --ansi --exit-0 --tiebreak=index
     --delimiter "\t"
     --with-nth=2..
-    --header "  C-d kill  C-r rename  C-f zoxide  C-b back  ? preview"
+    --header "  C-d kill  C-r rename  C-f zoxide  C-b back  ? preview  ${TOGGLE_KEY} close"
   )
 
   # Keybindings
@@ -351,6 +357,7 @@ function main() {
     --bind "ctrl-f:change-prompt(  Zoxide: )+reload(${SCRIPT_PATH} --zoxide)+clear-query"
     --bind "ctrl-b:change-prompt(  Search: )+reload(${SCRIPT_PATH} --list)+clear-query"
     --bind "?:toggle-preview"
+    --bind "${TOGGLE_KEY}:abort"  # Toggle: opens popup (tmux.conf), closes it (fzf abort)
   )
 
   # Conditional fzf features based on cached version

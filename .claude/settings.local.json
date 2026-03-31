@@ -18,7 +18,8 @@
       "Bash(fzf --zsh)",
       "Bash(carapace _carapace)",
       "Bash(starship init:*)",
-      "Bash(zoxide init:*)"
+      "Bash(zoxide init:*)",
+      "Bash(bash /Users/marc.deferranti/dotfiles/macos/.local/bin/random-wallpaper.sh 2>&1)"
     ]
   }
 }

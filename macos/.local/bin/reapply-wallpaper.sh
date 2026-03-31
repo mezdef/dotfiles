@@ -3,99 +3,33 @@
 #
 # Reads the wallpaper path from the wallpaper plist and sets it on every
 # connected display via NSWorkspace. Also updates the plist for any new
-# display UUIDs so macOS's wallpaper agent doesn't revert them.
+# display UUIDs and Spaces so macOS's wallpaper agent doesn't revert them.
 #
 # Triggered by launchd when display configuration changes (monitor connect/disconnect).
+# The launchd plist watches /Library/Preferences/com.apple.windowserver.displays.plist
+# which changes whenever a monitor is connected or disconnected.
+#
+# Retry logic: after a display change, macOS's wallpaper agent races with us to
+# update the plist. Rather than a fixed sleep (which wastes time when it works and
+# isn't long enough when it doesn't), we retry the Swift script up to 3 times with
+# 3s gaps. First attempt often succeeds immediately.
 set -euo pipefail
 
-# Let macOS wallpaper agent finish its own setup before we override
-sleep 3
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-swift -e '
-import AppKit
-import Foundation
+# Retry: the plist may not be ready immediately after a display change.
+retries=3
+while [[ $retries -gt 0 ]]; do
+  if output=$(swift "$SCRIPT_DIR/reapply-wallpaper.swift" 2>&1); then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $output"
+    exit 0
+  fi
+  ((retries--))
+  if [[ $retries -gt 0 ]]; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Retrying in 3s... ($retries attempts left)"
+    sleep 3
+  fi
+done
 
-let plistPath = NSHomeDirectory() + "/Library/Application Support/com.apple.wallpaper/Store/Index.plist"
-let plistURL = URL(fileURLWithPath: plistPath)
-
-guard let plistData = try? Data(contentsOf: plistURL),
-      var plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any] else {
-    fputs("Failed to read wallpaper plist\n", stderr)
-    exit(1)
-}
-
-// Extract current wallpaper URL from a Content dict
-func extractImageURL(from content: [String: Any]) -> URL? {
-    guard let choices = content["Choices"] as? [[String: Any]],
-          let first = choices.first,
-          let configData = first["Configuration"] as? Data,
-          let config = try? PropertyListSerialization.propertyList(from: configData, format: nil) as? [String: Any],
-          let urlDict = config["url"] as? [String: Any],
-          let relative = urlDict["relative"] as? String else { return nil }
-    return URL(string: relative)
-}
-
-// Find the desired wallpaper from SystemDefault or first display entry
-var imageURL: URL? = nil
-var sourceContent: [String: Any]? = nil
-
-if let sysDefault = plist["SystemDefault"] as? [String: Any],
-   let desktop = sysDefault["Desktop"] as? [String: Any],
-   let content = desktop["Content"] as? [String: Any] {
-    imageURL = extractImageURL(from: content)
-    sourceContent = content
-}
-
-if imageURL == nil || sourceContent == nil,
-   let displays = plist["Displays"] as? [String: Any] {
-    for (_, val) in displays {
-        guard let d = val as? [String: Any],
-              let desktop = d["Desktop"] as? [String: Any],
-              let content = desktop["Content"] as? [String: Any] else { continue }
-        if let url = extractImageURL(from: content) {
-            imageURL = url
-            if sourceContent == nil { sourceContent = content }
-            break
-        }
-    }
-}
-
-guard let url = imageURL, let templateContent = sourceContent else {
-    fputs("No wallpaper URL found in plist\n", stderr)
-    exit(1)
-}
-
-// Update all display entries in the plist to use the same wallpaper.
-// This ensures newly connected monitors get the right Content, so macOS
-// wallpaper agent does not revert them to a stale default.
-var plistChanged = false
-
-if var displays = plist["Displays"] as? [String: Any] {
-    for (uuid, val) in displays {
-        guard var d = val as? [String: Any],
-              var desktop = d["Desktop"] as? [String: Any] else { continue }
-        let existing = desktop["Content"] as? [String: Any]
-        let existingURL = existing.flatMap { extractImageURL(from: $0) }
-        if existingURL != url {
-            desktop["Content"] = templateContent
-            d["Desktop"] = desktop
-            displays[uuid] = d
-            plistChanged = true
-        }
-    }
-    if plistChanged { plist["Displays"] = displays }
-}
-
-if plistChanged {
-    let outData = try PropertyListSerialization.data(fromPropertyList: plist, format: .binary, options: 0)
-    try outData.write(to: plistURL, options: .atomic)
-}
-
-// Now set via NSWorkspace — this takes effect immediately on connected screens
-let ws = NSWorkspace.shared
-for screen in NSScreen.screens {
-    try ws.setDesktopImageURL(url, for: screen, options: [:])
-}
-
-print("Reapplied wallpaper: \(url.path)")
-'
+echo "$(date '+%Y-%m-%d %H:%M:%S') Error: failed after retries: $output" >&2
+exit 1

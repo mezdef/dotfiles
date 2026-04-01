@@ -7,19 +7,32 @@
   ;; Hyper key (defined in hyper.kbd)
   caps @hyper
 
-  ;; Home row mods — per-finger hold timeouts:
-  ;;   index (shift): 160ms — achordion: same-hand rolls = tap, opposite = hold
-  ;;   pinky (ctrl):  225ms
-  ;;   middle (cmd):  275ms
-  ;;   ring (opt):    325ms
-  f (t! homerowmodfiltered $tot 160 f lsft $left-hand-keys)
-  j (t! homerowmodfiltered $tot 160 j rsft $right-hand-keys)
-  a (t! homerowmod $tot 225 a lctl)
-  ; (t! homerowmod $tot 225 ; rctl)
-  d (t! homerowmod $tot 275 d lmet)
-  k (t! homerowmod $tot 275 k rmet)
-  s (t! homerowmod $tot 325 s lalt)
-  l (t! homerowmod $tot 325 l ralt)
+  ;; Home row mods
+  ;;
+  ;; Template args: $tot <hold-timeout> <key> <modifier> [<same-hand-keys>]
+  ;;   $tot (tap timeout):  defined in home-row-mods.kbd — max hold time before
+  ;;                        another keypress for it to still count as a tap
+  ;;   hold timeout:        per-finger ms below — how long a solo hold takes
+  ;;                        before the modifier activates
+  ;;
+  ;; homerowmodfiltered (shift/index) uses tap-hold-release-keys with achordion:
+  ;;   same-hand rolls = tap, opposite-hand = hold. Prevents false shifts
+  ;;   during fast same-hand rolls like "sf" or "jk".
+  ;; homerowmod (all others) uses plain tap-hold.
+  ;;
+  ;; Per-finger hold timeouts (slower fingers get more time):
+  ;;   index (shift): 100ms
+  ;;   pinky (ctrl):  175ms
+  ;;   middle (cmd):  225ms
+  ;;   ring (opt):    275ms
+  f (t! homerowmodfiltered $tot 100 f lsft $left-hand-keys)
+  j (t! homerowmodfiltered $tot 100 j rsft $right-hand-keys)
+  a (t! homerowmod $tot 175 a lctl)
+  ; (t! homerowmod $tot 175 ; rctl)
+  d (t! homerowmod $tot 225 d lmet)
+  k (t! homerowmod $tot 225 k rmet)
+  s (t! homerowmod $tot 275 s lalt)
+  l (t! homerowmod $tot 275 l ralt)
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)

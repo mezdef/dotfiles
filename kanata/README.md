@@ -31,8 +31,11 @@ kanata/
 
 ## Editing
 
-Edit `.kbd` files in `.config/kanata/`. With `live-reload yes` in defcfg,
-changes are picked up automatically — no restart needed.
+Edit `.kbd` files in `.config/kanata/`. Restart kanata to apply changes:
+
+```bash
+sudo launchctl kickstart -k system/com.jtroo.kanata
+```
 
 ## Managing the daemon
 

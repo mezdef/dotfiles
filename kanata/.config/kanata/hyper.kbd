@@ -2,9 +2,11 @@
 ;;
 ;; Caps Lock → ctrl+opt+cmd held, escape tapped
 ;;
-;; Uses tap-hold-press with generous hold timeout. The hold activates
-;; immediately when another key is pressed (tap-hold-press), so the
-;; 200ms hold timeout only matters for solo caps holds.
+;; tap-hold-press 300 200:
+;;   300ms = tap timeout (max hold before it becomes a hold action)
+;;   200ms = hold timeout (ignored here — tap-hold-press activates hold
+;;           immediately when another key is pressed, so this only
+;;           matters if caps is held alone without pressing anything)
 
 (defalias
   hyper (tap-hold-press 300 200 esc (multi lctl lalt lmet))

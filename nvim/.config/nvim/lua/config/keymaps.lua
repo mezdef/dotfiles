@@ -2,7 +2,7 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- Fuzzy file picker (matches tmux C-p for teleport)
+-- Fuzzy file picker (matches tmux C-p for phaser)
 vim.keymap.set("n", "<C-p>", function()
   Snacks.picker.files()
 end, { desc = "Find Files" })

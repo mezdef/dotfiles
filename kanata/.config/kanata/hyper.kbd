@@ -9,5 +9,5 @@
 ;;           matters if caps is held alone without pressing anything)
 
 (defalias
-  hyper (tap-hold-press 300 200 esc (multi lctl lalt lmet))
+  hyper (tap-hold-press 300 200 esc (multi lctl lalt lmet (layer-while-held hyper)))
 )

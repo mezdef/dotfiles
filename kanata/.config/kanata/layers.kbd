@@ -61,6 +61,16 @@
   f12 volu
 )
 
+;; Hyper layer — active while caps (hyper) is held.
+;; Bypasses HRM tap-hold so hyper shortcuts fire instantly.
+;; f/j keep shift via tap-hold-press (no achordion) for hyper+shift combos.
+(deflayermap (hyper)
+  f (tap-hold-press 200 100 f lsft)
+  j (tap-hold-press 200 100 j rsft)
+  a a s s d d
+  k k l l ; ;
+)
+
 (deflayermap (typing)
   a a b b c c d d e e f f g g h h i i j j k k l l
   m m n n o o p p q q r r s s t t u u v v w w x x

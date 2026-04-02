@@ -26,7 +26,7 @@ TOGGLE_KEY="ctrl-p"  # fzf key to dismiss popup (should match tmux bind)
 PREVIEW_PANE=true
 # Popup dimensions controlled by display-popup in tmux.conf (not fzf --tmux)
 # to avoid the bell that run-shell triggers on completion.
-FZF_PREVIEW_WINDOW_POSITION='right,,,nowrap'
+FZF_PREVIEW_WINDOW_POSITION='right,,,nowrap,hidden'
 NERD_FONT_BIN="$HOME/.config/tmux/plugins/tmux-nerd-font-window-name/bin/tmux-nerd-font-window-name"
 CACHE_DIR="$HOME/.cache/tmux"
 

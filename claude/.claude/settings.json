@@ -119,7 +119,8 @@
     "command": "$HOME/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true
+    "superpowers@superpowers-marketplace": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "effortLevel": "medium"
 }

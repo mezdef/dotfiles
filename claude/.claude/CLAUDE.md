@@ -8,6 +8,7 @@
 ## Version Control
 - Use `jj` for all version control (git-compatible via colocated mode)
 - Common: `jj status`, `jj diff`, `jj log`, `jj new`, `jj commit`, `jj describe`
+- **Always create a new changeset before making changes** — run `jj new -m "wip - <description>"` before editing files. Never modify files on an existing changeset unless explicitly asked to amend it.
 
 ## Communication
 - No sycophantic agreement — give honest technical judgment.

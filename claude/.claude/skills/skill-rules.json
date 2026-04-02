@@ -1,11 +1,11 @@
 {
     "version": "1.0",
     "skills": {
-        "jj-examine": {
+        "jj-diffs": {
             "type": "domain",
             "enforcement": "suggest",
             "priority": "high",
-            "description": "Examine changes, prepare commits, resolve conflicts in jj repos",
+            "description": "Examine changes, review diffs, resolve conflicts in jj repos",
             "promptTriggers": {
                 "keywords": [
                     "jj",
@@ -22,6 +22,30 @@
                     "(examine|review|check|look at).*?(change|diff|what.*changed)",
                     "(prepare|create|write|make).*?(commit|description)",
                     "(resolve|fix).*?conflict"
+                ]
+            }
+        },
+        "jj-management": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Split, squash, move changes between jj revisions, group into logical changesets, describe commits",
+            "promptTriggers": {
+                "keywords": [
+                    "split",
+                    "squash",
+                    "changeset",
+                    "describe",
+                    "wip",
+                    "jj new",
+                    "group changes",
+                    "move changes",
+                    "organize changes"
+                ],
+                "intentPatterns": [
+                    "(split|squash|move|group|organize).*?(change|commit|file|revision|changeset)",
+                    "(create|make|write).*?(commit|changeset|description)",
+                    "wip.*?(prefix|name|describe)"
                 ]
             }
         },

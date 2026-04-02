@@ -1,5 +1,5 @@
 ---
-name: jj-examine
+name: jj-diffs
 description: AUTO-INVOKE when examining changes, preparing commits, resolving conflicts, or comparing revisions in a jj repository. Use instead of github-examining-changes for any jj repo.
 disable-model-invocation: true
 ---
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 **Core Principle:** Fast then slow. Run overview commands first (parallel), deep commands after reviewing output.
 
-**Announce at start:** "I'm using the jj-examine skill to examine changes."
+**Announce at start:** "I'm using the jj-diffs skill to examine changes."
 
 ## jj vs git Quick Map
 

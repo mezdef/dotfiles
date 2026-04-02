@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jtroo.kanata-restarter</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/marc.deferranti/dotfiles/kanata/scripts/restart-kanata.sh</string>
+    </array>
+    <key>WatchPaths</key>
+    <array>
+        <string>/tmp/kanata-restart-trigger</string>
+    </array>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>StandardOutPath</key>
+    <string>/Library/Logs/Kanata/restarter.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Library/Logs/Kanata/restarter.err.log</string>
+</dict>
+</plist>

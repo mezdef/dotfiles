@@ -7,9 +7,10 @@
 // wallpaper was last associated with that display UUID in the plist — not necessarily
 // the one we set with random-wallpaper.sh.
 //
-// Solution: read our desired wallpaper from SystemDefault (or first Displays entry),
-// then update all Displays AND Spaces entries to match, and call NSWorkspace to
-// apply immediately on connected screens.
+// Solution: read our desired wallpaper from a sidecar file (~/.local/state/current-wallpaper)
+// written by random-wallpaper.swift, then update all Displays, Spaces, and SystemDefault
+// entries to match, and call NSWorkspace to apply immediately on connected screens.
+// Falls back to reading from plist if sidecar doesn't exist yet.
 //
 // Spaces support: both the per-space Default and per-space-per-display entries are
 // updated. Without this, switching to a different Space on a newly connected monitor
@@ -38,34 +39,54 @@ func extractImageURL(from content: [String: Any]) -> URL? {
     return URL(string: relative)
 }
 
-// Find the desired wallpaper from SystemDefault or first display entry
+// Find the desired wallpaper — prefer sidecar file (immune to macOS plist overwrites)
 var imageURL: URL? = nil
-var sourceContent: [String: Any]? = nil
 
-if let sysDefault = plist["SystemDefault"] as? [String: Any],
-   let desktop = sysDefault["Desktop"] as? [String: Any],
-   let content = desktop["Content"] as? [String: Any] {
-    imageURL = extractImageURL(from: content)
-    sourceContent = content
+let sidecarPath = NSHomeDirectory() + "/.local/state/current-wallpaper"
+if let path = try? String(contentsOfFile: sidecarPath, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines),
+   FileManager.default.fileExists(atPath: path) {
+    imageURL = URL(fileURLWithPath: path)
 }
 
-if imageURL == nil || sourceContent == nil,
-   let displays = plist["Displays"] as? [String: Any] {
-    for (_, val) in displays {
-        guard let d = val as? [String: Any],
-              let desktop = d["Desktop"] as? [String: Any],
-              let content = desktop["Content"] as? [String: Any] else { continue }
-        if let url = extractImageURL(from: content) {
-            imageURL = url
-            if sourceContent == nil { sourceContent = content }
-            break
+// Fallback: read from plist (before sidecar exists)
+if imageURL == nil {
+    if let sysDefault = plist["SystemDefault"] as? [String: Any],
+       let desktop = sysDefault["Desktop"] as? [String: Any],
+       let content = desktop["Content"] as? [String: Any] {
+        imageURL = extractImageURL(from: content)
+    }
+    if imageURL == nil,
+       let displays = plist["Displays"] as? [String: Any] {
+        for (_, val) in displays {
+            guard let d = val as? [String: Any],
+                  let desktop = d["Desktop"] as? [String: Any],
+                  let content = desktop["Content"] as? [String: Any] else { continue }
+            if let u = extractImageURL(from: content) {
+                imageURL = u
+                break
+            }
         }
     }
 }
 
-guard let url = imageURL, let templateContent = sourceContent else {
-    fputs("Error: no wallpaper URL found in plist\n", stderr)
+guard let url = imageURL else {
+    fputs("Error: no wallpaper URL found in sidecar or plist\n", stderr)
     exit(1)
+}
+
+// Build Configuration binary plist for the desired image
+let config: [String: Any] = [
+    "type": "imageFile",
+    "url": ["relative": "file://" + url.path]
+]
+let configData = try PropertyListSerialization.data(fromPropertyList: config, format: .binary, options: 0)
+
+// Update Choices[0] in a Content dict to point to our wallpaper
+func updateContent(_ content: inout [String: Any]) {
+    guard var choices = content["Choices"] as? [[String: Any]], !choices.isEmpty else { return }
+    choices[0]["Configuration"] = configData
+    choices[0]["Provider"] = "com.apple.wallpaper.choice.image"
+    content["Choices"] = choices
 }
 
 // Update all display entries in the plist to use the same wallpaper.
@@ -76,13 +97,12 @@ var plistChanged = false
 if var displays = plist["Displays"] as? [String: Any] {
     for (uuid, val) in displays {
         guard var d = val as? [String: Any],
-              var desktop = d["Desktop"] as? [String: Any] else { continue }
-        let existing = desktop["Content"] as? [String: Any]
-        let existingURL = existing.flatMap { extractImageURL(from: $0) }
+              var desktop = d["Desktop"] as? [String: Any],
+              var content = desktop["Content"] as? [String: Any] else { continue }
+        let existingURL = extractImageURL(from: content)
         if existingURL != url {
-            desktop["Content"] = templateContent
-            d["Desktop"] = desktop
-            displays[uuid] = d
+            updateContent(&content)
+            desktop["Content"] = content; d["Desktop"] = desktop; displays[uuid] = d
             plistChanged = true
         }
     }
@@ -98,7 +118,7 @@ if var spaces = plist["Spaces"] as? [String: Any] {
            var content = desktop["Content"] as? [String: Any] {
             let existingURL = extractImageURL(from: content)
             if existingURL != url {
-                content = templateContent
+                updateContent(&content)
                 desktop["Content"] = content; def["Desktop"] = desktop; space["Default"] = def
                 plistChanged = true
             }
@@ -110,7 +130,7 @@ if var spaces = plist["Spaces"] as? [String: Any] {
                       var content = desktop["Content"] as? [String: Any] else { continue }
                 let existingURL = extractImageURL(from: content)
                 if existingURL != url {
-                    content = templateContent
+                    updateContent(&content)
                     desktop["Content"] = content; d["Desktop"] = desktop; spaceDisplays[dUUID] = d
                     plistChanged = true
                 }
@@ -120,6 +140,19 @@ if var spaces = plist["Spaces"] as? [String: Any] {
         spaces[spaceUUID] = space
     }
     if plistChanged { plist["Spaces"] = spaces }
+}
+
+// Update SystemDefault
+if var sysDefault = plist["SystemDefault"] as? [String: Any],
+   var desktop = sysDefault["Desktop"] as? [String: Any],
+   var content = desktop["Content"] as? [String: Any] {
+    let existingURL = extractImageURL(from: content)
+    if existingURL != url {
+        updateContent(&content)
+        desktop["Content"] = content; sysDefault["Desktop"] = desktop
+        plist["SystemDefault"] = sysDefault
+        plistChanged = true
+    }
 }
 
 if plistChanged {

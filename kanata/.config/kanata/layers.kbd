@@ -15,26 +15,28 @@
   ;;   hold timeout:        per-finger ms below — how long a solo hold takes
   ;;                        before the modifier activates
   ;;
-  ;; homerowmodfiltered (shift/index, ctrl/pinky) uses tap-hold-release-keys
+  ;; homerowmodfiltered (shift/index, left ctrl/pinky) uses tap-hold-release-keys
   ;;   with achordion: same-hand rolls = tap, opposite-hand = hold.
   ;;   Prevents false mods during fast same-hand rolls like "sf" or "cas".
-  ;; homerowmod (cmd/middle, opt/ring) uses plain tap-hold.
+  ;; homerowmod (right ctrl/pinky, cmd/middle, opt/ring) uses plain tap-hold.
+  ;;   Note: ; uses homerowmod because tap-hold-release-keys ignores keys
+  ;;   not in its filter list (delays ctrl activation until timeout).
   ;;
   ;; All modifiers use left variants (lsft, lctl, lmet, lalt) — right
   ;; variants don't work in Ghostty/macOS terminal input.
   ;; Per-finger hold timeouts (slower fingers get more time):
   ;;   index (shift): 150ms
   ;;   pinky (ctrl):  175ms
-  ;;   middle (cmd):  225ms
-  ;;   ring (opt):    275ms
+  ;;   middle (cmd):  250ms
+  ;;   ring (opt):    300ms
   f (t! homerowmodfiltered $tot 150 f lsft $left-hand-keys)
   j (t! homerowmodfiltered $tot 150 j lsft $right-hand-keys)
   a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys)
   ; (t! homerowmodfiltered $tot 175 ; lctl $right-hand-keys-no-index)
-  d (t! homerowmod $tot 225 d lmet)
-  k (t! homerowmod $tot 225 k lmet)
-  s (t! homerowmod $tot 275 s lalt)
-  l (t! homerowmod $tot 275 l lalt)
+  d (t! homerowmod $tot 250 d lmet)
+  k (t! homerowmod $tot 250 k lmet)
+  s (t! homerowmod $tot 300 s lalt)
+  l (t! homerowmod $tot 300 l lalt)
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)

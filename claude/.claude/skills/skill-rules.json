@@ -74,67 +74,6 @@
                 ]
             }
         },
-        "github-commits-and-prs": {
-            "type": "domain",
-            "enforcement": "suggest",
-            "priority": "high",
-            "description": "Create git commits and GitHub PRs with proper conventions",
-            "promptTriggers": {
-                "keywords": [
-                    "pull request",
-                    "create pr",
-                    "open pr",
-                    "release notes",
-                    "amend commit"
-                ],
-                "intentPatterns": [
-                    "(create|open|make|write).*?(pull request|PR)",
-                    "(write|create|draft).*?release note"
-                ]
-            }
-        },
-        "github-examining-changes": {
-            "type": "domain",
-            "enforcement": "suggest",
-            "priority": "medium",
-            "description": "Examine branch changes before committing or creating PRs",
-            "promptTriggers": {
-                "keywords": [
-                    "what changed",
-                    "review changes",
-                    "before committing",
-                    "before creating pr",
-                    "unintended changes"
-                ],
-                "intentPatterns": [
-                    "(what|which).*(changed|modified|different)",
-                    "(check|verify|review).*?(before|prior to).*(commit|push|pr)"
-                ]
-            }
-        },
-        "writing-sql-scripts": {
-            "type": "domain",
-            "enforcement": "suggest",
-            "priority": "high",
-            "description": "Write SQL scripts with verification and execution sections",
-            "promptTriggers": {
-                "keywords": [
-                    "sql script",
-                    "write sql",
-                    "database query",
-                    "fix data",
-                    "update records",
-                    "ad-hoc query",
-                    "backfill data",
-                    "data migration"
-                ],
-                "intentPatterns": [
-                    "(write|create|run).*?sql",
-                    "(fix|update|insert|delete|backfill).*?(record|row|data)",
-                    "(query|script).*?database"
-                ]
-            }
-        },
         "writing-plans": {
             "type": "domain",
             "enforcement": "suggest",
@@ -308,6 +247,25 @@
                     "(check|verify|test).*?(browser|UI|visual|render|client)",
                     "(screenshot|console|network).*?(error|log|request)",
                     "does.*(look|render|display|show)"
+                ]
+            }
+        },
+        "lint-conventions": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "medium",
+            "description": "Fast convention check for legal-marketplace: naming, layers, style",
+            "promptTriggers": {
+                "keywords": [
+                    "review changes",
+                    "check conventions",
+                    "lint conventions",
+                    "convention check",
+                    "code review"
+                ],
+                "intentPatterns": [
+                    "(review|check|verify|lint).*?(conventions|standards|naming|architecture)",
+                    "(check|review).*?(code|changes).*?(conventions|standards)"
                 ]
             }
         },

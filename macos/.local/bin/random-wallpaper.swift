@@ -58,7 +58,10 @@ let plistURL = URL(fileURLWithPath: plistPath)
 guard let plistData = try? Data(contentsOf: plistURL),
       var plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any] else {
     fputs("Warning: could not read wallpaper plist, skipping plist update\n", stderr)
-    // Still print the picked path — NSWorkspace already set connected screens
+    // Still write sidecar and print — NSWorkspace already set connected screens
+    let stateDir0 = NSHomeDirectory() + "/.local/state"
+    try? FileManager.default.createDirectory(atPath: stateDir0, withIntermediateDirectories: true)
+    try? picked.path.write(toFile: stateDir0 + "/current-wallpaper", atomically: true, encoding: .utf8)
     print(picked.path)
     exit(0)
 }
@@ -146,5 +149,11 @@ do {
 } catch {
     fputs("Warning: failed to write wallpaper plist: \(error.localizedDescription)\n", stderr)
 }
+
+// Write picked path to sidecar file so reapply-wallpaper can read it
+// without relying on the plist (which macOS's wallpaper agent can overwrite).
+let stateDir = NSHomeDirectory() + "/.local/state"
+try? FileManager.default.createDirectory(atPath: stateDir, withIntermediateDirectories: true)
+try? picked.path.write(toFile: stateDir + "/current-wallpaper", atomically: true, encoding: .utf8)
 
 print(picked.path)

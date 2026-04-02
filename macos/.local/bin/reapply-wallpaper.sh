@@ -9,27 +9,34 @@
 # The launchd plist watches /Library/Preferences/com.apple.windowserver.displays.plist
 # which changes whenever a monitor is connected or disconnected.
 #
-# Retry logic: after a display change, macOS's wallpaper agent races with us to
-# update the plist. Rather than a fixed sleep (which wastes time when it works and
-# isn't long enough when it doesn't), we retry the Swift script up to 3 times with
-# 3s gaps. First attempt often succeeds immediately.
+# Timing strategy: macOS's wallpaper agent races with us on display changes.
+# It can apply stale cached wallpapers AFTER we've already set ours. To win:
+#   1. Wait 2s for macOS to do its initial plist write
+#   2. Apply our wallpaper (overwriting whatever macOS set)
+#   3. Wait 3s and apply again to catch any late macOS overwrites
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Retry: the plist may not be ready immediately after a display change.
-retries=3
-while [[ $retries -gt 0 ]]; do
+run_swift() {
   if output=$(swift "$SCRIPT_DIR/reapply-wallpaper.swift" 2>&1); then
     echo "$(date '+%Y-%m-%d %H:%M:%S') $output"
-    exit 0
+    return 0
+  else
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Error: $output" >&2
+    return 1
   fi
-  ((retries--))
-  if [[ $retries -gt 0 ]]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') Retrying in 3s... ($retries attempts left)"
-    sleep 3
-  fi
-done
+}
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') Error: failed after retries: $output" >&2
-exit 1
+# Let macOS wallpaper agent settle before we overwrite
+sleep 2
+
+# First pass
+if ! run_swift; then
+  sleep 3
+  run_swift || true
+fi
+
+# Second pass to catch late macOS overwrites
+sleep 3
+run_swift || true

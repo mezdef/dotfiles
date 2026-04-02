@@ -25,6 +25,11 @@
   ;; Hand key lists for achordion (same-hand = tap, opposite-hand = hold)
   left-hand-keys (q w e r t a s d f g z x c v b)
   right-hand-keys (y u i o p h j k l ; n m , . /)
+
+  ;; Pinky (ctrl) achordion lists — exclude index fingers (f/j) so
+  ;; ctrl+shift combos (e.g. ;+j+v = ctrl+shift+v) work same-hand.
+  left-hand-keys-no-index (q w e r t a s d g z x c v b)
+  right-hand-keys-no-index (y u i o p h k l ; n m , . /)
 )
 
 (deftemplate homerowmod (timeouttap timeouthold keytap keyhold)

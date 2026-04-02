@@ -1,59 +1,22 @@
-// watch-keyboards.swift — Event-driven HID device watcher for kanata.
+// watch-keyboards.swift — Event-driven USB device watcher for kanata.
 //
-// Restarts kanata when external keyboards are connected or disconnected,
-// so kanata can grab the new device and apply remappings.
+// Restarts kanata when external USB devices are connected or disconnected,
+// so kanata can grab new keyboards and apply remappings.
 //
-// ## Why event-driven (not polling)
+// Uses IOKit service notifications (IOServiceAddMatchingNotification) to watch
+// for IOUSBHostDevice changes. This does NOT require Input Monitoring / TCC
+// permissions — it observes the IOKit registry, not HID device streams.
 //
-// Earlier versions polled `ioreg -r -c IOHIDDevice` every 5 seconds. This had
-// problems: up to 5s delay before remappings applied, continuous CPU cost, and
-// a blind spot after restart where devices connecting during cooldown were missed.
-//
-// This version uses IOKit's IOHIDManager which delivers attach/detach callbacks
-// via CFRunLoop — instant reaction, zero idle CPU, no missed events.
-//
-// ## Why we match ALL HID devices (not just keyboards)
-//
-// Standard HID keyboards report PrimaryUsagePage=1 (Generic Desktop),
-// PrimaryUsage=6 (Keyboard). We tried filtering on this but it fails for
-// keyboards connected through USB docks/monitors. The dock's Realtek HID
-// interface (which carries the keyboard) registers with vendor-specific usage
-// pages (e.g. UsagePage=65498/0xFFDA) instead of the keyboard usage page.
-// The actual keyboard (e.g. Mode M75H) does register correctly as UsagePage=1/
-// Usage=6, but it appears as a separate device — and the dock's HID device
-// appearing/disappearing is sometimes the only change signal.
-//
-// Tested keyboards:
-//   - Mode 75 (M75H): USB via dock. Registers 3 HID interfaces: keyboard
-//     (UsagePage=1/Usage=6), raw HID for VIA/VIAL (UsagePage=65376/Usage=97),
-//     and a composite (system control + consumer + keyboard).
-//   - ErgoDox EZ (early model, QMK Toolbox): USB via dock. Expected to register
-//     as standard keyboard (UsagePage=1/Usage=6) based on QMK defaults.
-//
-// Note: Logitech G Pro mouse also exposes UsagePage=1/Usage=6 (for macro keys),
-// so keyboard-only filtering would also false-trigger on mouse connect/disconnect.
-//
-// ## Exclusion strategy
-//
-// Instead of an allowlist (which misses non-standard keyboards), we use a denylist
-// of known static/non-keyboard devices that never change during normal use:
-//   - Apple built-in (manufacturer "Apple" or "APPL"): internal keyboard, trackpad, sensors
-//   - Karabiner virtual HID (manufacturer "pqrs.org"): always present when driver loaded
-//   - BTM (Bluetooth Manager): system service, not a keyboard
-//   - Keyboard Backlight: Apple internal backlight control, not a keyboard
-//
-// Any other HID device change triggers a kanata restart. This catches keyboards
-// regardless of how they identify themselves or what they're connected through.
+// When a non-ignored device appears or disappears, touches /tmp/kanata-restart-trigger.
+// The kanata-restarter LaunchDaemon (root) watches that file and restarts kanata.
 
 import Foundation
 import IOKit
-import IOKit.hid
+import IOKit.usb
 
 let cooldownSeconds: TimeInterval = 10
-let maxRetries = 3
-let retryDelay: UInt32 = 3
-
 var lastRestart = Date.distantPast
+var notifyPortRef: IONotificationPortRef?
 
 func log(_ message: String) {
     let ts = ISO8601DateFormatter().string(from: Date())
@@ -61,110 +24,109 @@ func log(_ message: String) {
     fflush(stdout)
 }
 
-func shouldIgnore(_ device: IOHIDDevice) -> Bool {
-    let product = IOHIDDeviceGetProperty(device, "Product" as CFString) as? String ?? ""
-    let manufacturer = IOHIDDeviceGetProperty(device, "Manufacturer" as CFString) as? String ?? ""
+func deviceName(_ service: io_service_t) -> String {
+    var name = [CChar](repeating: 0, count: 128)
+    IORegistryEntryGetName(service, &name)
+    return String(cString: name)
+}
 
-    // Apple built-in devices (keyboard, trackpad, sensors)
-    if manufacturer == "Apple" || manufacturer == "APPL" { return true }
-    // Karabiner virtual keyboard
-    if manufacturer == "pqrs.org" || product.contains("Karabiner") { return true }
-    // Known non-keyboard peripherals
-    if product == "BTM" || product == "Keyboard Backlight" { return true }
+func deviceProduct(_ service: io_service_t) -> String {
+    if let cf = IORegistryEntryCreateCFProperty(service, "USB Product Name" as CFString, kCFAllocatorDefault, 0) {
+        return cf.takeRetainedValue() as? String ?? "unknown"
+    }
+    return deviceName(service)
+}
 
+func shouldIgnore(_ service: io_service_t) -> Bool {
+    let product = deviceProduct(service)
+    let name = deviceName(service)
+    // Apple internal devices
+    if product.hasPrefix("Apple") || name.hasPrefix("Apple") { return true }
+    // Karabiner virtual HID
+    if product.contains("Karabiner") || product.contains("pqrs") { return true }
     return false
 }
 
-func restartKanata(reason: String) {
+func requestKanataRestart(reason: String) {
     let now = Date()
     if now.timeIntervalSince(lastRestart) < cooldownSeconds {
         log("Cooldown active, skipping restart for: \(reason)")
         return
     }
     lastRestart = now
+    log("USB device change: \(reason)")
+    let triggerPath = "/tmp/kanata-restart-trigger"
+    FileManager.default.createFile(atPath: triggerPath, contents: nil)
+    log("Wrote restart trigger")
+}
 
-    log("HID device change: \(reason)")
-
-    for attempt in 1...maxRetries {
-        log("Restarting kanata (attempt \(attempt)/\(maxRetries))")
-
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
-        process.arguments = ["kickstart", "-k", "system/com.jtroo.kanata"]
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            log("Failed to run launchctl: \(error.localizedDescription)")
-            if attempt < maxRetries { sleep(retryDelay) }
-            continue
+// Drain an iterator, optionally triggering restart for non-ignored devices
+func drainIterator(_ iterator: io_iterator_t, event: String, trigger: Bool) {
+    while case let service = IOIteratorNext(iterator), service != IO_OBJECT_NULL {
+        let product = deviceProduct(service)
+        if trigger && !shouldIgnore(service) {
+            requestKanataRestart(reason: "\(event) \(product)")
         }
-
-        if process.terminationStatus == 0 {
-            // Verify kanata is running
-            sleep(retryDelay)
-            let check = Process()
-            check.executableURL = URL(fileURLWithPath: "/bin/launchctl")
-            check.arguments = ["print", "system/com.jtroo.kanata"]
-            let pipe = Pipe()
-            check.standardOutput = pipe
-            check.standardError = FileHandle.nullDevice
-            do {
-                try check.run()
-                check.waitUntilExit()
-                let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-                if output.contains("state = running") {
-                    log("Kanata restarted successfully")
-                    return
-                }
-            } catch {
-                // Verification failed, but kickstart succeeded — probably fine
-                log("Kanata restart issued (could not verify state)")
-                return
-            }
-        }
-
-        log("Attempt \(attempt) failed (exit \(process.terminationStatus))")
-        if attempt < maxRetries { sleep(retryDelay) }
+        IOObjectRelease(service)
     }
-
-    log("Kanata failed to restart after \(maxRetries) attempts")
 }
 
 // Callbacks
-let matchCallback: IOHIDDeviceCallback = { context, result, sender, device in
-    if shouldIgnore(device) { return }
-    let product = IOHIDDeviceGetProperty(device, "Product" as CFString) as? String ?? "unknown"
-    let manufacturer = IOHIDDeviceGetProperty(device, "Manufacturer" as CFString) as? String ?? "unknown"
-    restartKanata(reason: "attached \(product) (\(manufacturer))")
+let matchCallback: IOServiceMatchingCallback = { refcon, iterator in
+    drainIterator(iterator, event: "attached", trigger: true)
 }
 
-let removalCallback: IOHIDDeviceCallback = { context, result, sender, device in
-    if shouldIgnore(device) { return }
-    let product = IOHIDDeviceGetProperty(device, "Product" as CFString) as? String ?? "unknown"
-    let manufacturer = IOHIDDeviceGetProperty(device, "Manufacturer" as CFString) as? String ?? "unknown"
-    restartKanata(reason: "detached \(product) (\(manufacturer))")
+let removalCallback: IOServiceMatchingCallback = { refcon, iterator in
+    drainIterator(iterator, event: "detached", trigger: true)
 }
 
-// Set up HID Manager
-let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
-
-// Match all HID devices — we filter in the callbacks
-IOHIDManagerSetDeviceMatching(manager, nil)
-IOHIDManagerRegisterDeviceMatchingCallback(manager, matchCallback, nil)
-IOHIDManagerRegisterDeviceRemovalCallback(manager, removalCallback, nil)
-IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)
-
-let openResult = IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
-if openResult != kIOReturnSuccess {
-    log("Error: failed to open IOHIDManager (0x\(String(openResult, radix: 16)))")
+// Set up IOKit notification port
+guard let notifyPort = IONotificationPortCreate(kIOMainPortDefault) else {
+    log("Error: failed to create IONotificationPort")
     exit(1)
 }
+notifyPortRef = notifyPort
 
-log("Watching for HID device changes...")
+let runLoopSource = IONotificationPortGetRunLoopSource(notifyPort).takeUnretainedValue()
+CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .defaultMode)
+
+// Watch for USB device attach
+var matchIterator: io_iterator_t = 0
+let matchDict = IOServiceMatching(kIOUSBDeviceClassName)
+let matchResult = IOServiceAddMatchingNotification(
+    notifyPort,
+    kIOFirstMatchNotification,
+    matchDict,
+    matchCallback,
+    nil,
+    &matchIterator
+)
+guard matchResult == kIOReturnSuccess else {
+    log("Error: failed to register match notification (0x\(String(matchResult, radix: 16)))")
+    exit(1)
+}
+// Drain existing devices without triggering restart
+drainIterator(matchIterator, event: "existing", trigger: false)
+
+// Watch for USB device detach
+var removeIterator: io_iterator_t = 0
+let removeDict = IOServiceMatching(kIOUSBDeviceClassName)
+let removeResult = IOServiceAddMatchingNotification(
+    notifyPort,
+    kIOTerminatedNotification,
+    removeDict,
+    removalCallback,
+    nil,
+    &removeIterator
+)
+guard removeResult == kIOReturnSuccess else {
+    log("Error: failed to register removal notification (0x\(String(removeResult, radix: 16)))")
+    exit(1)
+}
+// Drain existing terminated entries
+drainIterator(removeIterator, event: "existing-removed", trigger: false)
+
+log("Watching for USB device changes...")
 
 // Run forever
 CFRunLoopRun()

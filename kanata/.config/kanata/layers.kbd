@@ -15,24 +15,26 @@
   ;;   hold timeout:        per-finger ms below — how long a solo hold takes
   ;;                        before the modifier activates
   ;;
-  ;; homerowmodfiltered (shift/index) uses tap-hold-release-keys with achordion:
-  ;;   same-hand rolls = tap, opposite-hand = hold. Prevents false shifts
-  ;;   during fast same-hand rolls like "sf" or "jk".
-  ;; homerowmod (all others) uses plain tap-hold.
+  ;; homerowmodfiltered (shift/index, ctrl/pinky) uses tap-hold-release-keys
+  ;;   with achordion: same-hand rolls = tap, opposite-hand = hold.
+  ;;   Prevents false mods during fast same-hand rolls like "sf" or "cas".
+  ;; homerowmod (cmd/middle, opt/ring) uses plain tap-hold.
   ;;
+  ;; All modifiers use left variants (lsft, lctl, lmet, lalt) — right
+  ;; variants don't work in Ghostty/macOS terminal input.
   ;; Per-finger hold timeouts (slower fingers get more time):
-  ;;   index (shift): 100ms
+  ;;   index (shift): 150ms
   ;;   pinky (ctrl):  175ms
   ;;   middle (cmd):  225ms
   ;;   ring (opt):    275ms
-  f (t! homerowmodfiltered $tot 100 f lsft $left-hand-keys)
-  j (t! homerowmodfiltered $tot 100 j rsft $right-hand-keys)
-  a (t! homerowmod $tot 175 a lctl)
-  ; (t! homerowmod $tot 175 ; rctl)
+  f (t! homerowmodfiltered $tot 150 f lsft $left-hand-keys)
+  j (t! homerowmodfiltered $tot 150 j lsft $right-hand-keys)
+  a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys)
+  ; (t! homerowmodfiltered $tot 175 ; lctl $right-hand-keys-no-index)
   d (t! homerowmod $tot 225 d lmet)
-  k (t! homerowmod $tot 225 k rmet)
+  k (t! homerowmod $tot 225 k lmet)
   s (t! homerowmod $tot 275 s lalt)
-  l (t! homerowmod $tot 275 l ralt)
+  l (t! homerowmod $tot 275 l lalt)
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)
@@ -66,7 +68,7 @@
 ;; f/j keep shift via tap-hold-press (no achordion) for hyper+shift combos.
 (deflayermap (hyper)
   f (tap-hold-press 200 100 f lsft)
-  j (tap-hold-press 200 100 j rsft)
+  j (tap-hold-press 200 100 j lsft)
   a a s s d d
   k k l l ; ;
 )

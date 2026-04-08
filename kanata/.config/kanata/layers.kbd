@@ -28,8 +28,8 @@
   ;;   pinky (ctrl):  175ms
   ;;   middle (cmd):  250ms
   ;;   ring (opt):    300ms
-  f (t! shiftmod $tot 150 f $left-hand-keys)
-  j (t! shiftmod $tot 150 j $right-hand-keys)
+  f (t! homerowmodfiltered $tot 150 f lsft $left-hand-keys)
+  j (t! homerowmodfiltered $tot 150 j lsft $right-hand-keys)
   a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys-no-index)
   ; (t! homerowmodfiltered $tot 175 ; lctl $right-hand-keys-no-index)
   d (t! homerowmodfiltered $tot 250 d lmet $left-hand-keys-no-index)

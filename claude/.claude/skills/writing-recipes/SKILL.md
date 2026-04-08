@@ -16,9 +16,16 @@ Format recipes in markdown following specific conventions for tags, ingredient l
 ## Recipe Structure
 
 ```markdown
-# Recipe Title
+---
+tags:
+  - Recipe
+  - Cooking
+  - [Cuisine]
+  - [Type]
+  - [Dish]
+---
 
-Tags: `Recipe`, `Cooking`, `[Cuisine]`, `[Type]`, `[Dish]`
+# Recipe Title
 
 [SOURCE_URL]
 
@@ -128,9 +135,16 @@ Keep terse, capitalize ingredient names:
 ## Example Recipe
 
 ```markdown
-# Dashi Braised Chicken
+---
+tags:
+  - Recipe
+  - Cooking
+  - Japanese
+  - Dinner
+  - Chicken
+---
 
-Tags: `Recipe`, `Cooking`, `Japanese`, `Dinner`, `Chicken`
+# Dashi Braised Chicken
 
 | Serves  | Prep  | Time  |
 | --------|-------|-------|

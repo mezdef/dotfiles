@@ -269,6 +269,32 @@
                 ]
             }
         },
+        "managing-notes": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Note creation, renaming, restructuring in Obsidian vault",
+            "promptTriggers": {
+                "keywords": [
+                    "create a note",
+                    "new note",
+                    "rename note",
+                    "knowledgebase",
+                    "knowledge base",
+                    "restructure note",
+                    "note format",
+                    "note convention",
+                    "obsidian"
+                ],
+                "intentPatterns": [
+                    "(create|make|add|write|start).*?note",
+                    "(rename|move|restructure|reorganize).*?(note|file)",
+                    "(knowledgebase|knowledge base).*?(create|update|add|format)",
+                    "(what|which).*?(prefix|category|naming).*?(note|file)",
+                    "(event|recipe|travel|todo).*?file"
+                ]
+            }
+        },
         "writing-code-quick": {
             "type": "domain",
             "enforcement": "suggest",

@@ -24,7 +24,7 @@
 	</array>
 	<!-- Throttle: don't re-run more than once every 10 seconds -->
 	<key>ThrottleInterval</key>
-	<integer>10</integer>
+	<integer>20</integer>
 	<key>StandardOutPath</key>
 	<string>/Users/marc.deferranti/Library/Logs/reapply-wallpaper.log</string>
 	<key>StandardErrorPath</key>

@@ -63,8 +63,9 @@
   ;; Activate typing layer (nomods) after each tap. Timer resets on
   ;; every tap, so rapid repeated keys (jjjj, kkkk for vim) stay on
   ;; the typing layer and bypass tap-hold checks entirely.
-  ;; 100ms balances rapid repeated keys with avoiding unintended key repeat.
-  .tp (hold-for-duration 100 fast)
+  ;; 200ms covers ~2-3 keys at normal typing speed. Non-HRM keys
+  ;; re-trigger the timer from the base layer for longer words.
+  .tp (hold-for-duration 200 fast)
 
   ;; Space explicitly leaves typing layer (uppercase likely after space)
   .spc (multi (on-press release-vkey fast) spc)

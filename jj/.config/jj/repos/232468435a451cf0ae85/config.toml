@@ -2,3 +2,6 @@
 
 [revset-aliases]
 "trunk()" = "master@origin"
+
+[user]
+email = "marc.deferranti@lawconnect.com"

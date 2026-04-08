@@ -15,12 +15,11 @@
   ;;   hold timeout:        per-finger ms below — how long a solo hold takes
   ;;                        before the modifier activates
   ;;
-  ;; homerowmodfiltered (shift/index, left ctrl/pinky) uses tap-hold-release-keys
-  ;;   with achordion: same-hand rolls = tap, opposite-hand = hold.
-  ;;   Prevents false mods during fast same-hand rolls like "sf" or "cas".
-  ;; homerowmod (right ctrl/pinky, cmd/middle, opt/ring) uses plain tap-hold.
-  ;;   Note: ; uses homerowmod because tap-hold-release-keys ignores keys
-  ;;   not in its filter list (delays ctrl activation until timeout).
+  ;; All home row mods use achordion (tap-hold-release-keys): same-hand
+  ;; rolls = tap, opposite-hand = hold. Prevents false mods during fast typing.
+  ;; All use -no-index lists (excluding f/j) so same-hand mod+shift works.
+  ;; Shift (f/j) uses shiftmod: fork only activates lsft when another
+  ;; modifier is already held — prevents accidental capitalization.
   ;;
   ;; All modifiers use left variants (lsft, lctl, lmet, lalt) — right
   ;; variants don't work in Ghostty/macOS terminal input.
@@ -29,14 +28,14 @@
   ;;   pinky (ctrl):  175ms
   ;;   middle (cmd):  250ms
   ;;   ring (opt):    300ms
-  f (t! homerowmodfiltered $tot 150 f lsft $left-hand-keys)
-  j (t! homerowmodfiltered $tot 150 j lsft $right-hand-keys)
-  a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys)
+  f (t! shiftmod $tot 150 f $left-hand-keys)
+  j (t! shiftmod $tot 150 j $right-hand-keys)
+  a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys-no-index)
   ; (t! homerowmodfiltered $tot 175 ; lctl $right-hand-keys-no-index)
-  d (t! homerowmod $tot 250 d lmet)
-  k (t! homerowmod $tot 250 k lmet)
-  s (t! homerowmod $tot 300 s lalt)
-  l (t! homerowmod $tot 300 l lalt)
+  d (t! homerowmodfiltered $tot 250 d lmet $left-hand-keys-no-index)
+  k (t! homerowmodfiltered $tot 250 k lmet $right-hand-keys-no-index)
+  s (t! homerowmodfiltered $tot 300 s lalt $left-hand-keys-no-index)
+  l (t! homerowmodfiltered $tot 300 l lalt $right-hand-keys-no-index)
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)
@@ -46,6 +45,7 @@
   z (multi z @.tp) x (multi x @.tp) c (multi c @.tp)
   v (multi v @.tp) b (multi b @.tp) n (multi n @.tp)
   m (multi m @.tp)
+  , (multi , @.tp) . (multi . @.tp) / (multi / @.tp)
 
   ;; Space exits typing layer
   spc @.spc
@@ -78,7 +78,7 @@
 (deflayermap (typing)
   a a b b c c d d e e f f g g h h i i j j k k l l
   m m n n o o p p q q r r s s t t u u v v w w x x
-  y y z z
+  y y z z , , . . / /
   caps @hyper
   spc @.spc
   grv 102d

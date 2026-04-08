@@ -12,7 +12,8 @@
 ;;     cascading false modifier activations during fast typing
 ;;   - hold-for-duration exits typing layer without requiring idle state
 ;;   - Space explicitly exits typing layer (uppercase likely after space)
-;;   - homerowmodfiltered only for specific problematic bigrams
+;;   - homerowmodfiltered (achordion) for all home row mod keys
+;;   - Shift (f/j) uses fork: only activates with another modifier held
 
 (defvirtualkeys
   fast (layer-while-held typing)
@@ -26,8 +27,8 @@
   left-hand-keys (q w e r t a s d f g z x c v b)
   right-hand-keys (y u i o p h j k l ; n m , . /)
 
-  ;; Pinky (ctrl) achordion lists — exclude index fingers (f/j) so
-  ;; ctrl+shift combos (e.g. ;+j+v = ctrl+shift+v) work same-hand.
+  ;; Achordion lists excluding index fingers (f/j) — used by all non-shift
+  ;; home row mods so same-hand mod+shift combos still work.
   left-hand-keys-no-index (q w e r t a s d g z x c v b)
   right-hand-keys-no-index (y u i o p h k l ; n m , . /)
 )
@@ -39,7 +40,7 @@
   )
 )
 
-;; Force specific problematic bigrams to become letters not mods
+;; Achordion: same-hand rolls = tap, opposite-hand = hold
 (deftemplate homerowmodfiltered (timeouttap timeouthold keytap keyhold typinglist)
   (tap-hold-release-keys $timeouttap $timeouthold
     (multi $keytap @.tp)
@@ -48,12 +49,22 @@
   )
 )
 
+;; Shift only activates when another modifier (ctrl/cmd/opt) is already held.
+;; During normal typing, outputs the letter instead — prevents accidental caps.
+(deftemplate shiftmod (timeouttap timeouthold keytap typinglist)
+  (tap-hold-release-keys $timeouttap $timeouthold
+    (multi $keytap @.tp)
+    (fork (multi $keytap @.tp) lsft (lctl lmet lalt))
+    $typinglist
+  )
+)
+
 (defalias
   ;; Activate typing layer (nomods) after each tap. Timer resets on
   ;; every tap, so rapid repeated keys (jjjj, kkkk for vim) stay on
   ;; the typing layer and bypass tap-hold checks entirely.
-  ;; 80ms balances rapid repeated keys with avoiding unintended key repeat.
-  .tp (hold-for-duration 80 fast)
+  ;; 100ms balances rapid repeated keys with avoiding unintended key repeat.
+  .tp (hold-for-duration 100 fast)
 
   ;; Space explicitly leaves typing layer (uppercase likely after space)
   .spc (multi (on-press release-vkey fast) spc)

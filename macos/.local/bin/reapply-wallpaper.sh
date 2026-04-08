@@ -14,6 +14,8 @@
 #   1. Wait 2s for macOS to do its initial plist write
 #   2. Apply our wallpaper (overwriting whatever macOS set)
 #   3. Wait 3s and apply again to catch any late macOS overwrites
+#   4. Wait 8s and apply a third time to catch screens that appeared late
+#      (e.g., second monitor plugged in a few seconds after the first)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -39,4 +41,9 @@ fi
 
 # Second pass to catch late macOS overwrites
 sleep 3
+run_swift || true
+
+# Third pass to catch screens that appeared after the first two passes
+# (e.g., second monitor plugged in a few seconds after the first)
+sleep 8
 run_swift || true

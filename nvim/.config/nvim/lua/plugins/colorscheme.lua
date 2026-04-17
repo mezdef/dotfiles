@@ -13,7 +13,10 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      -- Use flavour-specific name: nvim 0.12 ships a bundled `catppuccin`
+      -- colorscheme in $VIMRUNTIME/colors that shadows the plugin's, but
+      -- only the plugin provides `catppuccin-mocha` (etc).
+      colorscheme = "catppuccin-mocha",
     },
   },
 }

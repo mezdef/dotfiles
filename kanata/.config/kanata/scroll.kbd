@@ -1,0 +1,22 @@
+;; Universal Scroll Bindings
+;;
+;; Hyper layer scroll using mouse wheel events for smooth scrolling
+;; and Home/End for jump-to-top/bottom.
+;;
+;; Bindings (active while Caps Lock / hyper is held):
+;;   u = scroll up       d = scroll down
+;;   g = top of page     G (shift+g) = bottom of page
+;;
+;; Scroll amount: adjust distance param (120 = one full mouse notch).
+;; Default 30 ≈ 2-3 lines per press. Hold key for continuous scroll.
+;;
+;; unmod temporarily releases hyper modifiers (lctl+lalt+lmet) so
+;; apps receive clean keystrokes, then re-presses them automatically.
+
+(defalias
+  scroll-up (mwheel-down 50 10)
+  scroll-down (mwheel-up 50 10)
+  scroll-top (unmod home)
+  scroll-bottom (unmod end)
+  scroll-goto (fork @scroll-top @scroll-bottom (lsft))
+)

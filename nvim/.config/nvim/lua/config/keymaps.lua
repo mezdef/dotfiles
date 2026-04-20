@@ -2,6 +2,10 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Universal scroll: Home/End → top/bottom of file (kanata hyper+g/G emits these)
+vim.keymap.set("n", "<Home>", "gg")
+vim.keymap.set("n", "<End>", "G")
+
 -- Fuzzy file picker (matches tmux C-p for phaser)
 vim.keymap.set("n", "<C-p>", function()
   Snacks.picker.files()

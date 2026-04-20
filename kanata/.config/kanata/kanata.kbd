@@ -15,4 +15,5 @@
 
 (include hyper.kbd)
 (include home-row-mods.kbd)
+(include scroll.kbd)
 (include layers.kbd)

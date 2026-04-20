@@ -3,4 +3,5 @@
 -- Add any additional options here
 vim.opt.relativenumber = true
 vim.o.timeoutlen = 300
+vim.opt.scrolloff = 10
 vim.opt.guicursor = "n-c-o:block-NormalCursor,v-ve:block-VisualCursor,i-ci-sm:ver25-InsertCursor,r-cr:hor20"

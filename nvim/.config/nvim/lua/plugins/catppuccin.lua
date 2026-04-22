@@ -20,6 +20,7 @@ return {
         GitSignsChangeNr = { fg = colors.yellow },
         GitSignsDeleteNr = { fg = colors.red },
         GitSignsChangeLn = { bg = blend(colors.yellow, colors.base, 0.2) },
+        GitSignsCurrentLineBlame = { fg = colors.surface0, italic = true },
         -- Diff highlights (used by codediff.nvim and built-in diff mode)
         DiffAdd = { bg = blend(colors.green, colors.base, 0.2) },
         DiffDelete = { bg = blend(colors.red, colors.base, 0.15) },

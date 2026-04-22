@@ -12,9 +12,6 @@ macos-titlebar-style = hidden
 macos-window-buttons = hidden
 macos-option-as-alt = true
 
-keybind = ctrl+backspace=text:\x11
-keybind = ctrl+\=text:\x1f
-
 # Universal scroll: kanata hyper+g/G emits Home/End
 keybind = home=scroll_to_top
 keybind = end=scroll_to_bottom

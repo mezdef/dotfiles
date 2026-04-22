@@ -77,7 +77,7 @@
     "ask": [
       "Bash(git checkout:*)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "auto"
   },
   "model": "opus",
   "hooks": {
@@ -122,5 +122,6 @@
     "superpowers@superpowers-marketplace": true,
     "swift-lsp@claude-plugins-official": true
   },
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "skipAutoPermissionPrompt": true
 }

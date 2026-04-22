@@ -122,6 +122,6 @@
     "superpowers@superpowers-marketplace": true,
     "swift-lsp@claude-plugins-official": true
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "skipAutoPermissionPrompt": true
 }

@@ -2,7 +2,10 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- Universal scroll: Home/End → top/bottom of file (kanata hyper+g/G emits these)
+-- Universal scroll: kanata ctrl layer maps C-u/d → Page Up/Down; remap to half-page
+vim.keymap.set("n", "<PageUp>", "<C-u>")
+vim.keymap.set("n", "<PageDown>", "<C-d>")
+-- Hyper+g/G emits Home/End → top/bottom of file
 vim.keymap.set("n", "<Home>", "gg")
 vim.keymap.set("n", "<End>", "G")
 

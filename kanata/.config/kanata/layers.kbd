@@ -30,8 +30,8 @@
   ;;   ring (opt):    300ms
   f (t! homerowmodfiltered $tot 150 f lsft $left-hand-keys)
   j (t! homerowmodfiltered $tot 150 j lsft $right-hand-keys)
-  a (t! homerowmodfiltered $tot 175 a lctl $left-hand-keys-no-index)
-  ; (t! homerowmodfiltered $tot 175 ; lctl $right-hand-keys-no-index)
+  a (t! homerowmodfiltered $tot 175 a (multi lctl (layer-while-held ctrl)) $left-hand-keys-no-index)
+  ; (t! homerowmodfiltered $tot 175 ; (multi lctl (layer-while-held ctrl)) $right-hand-keys-no-index)
   d (t! homerowmodfiltered $tot 250 d lmet $left-hand-keys-no-index)
   k (t! homerowmodfiltered $tot 250 k lmet $right-hand-keys-no-index)
   s (t! homerowmodfiltered $tot 300 s lalt $left-hand-keys-no-index)
@@ -71,13 +71,19 @@
 (deflayermap (hyper)
   f (tap-hold-press 200 100 f lsft)
   j (tap-hold-press 200 100 j lsft)
-  a a s s
+  a a s s d d
   k k l l ; ;
 
-  ;; Universal scroll (see scroll.kbd)
-  u @scroll-up
-  d @scroll-down
+  ;; Top/bottom of page (see scroll.kbd)
   g @scroll-goto
+)
+
+;; Ctrl layer — active while A or ; (home row ctrl) is held.
+;; Remaps u/d to Page Up/Down for universal scrolling.
+;; All other keys fall through with lctl held (normal Ctrl+key behavior).
+(deflayermap (ctrl)
+  u (unmod pgup)
+  d (unmod pgdn)
 )
 
 (deflayermap (typing)

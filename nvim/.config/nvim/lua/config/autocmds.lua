@@ -52,6 +52,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.b.completion = false
     vim.opt_local.spell = false
     vim.opt_local.list = false
+    vim.opt_local.conceallevel = 2
     vim.keymap.set("n", "<leader>mc", function()
       vim.b.completion = not vim.b.completion
       vim.notify("Completion " .. (vim.b.completion and "enabled" or "disabled"), vim.log.levels.INFO)

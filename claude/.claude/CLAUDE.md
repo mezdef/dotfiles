@@ -27,6 +27,8 @@
 ## Skill Usage
 Default to NOT using meta-skills — only invoke when they add value.
 
+**Project overrides this default.** When a project's CLAUDE.md lists MANDATORY skills (e.g. `/code-implement`, `/code-review`), follow the project — those are not optional and they supersede the "skip" rules below.
+
 **Skip:** trivial fix → `/writing-code-quick` or just do it · clear requirements → skip `/brainstorming` · one-file change → skip `/writing-plans` · obvious bug → fix directly · specific doc → use Read, not `/docs`
 
 **Use when:** ambiguous requirements → `/brainstorming` · complex multi-step → `/writing-plans` · stuck >15min → `/systematic-debugging` · complex feature + tests → `/test-driven-development`

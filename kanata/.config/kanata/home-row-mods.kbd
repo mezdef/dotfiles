@@ -1,36 +1,92 @@
-;; Home Row Mods
+;; Home Row Mods — urob's "timeless" pattern
 ;;
 ;; Layout:
 ;;   Left hand:  a=ctrl  s=opt  d=cmd  f=shift
 ;;   Right hand: ;=ctrl  l=opt  k=cmd  j=shift
 ;;
-;; Based on: https://github.com/jtroo/kanata/discussions/1656
+;; References:
+;;   - kanata PR #1781 (tap-hold-release-tap-keys-release)
+;;   - urob's ZMK timeless HRMs
+;;   - lucas's kanata port: https://gist.github.com/ldebritto/44574eac93148f387aaa560ccb131903
 ;;
 ;; Key ideas:
-;;   - Per-finger hold timeouts (fast index, slow pinky)
-;;   - Every letter tap triggers a typing layer (nomods) to prevent
-;;     cascading false modifier activations during fast typing
-;;   - hold-for-duration exits typing layer without requiring idle state
-;;   - Space explicitly exits typing layer (uppercase likely after space)
-;;   - homerowmodfiltered (achordion) for all home row mod keys
-;;   - Shift (f/j) uses fork: only activates with another modifier held
+;;   - tap-hold-release-tap-keys-release: two same-hand lists.
+;;       non-HRM keys (instant tap on press)        — classic roll protection
+;;       HRM keys    (release-order resolution)     — fast same-hand mod combos:
+;;                                                    HRM key released first → hold;
+;;                                                    other key released first → tap.
+;;     Opposite-hand keys (not in either list) → instant hold on release.
+;;   - Uniform 175ms hold-timeout. Per-finger ladder no longer needed:
+;;     release-order resolution does what per-finger timing was approximating.
+;;   - Typing layer (nomods) re-arms on every tap (hold-for-duration retriggers
+;;     per kanata discussion #1656), suppressing HRM during sustained typing.
+;;     ALL home-row keys (incl. f/j) become bare letters in typing layer —
+;;     shift HRMs only fire from base layer (after a >dwell-ms pause).
+;;   - Space explicitly exits typing layer (uppercase likely after space).
 
 (defvirtualkeys
   fast (layer-while-held typing)
 )
 
 (defvar
-  ;; tap timeout — max time a key can be held and still count as a tap
+  ;; tap-repress-timeout — re-press within this window after a tap = always tap.
+  ;; Covers vim repeats like `dddd`, `kkkk`. Same as ZMK's quick-tap-ms.
   tot 175
 
-  ;; Hand key lists for achordion (same-hand = tap, opposite-hand = hold)
+  ;; Uniform hold-timeout for all HRMs (replaces per-finger 150/175/250/300).
+  hold-timeout 175
+
+  ;; Hand split (kept for reference / future use).
   left-hand-keys (q w e r t a s d f g z x c v b)
   right-hand-keys (y u i o p h j k l ; n m , . /)
 
-  ;; Achordion lists excluding index fingers (f/j) — used by all non-shift
-  ;; home row mods so same-hand mod+shift combos still work.
-  left-hand-keys-no-index (q w e r t a s d g z x c v b)
-  right-hand-keys-no-index (y u i o p h k l ; n m , . /)
+  ;; --- Per-HRM same-hand resolution lists --------------------------------
+  ;;
+  ;; Each HRM key has its OWN (non-hrm, hrm) pair to tame natural rolls.
+  ;;   non-HRM list: pressed while HRM held → instant tap (roll = letters)
+  ;;   HRM     list: pressed while HRM held → release-order resolution
+  ;;                                          (deliberate same-hand mod combo)
+  ;;   keys in NEITHER list → opposite-hand path (instant hold on release).
+  ;;   ⚠️ Every same-hand key must be in EXACTLY ONE list, else opposite-hand
+  ;;      resolution kicks in for that pair and misfires get worse.
+  ;;
+  ;; Strategy: keep release-order ONLY for combos that are actually useful.
+  ;;   - shift HRMs (f / j) chord with everything for `mod+shift+letter`
+  ;;   - cmd HRMs (d / k) chord with shift + a couple of editor combos
+  ;;   - ctrl / alt HRMs only chord with shift — eliminates the bulk of
+  ;;     `as`, `sa`, `ds`, `lk`, `kl` roll misfires.
+
+  ;; A (ctrl): keep ctrl+shift only (a+f).
+  hrm-a-hrm    (f)
+  hrm-a-nonhrm (q w e r t g z x c v b s d)
+
+  ;; S (alt): keep alt+shift only (s+f).
+  hrm-s-hrm    (f)
+  hrm-s-nonhrm (q w e r t g z x c v b a d)
+
+  ;; D (cmd): keep cmd+a, cmd+s, cmd+shift (cmd+f).
+  hrm-d-hrm    (a s f)
+  hrm-d-nonhrm (q w e r t g z x c v b)
+
+  ;; F (shift): chord with all left-hand mods for *+shift+letter.
+  hrm-f-hrm    (a s d)
+  hrm-f-nonhrm (q w e r t g z x c v b)
+
+  ;; ; (ctrl, right): mirror of A — keep ctrl+shift only (;+j).
+  hrm-sc-hrm    (j)
+  hrm-sc-nonhrm (y u i o p h n m , . / k l)
+
+  ;; L (alt, right): mirror of S — keep alt+shift only (l+j).
+  hrm-l-hrm    (j)
+  hrm-l-nonhrm (y u i o p h n m , . / ; k)
+
+  ;; K (cmd, right): mirror of D — keep cmd+;, cmd+l, cmd+shift.
+  hrm-k-hrm    (; l j)
+  hrm-k-nonhrm (y u i o p h n m , . /)
+
+  ;; J (shift, right): chord with all right-hand mods for *+shift+letter.
+  hrm-j-hrm    (; l k)
+  hrm-j-nonhrm (y u i o p h n m , . /)
 )
 
 (deftemplate homerowmod (timeouttap timeouthold keytap keyhold)
@@ -40,33 +96,52 @@
   )
 )
 
-;; Achordion: same-hand rolls = tap, opposite-hand = hold
-(deftemplate homerowmodfiltered (timeouttap timeouthold keytap keyhold typinglist)
-  (tap-hold-release-keys $timeouttap $timeouthold
+;; urob-style timeless: opposite-hand → hold; same-hand non-HRM → tap on press;
+;; same-hand HRM → tap if released first, hold if HRM key released first.
+(deftemplate homerowmodfiltered (timeouttap timeouthold keytap keyhold non-hrm hrm)
+  (tap-hold-release-tap-keys-release $timeouttap $timeouthold
     (multi $keytap @.tp)
     $keyhold
-    $typinglist
+    $non-hrm
+    $hrm
   )
 )
 
-;; Shift only activates when another modifier (ctrl/cmd/opt) is already held.
-;; During normal typing, outputs the letter instead — prevents accidental caps.
-(deftemplate shiftmod (timeouttap timeouthold keytap typinglist)
-  (tap-hold-release-keys $timeouttap $timeouthold
+;; Optional fork variant for shift — currently unused; f/j bound via
+;; homerowmodfiltered directly with lsft. Kept for reference.
+(deftemplate shiftmod (timeouttap timeouthold keytap non-hrm hrm)
+  (tap-hold-release-tap-keys-release $timeouttap $timeouthold
     (multi $keytap @.tp)
     (fork (multi $keytap @.tp) lsft (lctl lmet lalt))
-    $typinglist
+    $non-hrm
+    $hrm
   )
 )
 
 (defalias
-  ;; Activate typing layer (nomods) after each tap. Timer resets on
-  ;; every tap, so rapid repeated keys (jjjj, kkkk for vim) stay on
-  ;; the typing layer and bypass tap-hold checks entirely.
-  ;; 200ms covers ~2-3 keys at normal typing speed. Non-HRM keys
-  ;; re-trigger the timer from the base layer for longer words.
-  .tp (hold-for-duration 200 fast)
+  ;; Activate typing layer (nomods) after each tap. Timer re-arms on
+  ;; every tap from BOTH base layer and typing layer (hold-for-duration
+  ;; resets on re-invocation per kanata discussion #1656), so sustained
+  ;; typing keeps the layer alive continuously until a >dwell-ms gap.
+  ;;
+  ;; Tuning history:
+  ;;   175 (old) → ctrl+l misfire on "walked" under tap-hold-release variant.
+  ;;   250 → covered inter-word pauses; chosen while f/j shift HRMs stayed
+  ;;         armed in typing layer (worst misfire class).
+  ;;   200 → after f/j stripped from typing layer (worst misfire vector gone).
+  ;;   175 (current) → retest under tap-hold-release-tap-keys-release.
+  ;;         Opposite-hand HRMs now resolve on key-release (event-driven, not
+  ;;         timing-driven), so the old 175 floor may no longer apply. Goal:
+  ;;         snappier opposite-hand HRMs after typing. Roll back to 200 if
+  ;;         "walked"-class misfires reappear.
+  .tp (hold-for-duration 175 fast)
 
   ;; Space explicitly leaves typing layer (uppercase likely after space)
   .spc (multi (on-press release-vkey fast) spc)
+
+  ;; Shift HRMs aliased so they can be referenced from base AND typing
+  ;; layers — keeps shift available for inline capitalization mid-burst
+  ;; (mirrors lucas's pattern of keeping shift HRMs armed in nomods).
+  hrm-f (t! homerowmodfiltered $tot $hold-timeout f lsft $hrm-f-nonhrm $hrm-f-hrm)
+  hrm-j (t! homerowmodfiltered $tot $hold-timeout j lsft $hrm-j-nonhrm $hrm-j-hrm)
 )

@@ -24,14 +24,20 @@
   ;;
   ;; All modifiers use left variants (lsft, lctl, lmet, lalt) — right
   ;; variants don't work in Ghostty/macOS terminal input.
-  f @hrm-f
-  j @hrm-j
-  a (t! homerowmodfiltered $tot $hold-timeout a (multi lctl (layer-while-held ctrl)) $hrm-a-nonhrm $hrm-a-hrm)
-  ; (t! homerowmodfiltered $tot $hold-timeout ; (multi lctl (layer-while-held ctrl)) $hrm-sc-nonhrm $hrm-sc-hrm)
-  d (t! homerowmodfiltered $tot $hold-timeout d lmet $hrm-d-nonhrm $hrm-d-hrm)
-  k (t! homerowmodfiltered $tot $hold-timeout k lmet $hrm-k-nonhrm $hrm-k-hrm)
-  s (t! homerowmodfiltered $tot $hold-timeout s lalt $hrm-s-nonhrm $hrm-s-hrm)
-  l (t! homerowmodfiltered $tot $hold-timeout l lalt $hrm-l-nonhrm $hrm-l-hrm)
+  ;; HRMs temporarily disabled — home-row keys are bare letters.
+  ;; Re-enable: `jj abandon` this changeset (or restore the block below).
+  ;;   f @hrm-f
+  ;;   j @hrm-j
+  ;;   a (t! homerowmodfiltered $tot $hold-timeout a (multi lctl (layer-while-held ctrl)) $hrm-a-nonhrm $hrm-a-hrm)
+  ;;   ; (t! homerowmodfiltered $tot $hold-timeout ; (multi lctl (layer-while-held ctrl)) $hrm-sc-nonhrm $hrm-sc-hrm)
+  ;;   d (t! homerowmodfiltered $tot $hold-timeout d lmet $hrm-d-nonhrm $hrm-d-hrm)
+  ;;   k (t! homerowmodfiltered $tot $hold-timeout k lmet $hrm-k-nonhrm $hrm-k-hrm)
+  ;;   s (t! homerowmodfiltered $tot $hold-timeout s lalt $hrm-s-nonhrm $hrm-s-hrm)
+  ;;   l (t! homerowmodfiltered $tot $hold-timeout l lalt $hrm-l-nonhrm $hrm-l-hrm)
+  f f  j j
+  a a  ; ;
+  d d  k k
+  s s  l l
 
   ;; Every letter triggers typing layer
   q (multi q @.tp) w (multi w @.tp) e (multi e @.tp)

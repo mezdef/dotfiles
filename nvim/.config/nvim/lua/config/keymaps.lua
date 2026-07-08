@@ -14,6 +14,12 @@ vim.keymap.set("n", "<C-p>", function()
   Snacks.picker.files()
 end, { desc = "Find Files" })
 
+-- Undo history browser (Snacks picker: fuzzy list + diff preview + restore).
+-- Overrides LazyVim's default <leader>uh (Toggle Inlay Hints).
+vim.keymap.set("n", "<leader>uh", function()
+  Snacks.picker.undo()
+end, { desc = "Undo History" })
+
 -- Move macro recording to Q to prevent accidental triggers
 vim.keymap.set("n", "q", "<Nop>", { desc = "Disable accidental macro recording" })
 vim.keymap.set("n", "Q", "q", { desc = "Record macro" })

@@ -58,14 +58,20 @@ return {
       },
       {
         function()
-          local filename = vim.fn.expand("%:t")
-          if filename == "" then
+          local full = vim.fn.expand("%:p")
+          if full == "" then
             return "[No Name]"
           end
-          if vim.bo.modified then
-            return filename .. " ●"
+          -- cwd-relative if under cwd, else ~-relative
+          local rel = vim.fn.fnamemodify(full, ":.")
+          if rel == full then
+            rel = vim.fn.fnamemodify(full, ":~")
           end
-          return filename
+          local shortened = vim.fn.pathshorten(rel) -- fish-style: dirs → first char, filename full
+          if vim.bo.modified then
+            return shortened .. " ●"
+          end
+          return shortened
         end,
         color = function()
           if vim.bo.modified then

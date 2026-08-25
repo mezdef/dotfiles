@@ -87,6 +87,15 @@ export EZA_ICONS_AUTO=always
 _cache_init zoxide.zsh zoxide init zsh
 _cache_init fzf.zsh fzf --zsh
 
+# Atuin — shell history search on ^R. Must init AFTER fzf so its ^R binding
+# wins over fzf-history-widget. --disable-up-arrow keeps zsh's up-arrow
+# history. Atuin also grabs vicmd '/' and '?' (its AI prompt); restore both
+# so only ^R changes.
+_cache_init atuin.zsh atuin init zsh --disable-up-arrow
+bindkey -M vicmd '/' vi-history-search-backward
+bindkey -M viins '?' self-insert
+bindkey -M vicmd '?' vi-rev-repeat-search
+
 # Bun completions — lazy-loaded because the file is ~1000 lines and only
 # needed when you actually tab-complete a bun command.
 if [[ -s "$HOME/.bun/_bun" ]]; then

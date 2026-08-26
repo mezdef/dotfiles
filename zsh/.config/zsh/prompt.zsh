@@ -100,10 +100,12 @@ zle-keymap-select() {
   zle reset-prompt
 }
 zle -N zle-keymap-select
-zle-line-init() {
+# Named function (not a same-name widget) so zsh-vi-mode's zvm_define_widget
+# sees 4 fields from `zle -l -L` and wraps this instead of replacing it.
+_prompt_zle_line_init() {
   zle -K viins
   echo -ne "\e[1 q\e]12;${CAT_TEXT}\a"
 }
-zle -N zle-line-init
+zle -N zle-line-init _prompt_zle_line_init
 echo -ne "\e[1 q\e]12;${CAT_TEXT}\a"
 preexec() { echo -ne "\e[1 q\e]12;${CAT_TEXT}\a"; }

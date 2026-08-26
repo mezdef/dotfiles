@@ -66,6 +66,30 @@ source "$ZDOTDIR/prompt.zsh" # prompt symbol, directory, cmd duration, vi cursor
 bindkey -v
 export KEYTIMEOUT=1
 
+# zsh-vi-mode — text objects, surround, real visual mode. Config vars must be
+# set before sourcing; zvm_init itself runs at the first prompt.
+# LAZY_KEYBINDINGS=false binds vicmd/visual during init instead of on the first
+# ESC, so the zvm_after_init overrides below aren't clobbered later.
+ZVM_LAZY_KEYBINDINGS=false
+# prompt.zsh owns the cursor (block in both modes, green normal / white insert).
+ZVM_CURSOR_STYLE_ENABLED=false
+# Yank to macOS clipboard — auto-detects pbcopy/pbpaste. Replaces the hand-rolled
+# vi-yank-clip widgets and also covers yiw/y$/visual-y, not just y and Y.
+ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+source /opt/homebrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT # start every line in insert, as before
+
+# zvm_init rebinds the keymaps at the first prompt, so re-apply our bindings
+# after it: zvm takes viins ^R for history-incremental-search-backward, and
+# vicmd / and ? need the same native restore as the atuin section below.
+zvm_after_init() {
+  bindkey -M viins '^R' atuin-search-viins
+  bindkey -M vicmd '^R' atuin-search
+  bindkey -M vicmd '/' vi-history-search-backward
+  bindkey -M viins '?' self-insert
+  bindkey -M vicmd '?' vi-rev-repeat-search
+}
+
 ################################################################################
 # Environment
 ################################################################################
@@ -89,12 +113,10 @@ _cache_init fzf.zsh fzf --zsh
 
 # Atuin — shell history search on ^R. Must init AFTER fzf so its ^R binding
 # wins over fzf-history-widget. --disable-up-arrow keeps zsh's up-arrow
-# history. Atuin also grabs vicmd '/' and '?' (its AI prompt); restore both
-# so only ^R changes.
+# history. Atuin also grabs vicmd '/' and '?' (its AI prompt); those are
+# restored in zvm_after_init above, which runs last and would overwrite
+# anything bound here.
 _cache_init atuin.zsh atuin init zsh --disable-up-arrow
-bindkey -M vicmd '/' vi-history-search-backward
-bindkey -M viins '?' self-insert
-bindkey -M vicmd '?' vi-rev-repeat-search
 
 # Bun completions — lazy-loaded because the file is ~1000 lines and only
 # needed when you actually tab-complete a bun command.

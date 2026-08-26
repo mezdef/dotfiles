@@ -8,10 +8,19 @@ onboarding = false
 name = "catppuccin"
 
 [ui]
-accent = "#cba6f7"          # mauve, matches tmux active pane border
+accent = "#a6e3a1"          # catppuccin green: selected tab bg, active pane border
 prompt_new_tab_name = false # tmux M-t creates instantly
 
 agent_panel_sort = "spaces"
+
+# Zoom indicator at the right edge of the tab row, standing in for tmux's
+# status-right chip. Built-in `zoom` for its coloured chip and instant update.
+# A `type = "command"` entry can print tmux's magnifier glyph instead, but not
+# in colour: command/text entries take no fg/bg, [theme.custom] has no tab-bar
+# token, and SGR escapes in a command's stdout render literally. Colour won.
+[[ui.tab_bar_right]]
+type = "zoom"
+
 [keys]
 prefix = "ctrl+space"
 

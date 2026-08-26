@@ -17,7 +17,7 @@ prefix = "ctrl+space"
 
 # Prefix actions
 reload_config = "prefix+r"      # tmux: prefix r
-copy_mode = "prefix+v"          # tmux: prefix v
+copy_mode = ["prefix+v", "prefix+["]  # tmux: prefix v; second is herdr's default
 detach = "prefix+d"             # tmux default; herdr default is prefix+q
 resize_mode = "prefix+shift+r"  # displaced by reload_config
 
@@ -57,12 +57,25 @@ move_tab_previous = "alt+shift+j"
 move_tab_next = "alt+shift+k"
 switch_tab = ["prefix+1..9", "alt+shift+1..9"]  # direct jump to tab 1-9
 
-# Pickers / scrollback (tmux: M-p phaser, M-c scrollback in nvim)
-workspace_picker = "alt+p"
+# Scrollback (tmux: M-c scrollback in nvim)
 edit_scrollback = "alt+c"
+
+# tmux M-p phaser lives in [[keys.command]] below. goto (prefix+g) is herdr's
+# own session navigator, kept as a fallback.
+
+# Session picker (tmux: M-p phaser). fzf over spaces/tabs/panes/agents, fuzzy
+# from the first keystroke — herdr's own navigator always opens in list mode and
+# needs / to search, which is not configurable.
+[[keys.command]]
+key = "alt+p"
+type = "popup"
+command = "$HOME/.config/herdr/scripts/herdr-phaser.sh"
+description = "session picker"
+width = "80%"
+height = "70%"
 
 # Gaps with no herdr equivalent:
 # - tmux `prefix L` (last-session): herdr has last_pane and previous/next_workspace, no last workspace.
 # - kanata hyper+g/G (Home/End) → copy-mode history-top/bottom: herdr copy mode has no configurable inner keymap.
-# - tmux-phaser.sh: tmux-CLI-only; workspace_picker covers switching, not zoxide-dir creation or in-picker kill/rename.
+# - phaser extras not ported: zoxide-dir -> new space, in-picker kill/rename.
 # - alt chords depend on the terminal. Requires ghostty `macos-option-as-alt = true`.

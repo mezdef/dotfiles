@@ -76,6 +76,10 @@ ZVM_CURSOR_STYLE_ENABLED=false
 # Yank to macOS clipboard — auto-detects pbcopy/pbpaste. Replaces the hand-rolled
 # vi-yank-clip widgets and also covers yiw/y$/visual-y, not just y and Y.
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
+# Visual-mode selection highlight. The plugin has no theme integration, just raw
+# hex, so wire it to catppuccin from theme.zsh (default is a hardcoded #cc0000).
+ZVM_VI_HIGHLIGHT_BACKGROUND=$CAT_MAUVE
+ZVM_VI_HIGHLIGHT_FOREGROUND=$CAT_BASE
 source /opt/homebrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT # start every line in insert, as before
 
@@ -88,6 +92,69 @@ zvm_after_init() {
   bindkey -M vicmd '/' vi-history-search-backward
   bindkey -M viins '?' self-insert
   bindkey -M vicmd '?' vi-rev-repeat-search
+
+  # Classic surround mode binds visual `ys<char>` as an alias for `S<char>`,
+  # which makes `y` a prefix — so every visual yank stalls $ZVM_KEYTIMEOUT
+  # (0.4s) waiting for a possible `s`. Drop the alias; `S` still adds surround.
+  local s
+  for s in '(' ')' '[' ']' '{' '}' '<' '>' "'" '"' '`' ' ' $'\e'; do
+    bindkey -M visual -r "ys$s"
+  done
+
+  # Flash the yanked region, like LazyVim's highlight-on-yank. zvm_vi_yank is the
+  # only caller of zvm_yank and the single entry point for every yank (visual
+  # `y`, plus yy/yiw/y$ via the normal-mode default handler), so wrapping it
+  # covers all of them and nothing else. The region is recomputed with the same
+  # no-arg zvm_calc_selection that zvm_yank uses, before the yank runs, because
+  # exiting visual mode resets CURSOR/MARK.
+  functions[_zvm_vi_yank_orig]=$functions[zvm_vi_yank]
+  zvm_vi_yank() {
+    local ret=($(zvm_calc_selection))
+    _zvm_vi_yank_orig "$@"
+    _yank_flash $ret[1] $ret[2]
+  }
+}
+
+# Yank flash, matching LazyVim's 150ms IncSearch (catppuccin sky on mantle).
+autoload -Uz add-zle-hook-widget
+
+# Re-applied on every redraw rather than set once: zsh-patina rebuilds
+# region_highlight on line-pre-redraw, and later entries win, so appending ours
+# last is what keeps the flash on top of patina's syntax colors.
+_YANK_FLASH=()
+_yank_flash_hook() {
+  (( $#_YANK_FLASH )) && region_highlight+=("$_YANK_FLASH[1]")
+}
+add-zle-hook-widget line-pre-redraw _yank_flash_hook
+
+# `zle -R` called directly from a `zle -F` handler returns 0 but never repaints;
+# calling a registered widget from the handler does. Hence the indirection.
+# The entry is also dropped explicitly, since `zle -R` repaints from whatever
+# region_highlight already holds.
+_yank_flash_redraw() {
+  region_highlight=("${(@)region_highlight:#$1}")
+  zle -R
+}
+zle -N _yank_flash_redraw
+
+_yank_flash_end() {
+  local fd=$1
+  zle -F $fd
+  exec {fd}<&-
+  local entry=$_YANK_FLASH[1]
+  _YANK_FLASH=()
+  zle _yank_flash_redraw -- "$entry"
+}
+
+# The timer is a backgrounded sleep watched by `zle -F`, not an inline sleep, so
+# the flash never blocks keyboard input.
+_yank_flash() {
+  local bpos=$1 epos=$2
+  (( epos > bpos )) || return
+  _YANK_FLASH=("$bpos $epos fg=$CAT_MANTLE,bg=$CAT_SKY")
+  local fd
+  exec {fd}< <(sleep 0.15)
+  zle -F $fd _yank_flash_end
 }
 
 ################################################################################

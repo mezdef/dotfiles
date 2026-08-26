@@ -20,14 +20,24 @@ Grant in System Settings → Privacy & Security:
 ```
 kanata/
 ├── .config/kanata/
-│   ├── kanata.kbd          ← entry point (defcfg, defsrc, includes)
-│   ├── hyper.kbd           ← caps lock → hyper (ctrl+opt+cmd), tap → esc
-│   └── home-row-mods.kbd  ← per-finger timing, typing layer, spotlight remap
-├── com.jtroo.kanata.plist  ← LaunchDaemon definition (not stowed)
+│   ├── kanata.kbd                     ← entry point (defcfg, defsrc, includes)
+│   ├── hyper.kbd                      ← caps lock → hyper (ctrl+opt+cmd), tap → esc
+│   ├── home-row-mods.kbd              ← per-finger timing, typing layer, spotlight remap
+│   ├── scroll.kbd                     ← page up/down, top/bottom bindings
+│   └── layers.kbd                     ← deflayermap per layer (one file per layer name)
+├── com.jtroo.kanata.plist             ← LaunchDaemon definition (not stowed)
+├── com.jtroo.kanata-watcher.plist     ← restarts kanata on keyboard connect (not stowed)
+├── com.jtroo.kanata-restarter.plist   ← runs scripts/restart-kanata.sh
 ├── scripts/
-│   └── install-daemon.sh   ← installs plist to /Library/LaunchDaemons/
-└── .stow-local-ignore      ← excludes plist/scripts/README from stow
+│   ├── install-daemon.sh              ← installs plist to /Library/LaunchDaemons/
+│   ├── restart-kanata.sh              ← restart helper
+│   ├── watch-keyboards.sh             ← wrapper for the watcher
+│   └── watch-keyboards.swift          ← keyboard connect/disconnect watcher
+└── .stow-local-ignore                 ← excludes plists/scripts/README from stow
 ```
+
+`kanata.kbd` includes the other four `.kbd` files, so a new layer must be added to
+`layers.kbd` (or included explicitly) to take effect.
 
 ## Editing
 

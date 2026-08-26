@@ -9,3 +9,15 @@ history.txt
 zsh/.config/zsh/.zprofile.local
 zsh/.config/zsh/.zshrc.local
 jj/.config/jj/repos/
+
+# Work-specific Claude skills — kept local, not published
+claude/.claude/skills/clone-prod-read-replica-subset/
+claude/.claude/skills/query-db-production/
+claude/.claude/skills/query-logs-production/
+claude/.claude/skills/query-logs-development/
+claude/.claude/skills/lint-conventions/
+claude/.claude/skills/drizzle-migrations/
+claude/.claude/skills/browser-dev/
+claude/.claude/settings.local.json
+claude/.claude/skills/skill-rules.local.json
+__pycache__/

@@ -1,0 +1,68 @@
+# herdr configuration — keybinds mirror ~/.config/tmux/tmux.conf
+# Reference for all options: `herdr --default-config`
+# Validate: `herdr config check`   Apply live: `herdr server reload-config` or prefix+r
+
+onboarding = false
+
+[theme]
+name = "catppuccin"
+
+[ui]
+accent = "#cba6f7"          # mauve, matches tmux active pane border
+prompt_new_tab_name = false # tmux M-t creates instantly
+
+agent_panel_sort = "spaces"
+[keys]
+prefix = "ctrl+space"
+
+# Prefix actions
+reload_config = "prefix+r"      # tmux: prefix r
+copy_mode = "prefix+v"          # tmux: prefix v
+detach = "prefix+d"             # tmux default; herdr default is prefix+q
+resize_mode = "prefix+shift+r"  # displaced by reload_config
+
+# Pane focus (tmux: M-h/j/k/l)
+# Note: herdr has no vim-tmux-navigator equivalent, so these do NOT pass through
+# to nvim. Use <C-w>h/j/k/l for nvim splits.
+focus_pane_left = "alt+h"
+focus_pane_down = "alt+j"
+focus_pane_up = "alt+k"
+focus_pane_right = "alt+l"
+
+# Splits (tmux: M-v side-by-side, M-s stacked)
+split_vertical = "alt+v"
+split_horizontal = "alt+s"
+
+# Pane management (tmux: M-f, M-q)
+zoom = "alt+f"
+close_pane = "alt+q"
+
+# Pane resize (tmux: C-M-h/j/k/l)
+resize_pane_left = "ctrl+alt+h"
+resize_pane_down = "ctrl+alt+j"
+resize_pane_up = "ctrl+alt+k"
+resize_pane_right = "ctrl+alt+l"
+
+# Pane swap (tmux: C-M-H/J/K/L)
+swap_pane_left = "ctrl+alt+shift+h"
+swap_pane_down = "ctrl+alt+shift+j"
+swap_pane_up = "ctrl+alt+shift+k"
+swap_pane_right = "ctrl+alt+shift+l"
+
+# Tabs = tmux windows (M-t, M-H/M-L, M-J/M-K)
+new_tab = "alt+t"
+previous_tab = "alt+shift+h"
+next_tab = "alt+shift+l"
+move_tab_previous = "alt+shift+j"
+move_tab_next = "alt+shift+k"
+switch_tab = ["prefix+1..9", "alt+shift+1..9"]  # direct jump to tab 1-9
+
+# Pickers / scrollback (tmux: M-p phaser, M-c scrollback in nvim)
+workspace_picker = "alt+p"
+edit_scrollback = "alt+c"
+
+# Gaps with no herdr equivalent:
+# - tmux `prefix L` (last-session): herdr has last_pane and previous/next_workspace, no last workspace.
+# - kanata hyper+g/G (Home/End) → copy-mode history-top/bottom: herdr copy mode has no configurable inner keymap.
+# - tmux-phaser.sh: tmux-CLI-only; workspace_picker covers switching, not zoxide-dir creation or in-picker kill/rename.
+# - alt chords depend on the terminal. Requires ghostty `macos-option-as-alt = true`.

@@ -35,7 +35,6 @@ stow strips the package directory (`tmux/`) and recreates everything beneath it 
 | `macos` | System defaults (`.macos`), wallpaper scripts, nvim-opener, LaunchAgents |
 | `nvim` | LazyVim-based Neovim config |
 | `sesh` | Session manager |
-| `starship` | Prompt config — **currently inactive**, `.zshrc` uses `prompt.zsh` instead |
 | `tmux` | Multiplexer; prefix-less keybinds, helper scripts |
 | `zsh` | Shell: `.zshenv`, `.zprofile`, `.zshrc`, prompt, theme, jj helpers |
 

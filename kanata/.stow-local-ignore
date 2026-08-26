@@ -1,5 +1,6 @@
 \.stow-local-ignore
 com\.jtroo\.kanata\.plist
 com\.jtroo\.kanata-watcher\.plist
+com\.jtroo\.kanata-restarter\.plist
 scripts
 README\.md

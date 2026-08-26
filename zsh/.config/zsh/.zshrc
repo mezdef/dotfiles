@@ -26,7 +26,7 @@ setopt share_history
 
 # Runs a command once and caches its stdout to ~/.cache/zsh/<name>.
 # Subsequent shells source the cached file instead of forking the command.
-# Saves ~10ms per cached tool (starship, carapace, zoxide, fzf each fork on init).
+# Saves ~10ms per cached tool (carapace, zoxide, fzf, atuin each fork on init).
 # Clear caches with: rm ~/.cache/zsh/*.zsh (or use the `rr` alias).
 _cache_init() {
   local cache="$HOME/.cache/zsh/$1"; shift

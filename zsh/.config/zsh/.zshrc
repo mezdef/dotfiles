@@ -112,6 +112,13 @@ zvm_after_init() {
     local ret=($(zvm_calc_selection))
     _zvm_vi_yank_orig "$@"
     _yank_flash $ret[1] $ret[2]
+    # Exiting visual mode via an operator leaves zvm's reset-prompt counter at
+    # zero. `d` and `c` still redraw because they modify BUFFER; `y` does not,
+    # so the mode-coloured prompt symbol would stay on visual. Bumping the
+    # counter is enough: zvm_readkeys_handler flushes it once it re-enables
+    # reset-prompt. Flushing it here instead is too early and gets dropped by
+    # the ZVM_RESET_PROMPT_DISABLED guard.
+    zle reset-prompt
   }
 }
 

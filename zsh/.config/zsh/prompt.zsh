@@ -19,10 +19,24 @@ _hex_fg() { printf '\e[38;2;%d;%d;%dm' 0x${1:1:2} 0x${1:3:2} 0x${1:5:2}; }
 _RST=$'\e[0m'
 _CLR_TEXT="$(_hex_fg "$CAT_TEXT")"
 _CLR_RED="$(_hex_fg "$CAT_RED")"
+_CLR_GREEN="$(_hex_fg "$CAT_GREEN")"
+_CLR_MAUVE="$(_hex_fg "$CAT_MAUVE")"
 _CLR_BLUE="$(_hex_fg "$CAT_BLUE")"
 _CLR_YELLOW="$(_hex_fg "$CAT_YELLOW")"
-_CLR_SYMBOL="$_CLR_TEXT"
 unfunction _hex_fg
+
+# Symbol colour by vi mode, keyed on zsh-vi-mode's $ZVM_MODE (n/i/v/vl/r).
+# Looked up during prompt expansion so mode changes cost no forks. The cursor
+# colour below does the same job, but multiplexers swallow OSC 12, so the
+# symbol is the indicator that actually survives tmux and herdr.
+typeset -A _CLR_MODE
+_CLR_MODE=(
+  n  "$_CLR_GREEN"
+  i  "$_CLR_TEXT"
+  v  "$_CLR_MAUVE"
+  vl "$_CLR_MAUVE"
+  r  "$_CLR_RED"
+)
 
 # --- Command duration & exit status tracking ---
 # _PROMPT_CMD_RAN guards against coloring the first prompt red due to non-zero
@@ -51,11 +65,11 @@ _prompt_precmd() {
   fi
   _PROMPT_CMD_RAN=1
 
-  # Symbol color: white (success) or red (error)
+  # A failed command overrides the vi-mode colour until the next command runs.
   if (( _PROMPT_SYMBOL_STATUS == 0 )); then
-    _CLR_SYMBOL="$_CLR_TEXT"
+    _PROMPT_ERR=
   else
-    _CLR_SYMBOL="$_CLR_RED"
+    _PROMPT_ERR="$_CLR_RED"
   fi
 }
 add-zsh-hook preexec _prompt_preexec
@@ -85,13 +99,17 @@ _prompt_update_dir() {
 add-zsh-hook chpwd _prompt_update_dir
 _prompt_update_dir
 
-PROMPT='%{$_CLR_SYMBOL%}󱨊%{$_RST%} '
+PROMPT='%{${_PROMPT_ERR:-${_CLR_MODE[${ZVM_MODE:-i}]}}%}󱨊%{$_RST%} '
 RPROMPT='%{$_CLR_BLUE%}${_PROMPT_DIR}%{$_RST%}${_PROMPT_DURATION:+%{$_CLR_YELLOW%\}$_PROMPT_DURATION%{$_RST%\}}'
 
 # --- Vi mode cursor ---
 # Block cursor in both modes; green in normal mode, white in insert mode.
 # \e[1 q = block cursor, \e]12;COLOR\a = set cursor color (xterm OSC 12).
 zle-keymap-select() {
+  # Deliberately switching out of insert clears the error colour so the symbol
+  # can show the mode again. line-init's forced `zle -K viins` is a viins
+  # transition, so it leaves a fresh error colour intact.
+  [[ ${KEYMAP} != viins ]] && _PROMPT_ERR=
   if [[ ${KEYMAP} == vicmd || $1 == 'block' ]]; then
     echo -ne "\e[1 q\e]12;${CAT_GREEN}\a"
   else

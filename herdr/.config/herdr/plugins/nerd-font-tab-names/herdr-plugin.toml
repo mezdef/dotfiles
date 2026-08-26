@@ -1,0 +1,38 @@
+id = "nerd-font-tab-names"
+name = "Nerd Font Tab Names"
+version = "0.1.0"
+min_herdr_version = "0.8.0"
+description = "Prefix tab labels with a nerd font icon for the running process."
+platforms = ["linux", "macos"]
+
+# Re-arm the worker after a server restart. `start` is idempotent and detaches.
+[[startup]]
+command = ["python3", "watcher.py", "start"]
+
+[[actions]]
+id = "start"
+title = "Tab icons: start"
+description = "Start the detached tab icon worker."
+contexts = ["global", "workspace"]
+command = ["python3", "watcher.py", "start"]
+
+[[actions]]
+id = "stop"
+title = "Tab icons: stop"
+description = "Stop the tab icon worker."
+contexts = ["global", "workspace"]
+command = ["python3", "watcher.py", "stop"]
+
+[[actions]]
+id = "status"
+title = "Tab icons: status"
+description = "Report worker status."
+contexts = ["global", "workspace"]
+command = ["python3", "watcher.py", "status"]
+
+[[actions]]
+id = "apply"
+title = "Tab icons: apply now"
+description = "Rename every tab once, without the worker."
+contexts = ["global", "workspace", "tab", "pane"]
+command = ["python3", "watcher.py", "apply"]

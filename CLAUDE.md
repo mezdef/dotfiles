@@ -15,9 +15,60 @@ Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 Work-specific skills and scripts physically live in the package but are gitignored, so they are
 stowed locally without being published. See the gitignore block for the list.
 
-`settings.json` is verified against Claude Code 2.1.228. When changing it, confirm keys still
-exist rather than trusting docs summaries: `strings -a $(readlink -f $(which claude)) | grep -x
-'<key>'`.
+### Settings
+
+`settings.json` is verified against Claude Code 2.1.228. Confirm a key exists before adding it,
+rather than trusting a docs summary: `strings -a $(readlink -f $(which claude)) | grep -x '<key>'`.
+The binary embeds the full settings-key list with descriptions, which is the fastest reference.
+
+`outputStyle: "Direct"` activates `output-styles/direct.md`. Its register rules overlap the
+Communication section of `claude/.claude/CLAUDE.md`; both load every turn, so if that duplication
+becomes a problem, one of the two should own register.
+
+Rules are evaluated `deny` -> `ask` -> `allow`, first match wins, and specificity does not change
+that order. A deny rule therefore cannot carry allowlist exceptions, so deny rules must be narrow.
+
+The split here is narrow-deny layered under broad-ask:
+
+- `deny` holds only material with no legitimate read: the atuin sync key, `~/.aws/credentials`, and
+  SSH private keys by name (`id_rsa*`, `id_ed25519*`, `id_ecdsa*`, `id_dsa*`). Deny never prompts
+  and has no settings override, so nothing goes here that a real task might need.
+- `ask` holds everything worth a confirmation but plausibly needed: `~/.ssh/**` and `~/.aws/**`
+  broadly (so `config` and `known_hosts` prompt rather than fail), the `.env` family, `*.pem` and
+  `*.key`, and force-push.
+
+The layering works because deny is checked first: `~/.ssh/id_ed25519` is denied while
+`~/.ssh/config` falls through to the broad ask. Do not duplicate an entry into both arrays — the
+`ask` copy is dead.
+
+The `.env` rules name specific files rather than globbing `**/.env*`, so `.env.example` stays
+readable. `jj git push` does not match the `git push --force` rules; they only bite on raw git.
+
+Both tiers are `Read(...)`/`Bash(...)` scoped. The allowlist grants `Bash(cat:*)`, `Bash(tail:*)`,
+`Bash(grep:*)` and `Bash(find:*)`, any of which reaches a protected path without matching a rule.
+Treat this as a guardrail against touching a secret by accident, not a security boundary. Closing
+the Bash route needs `sandbox`, not more patterns — per-command patterns like `Bash(cat .env:*)`
+miss `./.env`, `apps/x/.env` and every other spelling, so they imply coverage they lack.
+
+Auto mode already runs 65 classifier `soft_deny` rules covering this ground independently, incl.
+`Credential Exploration`, `Sensitive-Source Provenance` and `Credential Leakage`. Inspect them with
+`claude auto-mode defaults` and see the effective config with `claude auto-mode config`.
+
+**Version lag.** Installed via Homebrew cask, which trails npm by roughly 15-20 versions
+(2.1.228 installed / 2.1.231 cask / 2.1.247 npm as of 2026-08-27). `autoUpdates: true` has no
+effect on a cask install; upgrade with `brew upgrade --cask claude-code`. Settings gated behind
+the lag and therefore not yet usable: `promptCacheTtl` and `subagentPromptCacheTtl` (2.1.243),
+`modelPicker` (2.1.243), `spellcheck` (2.1.235), `keybindingFlavor` (2.1.238).
+
+### MCP servers
+
+`.mcp.json` at the repo root defines this repo's servers and is tracked. Everything else lives
+per-project in the untracked 142KB `~/.claude.json`, so it is not version controlled and has
+drifted: the `work-app` worktrees disagree on the Linear server name (`lienar-server` is
+a typo, and `-2`/`-4` define both `linear` and `linear-server`). Clean that up in those repos with
+their own `.mcp.json`.
+
+Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on next start.
 
 ### Hooks
 

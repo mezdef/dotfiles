@@ -5,6 +5,46 @@ GNU Stow-managed dotfiles. Each top-level directory is a stow package that symli
 
 See `README.md` for the package inventory and the `.local` override pattern.
 
+## Claude Code
+
+Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
+`settings.json`, `settings.local.json`, `CLAUDE.md`, `hooks/`, `skills/`, `scripts/`,
+`output-styles/`, `statusline.sh`. Everything else under `~/.claude/` (`plans/`, `projects/`,
+`sessions/`, `history.jsonl`, caches) is machine state and stays untracked.
+
+Work-specific skills and scripts physically live in the package but are gitignored, so they are
+stowed locally without being published. See the gitignore block for the list.
+
+`settings.json` is verified against Claude Code 2.1.228. When changing it, confirm keys still
+exist rather than trusting docs summaries: `strings -a $(readlink -f $(which claude)) | grep -x
+'<key>'`.
+
+### Hooks
+
+- `agent-finish.sh` — Stop event, `asyncRewake: true`. Runs `bun lint --fix` then `bun type` in
+  node projects. **Contract: exit 2 with findings on stderr to wake Claude, exit 0 to stay
+  silent.** Plain stdout at exit 0 is discarded by Claude Code, so anything meant for the model
+  must go to stderr with exit 2.
+- `plan-lifecycle-hook.sh` — PostToolUse, `matcher: "ExitPlanMode|Write|Edit"`. Emits reminders as
+  `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout.
+
+Two rules learned the hard way:
+
+1. **Never give a Stop hook a `timeout` shorter than the work it runs.** A cancelled hook has its
+   output discarded, and a cancelled `eslint --cache` never writes `.eslintcache`, so every run
+   stays cold forever. Cold eslint in `work-app` is ~68s against a 60s timeout; it never
+   converged and blocked every turn end.
+2. **Do slow post-turn work with `asyncRewake`, not a synchronous Stop hook.** It runs detached and
+   only interrupts on failure.
+
+`agent-finish.sh` takes a per-worktree `mkdir` lock, because `eslint --cache` and
+`tsc --incremental` share mutable state across concurrent sessions in the same tree.
+
+### Statusline
+
+`statusline.sh` renders on every prompt, so it uses one `jq` fork and bash integer comparison. Do
+not add per-render subprocesses.
+
 ## Kanata (keyboard remapping)
 
 Handles home row mods, hyper key, spotlight remap, and scroll bindings. Config is `.kbd` files

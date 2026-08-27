@@ -24,7 +24,7 @@ stow strips the package directory (`tmux/`) and recreates everything beneath it 
 |---------|--------------------|
 | `atuin` | Shell history search (ctrl-r). History DB and sync key stay in `~/.local/share/atuin/`, untracked |
 | `bat` | `bat` pager, Catppuccin Mocha theme |
-| `claude` | Claude Code: `CLAUDE.md`, hooks, skills, output styles, settings |
+| `claude` | Claude Code: `CLAUDE.md`, settings, hooks, skills, scripts, statusline, output styles. See the Claude Code section in `CLAUDE.md` |
 | `ghostty` | Terminal; keybind remaps for tmux compatibility |
 | `git` | `git/config` |
 | `herdr` | Terminal multiplexer; keybinds mirror tmux, plus tab-name plugin |

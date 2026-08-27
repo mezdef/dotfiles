@@ -54,6 +54,48 @@ Auto mode already runs 65 classifier `soft_deny` rules covering this ground inde
 `Credential Exploration`, `Sensitive-Source Provenance` and `Credential Leakage`. Inspect them with
 `claude auto-mode defaults` and see the effective config with `claude auto-mode config`.
 
+#### What the allowlist buys under `defaultMode: auto`
+
+Unmatched calls are reviewed by the classifier, not surfaced as a prompt. Allow rules therefore
+reduce classifier round-trips and false positives, not prompt count. The false positives are real:
+the classifier blocked three legitimate edits to this settings file while it was being written.
+
+The allowlist was derived from usage, not guesswork: scan `~/.claude/projects/*/*.jsonl` for
+`tool_use` entries, strip heredoc bodies (otherwise embedded script and SQL text counts as
+commands), split compound commands on `|`/`&&`/`;`, strip env assignments and `sudo`/`timeout`,
+then normalise to command + subcommand. 50 transcripts covered 9,046 Bash calls.
+
+`jj` is the reason the list is long. Claude Code ships read-only handling for `git`, `gh` and
+`docker` subcommands but has no concept of `jj`, so every jj call needs an explicit rule. The rules
+are listed per-subcommand rather than as `Bash(jj:*)` or `Bash(jj file:*)` so that mutating
+siblings stay uncovered: `jj file untrack` is not covered by `jj file show`/`file list`, and
+**`jj git push` is deliberately absent** — it is the one jj operation with externally visible
+effect, so it should keep being classified. Local jj mutations are allowlisted because the op log
+makes them reversible via `jj undo` / `jj op restore`. Current coverage is 99% of observed jj calls.
+
+MCP allow rules must match the real server name. `mcp__linear__*` sat in this file matching nothing
+for months, because the server is actually `linear-server`. Verify against
+`jq -r '[.projects[]?.mcpServers // {} | keys[]] | unique[]' ~/.claude.json` before adding a rule.
+
+`Bash(bunx:*)`, `Bash(bun run:*)`, `Bash(curl:*)`, `Bash(gh api:*)`, `Bash(rm:*)` and
+`Bash(chmod:*)` are deliberately broad, which is the reason the `Read` deny/ask tiers above are
+advisory rather than binding. Narrower observed-usage replacements, if that trade is ever revisited:
+`bunx vitest run` 917, `bunx eslint` 387, `bunx playwright` 30, `bunx prettier` 23; `bun run type`
+741, `bun run lint` 171, `bun run test:unit` 54.
+
+Never allowlist: `tmux send-keys` (injects keystrokes into any pane — arbitrary command execution
+laundered through tmux), `psql` (arbitrary SQL and DDL), or interpreter wildcards. `Bash(python3:*)`
+and `Bash(node:*)` were removed for exactly that reason — `python3 -c "print(open('.env').read())"`
+reads a denied path without ever evaluating a `Read` rule.
+
+Unresolved: the documented set of commands Claude Code auto-allows without any rule could only be
+partly confirmed against 2.1.228. The `READONLY_COMMANDS` cluster is in the binary (`echo`,
+`printf`, `grep`, `head`, `tail`, `stat`, `strings`, `uname`, `which`, `diff`, `sleep`, `cd`, `ls`,
+`find`, `jq`, `pwd`, `whoami`), but `shortlog`, `reflog` and `blame` appear nowhere, so the claimed
+built-in git/gh read-only lists are unverified here. Do not prune the `git diff` / `git log` /
+`gh pr view` / `cat` / `ls` entries as redundant on that basis — test empirically first (remove one,
+restart, run the command, see whether it is classified).
+
 **Version lag.** Installed via Homebrew cask, which trails npm by roughly 15-20 versions
 (2.1.228 installed / 2.1.231 cask / 2.1.247 npm as of 2026-08-27). `autoUpdates: true` has no
 effect on a cask install; upgrade with `brew upgrade --cask claude-code`. Settings gated behind

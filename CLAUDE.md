@@ -15,6 +15,10 @@ Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 Work-specific scripts physically live in the package but are gitignored, so they are stowed
 locally without being published. See the gitignore block for the list.
 
+Context budget, the plan-file lifecycle contract, and the measurements behind both are in
+`docs/claude-context.md`. Read it before changing `statusline.sh` thresholds, the plan hooks, or
+`plan-active.sh`.
+
 `claude/project-skills/` holds per-project skills. They are **not** stowed (see
 `claude/.stow-local-ignore`) and must never land in `~/.claude/skills/`, which costs context in
 every session of every project; they are symlinked into the consuming repo instead. Memory is
@@ -22,7 +26,7 @@ owned by Claude Code's built-in prompt, not a skill. Details in `docs/claude-per
 
 ### Settings and permissions
 
-`settings.json` is verified against Claude Code 2.1.228, installed via Homebrew cask (trails npm by
+`settings.json` is verified against Claude Code 2.1.231, installed via Homebrew cask (trails npm by
 ~20 versions; `autoUpdates` has no effect). Permission rules, the deny/ask/allow layering, the
 allowlist derivation, and the version-gated settings are documented in
 `docs/claude-permissions.md`. **Read that file before editing `settings.json`.**
@@ -47,7 +51,22 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
   silent.** Plain stdout at exit 0 is discarded by Claude Code, so anything meant for the model
   must go to stderr with exit 2.
 - `plan-lifecycle-hook.sh` — PostToolUse, `matcher: "ExitPlanMode|Write|Edit"`. Emits reminders as
-  `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout.
+  `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout. The
+  `ExitPlanMode` branch reads `tool_input.planFilePath` and checks filename, status directory,
+  `repo:` frontmatter and the `## Tasks` / `## Next` sections.
+- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 400k
+  of context. Always exits 0; it never blocks a prompt.
+- `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
+  active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
+  `herdr-agent-state.sh` under `matcher: "*"` is left alone.
+
+Thresholds, the 967k auto-compact derivation and the plan-lifecycle contract are in
+`docs/claude-context.md`.
+
+Only three events deliver plain exit-0 stdout to the model: `SessionStart`, `UserPromptSubmit` and
+`UserPromptExpansion`. Everything else needs `hookSpecificOutput.additionalContext`, which is
+supported on `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, `Notification` and others, but
+**not** on `PreCompact` or `PostCompact`.
 
 Two rules learned the hard way:
 
@@ -63,8 +82,15 @@ Two rules learned the hard way:
 
 ### Statusline
 
-`statusline.sh` renders on every prompt, so it uses one `jq` fork and bash integer comparison. Do
-not add per-render subprocesses.
+`statusline.sh` uses one `jq` fork and bash integer comparison. Do not add per-render subprocesses.
+It is not run per render: Claude Code re-runs it on a 300ms trailing debounce whenever `tokenUsage`,
+the model, vim mode, effort or PR status changes, plus the optional `statusLine.refreshInterval`.
+
+The context segment colors on **absolute token counts**, not `used_percentage`: green below 300k,
+yellow at 300k, red plus an action hint at 400k. On a 1M window a percentage is useless as a warning
+because auto-compact does not fire until 967k. It reads `context_window.total_input_tokens`, which
+already includes cache reads and creation; adding `total_output_tokens` to it double-counts.
+Rationale and measurements in `docs/claude-context.md`.
 
 ## Kanata (keyboard remapping)
 

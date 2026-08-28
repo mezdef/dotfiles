@@ -12,99 +12,27 @@ Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 `output-styles/`, `statusline.sh`. Everything else under `~/.claude/` (`plans/`, `projects/`,
 `sessions/`, `history.jsonl`, caches) is machine state and stays untracked.
 
-Work-specific skills and scripts physically live in the package but are gitignored, so they are
-stowed locally without being published. See the gitignore block for the list.
+Work-specific scripts physically live in the package but are gitignored, so they are stowed
+locally without being published. See the gitignore block for the list.
 
-### Settings
+`claude/project-skills/` holds per-project skills. They are **not** stowed (see
+`claude/.stow-local-ignore`) and must never land in `~/.claude/skills/`, which costs context in
+every session of every project; they are symlinked into the consuming repo instead. Memory is
+owned by Claude Code's built-in prompt, not a skill. Details in `docs/claude-permissions.md`.
 
-`settings.json` is verified against Claude Code 2.1.228. Confirm a key exists before adding it,
-rather than trusting a docs summary: `strings -a $(readlink -f $(which claude)) | grep -x '<key>'`.
-The binary embeds the full settings-key list with descriptions, which is the fastest reference.
+### Settings and permissions
 
-`outputStyle: "Direct"` activates `output-styles/direct.md`. Its register rules overlap the
-Communication section of `claude/.claude/CLAUDE.md`; both load every turn, so if that duplication
-becomes a problem, one of the two should own register.
-
-Rules are evaluated `deny` -> `ask` -> `allow`, first match wins, and specificity does not change
-that order. A deny rule therefore cannot carry allowlist exceptions, so deny rules must be narrow.
-
-The split here is narrow-deny layered under broad-ask:
-
-- `deny` holds only material with no legitimate read: the atuin sync key, `~/.aws/credentials`, and
-  SSH private keys by name (`id_rsa*`, `id_ed25519*`, `id_ecdsa*`, `id_dsa*`). Deny never prompts
-  and has no settings override, so nothing goes here that a real task might need.
-- `ask` holds everything worth a confirmation but plausibly needed: `~/.ssh/**` and `~/.aws/**`
-  broadly (so `config` and `known_hosts` prompt rather than fail), the `.env` family, `*.pem` and
-  `*.key`, and force-push.
-
-The layering works because deny is checked first: `~/.ssh/id_ed25519` is denied while
-`~/.ssh/config` falls through to the broad ask. Do not duplicate an entry into both arrays — the
-`ask` copy is dead.
-
-The `.env` rules name specific files rather than globbing `**/.env*`, so `.env.example` stays
-readable. `jj git push` does not match the `git push --force` rules; they only bite on raw git.
-
-Both tiers are `Read(...)`/`Bash(...)` scoped. The allowlist grants `Bash(cat:*)`, `Bash(tail:*)`,
-`Bash(grep:*)` and `Bash(find:*)`, any of which reaches a protected path without matching a rule.
-Treat this as a guardrail against touching a secret by accident, not a security boundary. Closing
-the Bash route needs `sandbox`, not more patterns — per-command patterns like `Bash(cat .env:*)`
-miss `./.env`, `apps/x/.env` and every other spelling, so they imply coverage they lack.
-
-Auto mode already runs 65 classifier `soft_deny` rules covering this ground independently, incl.
-`Credential Exploration`, `Sensitive-Source Provenance` and `Credential Leakage`. Inspect them with
-`claude auto-mode defaults` and see the effective config with `claude auto-mode config`.
-
-#### What the allowlist buys under `defaultMode: auto`
-
-Unmatched calls are reviewed by the classifier, not surfaced as a prompt. Allow rules therefore
-reduce classifier round-trips and false positives, not prompt count. The false positives are real:
-the classifier blocked three legitimate edits to this settings file while it was being written.
-
-The allowlist was derived from usage, not guesswork: scan `~/.claude/projects/*/*.jsonl` for
-`tool_use` entries, strip heredoc bodies (otherwise embedded script and SQL text counts as
-commands), split compound commands on `|`/`&&`/`;`, strip env assignments and `sudo`/`timeout`,
-then normalise to command + subcommand. 50 transcripts covered 9,046 Bash calls.
-
-`jj` is the reason the list is long. Claude Code ships read-only handling for `git`, `gh` and
-`docker` subcommands but has no concept of `jj`, so every jj call needs an explicit rule. The rules
-are listed per-subcommand rather than as `Bash(jj:*)` or `Bash(jj file:*)` so that mutating
-siblings stay uncovered: `jj file untrack` is not covered by `jj file show`/`file list`, and
-**`jj git push` is deliberately absent** — it is the one jj operation with externally visible
-effect, so it should keep being classified. Local jj mutations are allowlisted because the op log
-makes them reversible via `jj undo` / `jj op restore`. Current coverage is 99% of observed jj calls.
-
-MCP allow rules must match the real server name. `mcp__linear__*` sat in this file matching nothing
-for months, because the server is actually `linear-server`. Verify against
-`jq -r '[.projects[]?.mcpServers // {} | keys[]] | unique[]' ~/.claude.json` before adding a rule.
-
-`Bash(bunx:*)`, `Bash(bun run:*)`, `Bash(curl:*)`, `Bash(gh api:*)`, `Bash(rm:*)` and
-`Bash(chmod:*)` are deliberately broad, which is the reason the `Read` deny/ask tiers above are
-advisory rather than binding. Narrower observed-usage replacements, if that trade is ever revisited:
-`bunx vitest run` 917, `bunx eslint` 387, `bunx playwright` 30, `bunx prettier` 23; `bun run type`
-741, `bun run lint` 171, `bun run test:unit` 54.
-
-Never allowlist: `tmux send-keys` (injects keystrokes into any pane — arbitrary command execution
-laundered through tmux), `psql` (arbitrary SQL and DDL), or interpreter wildcards. `Bash(python3:*)`
-and `Bash(node:*)` were removed for exactly that reason — `python3 -c "print(open('.env').read())"`
-reads a denied path without ever evaluating a `Read` rule.
-
-Unresolved: the documented set of commands Claude Code auto-allows without any rule could only be
-partly confirmed against 2.1.228. The `READONLY_COMMANDS` cluster is in the binary (`echo`,
-`printf`, `grep`, `head`, `tail`, `stat`, `strings`, `uname`, `which`, `diff`, `sleep`, `cd`, `ls`,
-`find`, `jq`, `pwd`, `whoami`), but `shortlog`, `reflog` and `blame` appear nowhere, so the claimed
-built-in git/gh read-only lists are unverified here. Do not prune the `git diff` / `git log` /
-`gh pr view` / `cat` / `ls` entries as redundant on that basis — test empirically first (remove one,
-restart, run the command, see whether it is classified).
-
-**Version lag.** Installed via Homebrew cask, which trails npm by roughly 15-20 versions
-(2.1.228 installed / 2.1.231 cask / 2.1.247 npm as of 2026-08-27). `autoUpdates: true` has no
-effect on a cask install; upgrade with `brew upgrade --cask claude-code`. Settings gated behind
-the lag and therefore not yet usable: `promptCacheTtl` and `subagentPromptCacheTtl` (2.1.243),
-`modelPicker` (2.1.243), `spellcheck` (2.1.235), `keybindingFlavor` (2.1.238).
+`settings.json` is verified against Claude Code 2.1.228, installed via Homebrew cask (trails npm by
+~20 versions; `autoUpdates` has no effect). Permission rules, the deny/ask/allow layering, the
+allowlist derivation, and the version-gated settings are documented in
+`docs/claude-permissions.md`. **Read that file before editing `settings.json`.**
 
 ### MCP servers
 
-`.mcp.json` at the repo root defines this repo's servers and is tracked. Everything else lives
+`.mcp.json` at the repo root defines this repo's servers and is tracked. Playwright is defined
+there but **not** in `enabledMcpjsonServers`, because loading it costs ~370 tokens of context
+per session and nothing here uses it (`md-preview` drives a plain Bun server, not a browser
+driver). Enable it per-session if a task genuinely needs browser automation. Everything else lives
 per-project in the untracked 142KB `~/.claude.json`, so it is not version controlled and has
 drifted: the `work-app` worktrees disagree on the Linear server name (`lienar-server` is
 a typo, and `-2`/`-4` define both `linear` and `linear-server`). Clean that up in those repos with

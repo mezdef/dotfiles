@@ -11,8 +11,8 @@ zsh/.config/zsh/.zshrc.local
 jj/.config/jj/repos/
 
 # Work-specific Claude skills and scripts — kept local, not published
-claude/.claude/skills/clone-prod-read-replica-subset/
-claude/.claude/skills/query-db-production/
+claude/project-skills/work-app/clone-prod-read-replica-subset/
+claude/project-skills/work-app/query-db-production/
 claude/.claude/skills/query-logs-production/
 claude/.claude/skills/query-logs-development/
 claude/.claude/skills/lint-conventions/

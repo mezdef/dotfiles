@@ -106,7 +106,8 @@ Package layout, all stowed:
   `recovery.md` what to do when herdr went away or a copy is stale. Per-role contracts are
   `roles/<abbrev>.md` under `roles/_contract.md`
 - `claude/.claude/scripts/captain/` — the `cap-*.sh` scripts plus `lib-manifest.sh`, the shared
-  library every one of them sources. `tests/stage<N>.sh` is the regression suite, one file per
+  library the manifest-touching scripts source (eight of eleven; `cap-lease.sh`, `cap-context.sh` and
+  `cap-improve.sh` stand alone). `tests/stage<N>.sh` is the regression suite, one file per
   release stage, and all of them run from the real repo rather than from a working copy
 
 Thirteen roles across the eight phases, seven of them shipped. `roles.md` is the only complete list;

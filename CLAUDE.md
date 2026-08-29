@@ -10,7 +10,7 @@ See `README.md` for the package inventory and the `.local` override pattern.
 Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 `settings.json`, `settings.local.json`, `CLAUDE.md`, `hooks/`, `skills/`, `scripts/`,
 `output-styles/`, `statusline.sh`. Everything else under `~/.claude/` (`plans/`, `projects/`,
-`sessions/`, `history.jsonl`, caches) is machine state and stays untracked.
+`sessions/`, `crews/`, `history.jsonl`, caches) is machine state and stays untracked.
 
 Work-specific scripts physically live in the package but are gitignored, so they are stowed
 locally without being published. See the gitignore block for the list.
@@ -91,6 +91,50 @@ yellow at 300k, red plus an action hint at 400k. On a 1M window a percentage is 
 because auto-compact does not fire until 967k. It reads `context_window.total_input_tokens`, which
 already includes cache reads and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
+
+## Captain
+
+Herdr-backed crew orchestration. `/captain` drives one task through eight phases — define, survey,
+explore, plan, build, review, integrate, close — spawning a crew per phase, each in its own jj
+working copy behind its own permission profile. Design in
+`docs/design/2026-08-28-captain-crew-orchestration.md`.
+
+Package layout, all stowed:
+
+- `claude/.claude/skills/captain/` — `SKILL.md` is the front page. `roles.md` is the authoritative
+  role table, `artifacts.md` what each phase writes, `concurrency.md` what may run at once,
+  `recovery.md` what to do when herdr went away or a copy is stale. Per-role contracts are
+  `roles/<abbrev>.md` under `roles/_contract.md`
+- `claude/.claude/scripts/captain/` — the `cap-*.sh` scripts plus `lib-manifest.sh`, the shared
+  library every one of them sources. `tests/stage<N>.sh` is the regression suite, one file per
+  release stage, and all of them run from the real repo rather than from a working copy
+
+Thirteen roles across the eight phases, seven of them shipped. `roles.md` is the only complete list;
+the design's Appendix B and the plan's stage sections each omit some. Read `roles.md`, not either.
+
+**Runtime state is `~/.claude/crews/<slug>/` and is not version controlled.** One directory per
+project holding the manifest, the briefs, the crew logs, the survey and the generated per-crew
+settings. `_pool/` holds the working-copy claims, `_improve/` the improvement record and
+`_archive/` torn-down projects. Claude Code owns `~/.claude/projects/`, so the captain cannot use it.
+
+Working copies come from a pool sized per repo in `claude/.claude/scripts/captain/pool.conf`, four
+for this one. They are dedicated `<repo>-lease-N` jj workspaces and never the user's own copy;
+sizes are bounded by disk, because build caches are unbounded.
+
+`docs/design/YYYY-MM-DD-<name>.md` paired 1:1 with a plan of the same name is the convention the
+plan phase writes to, and it is the same convention the rest of this repo already uses.
+
+`cap-improve.sh` is the improvement loop, and it improves the captain rather than the projects it
+runs. Entries are append-only in `~/.claude/crews/_improve/`, each naming the file it wants changed
+and the dotfiles change id at the time; an entry that cannot name a target is refused. The status
+and wait scripts record their own anomalies, and `cap-status.sh` flags any target that reaches three
+entries in its footer. A fact about the work goes in the crew log instead.
+
+**The permission profiles are the only enforceable boundary in the design.** `cap-profile.sh`
+generates one per crew from the role file's frontmatter; nothing maps role to profile a second time.
+`herdr pane send-keys` and `agent send-keys` are deliberately **not** allowlisted, because either
+one is arbitrary command execution laundered through herdr. The `cap-*.sh` scripts are allowlisted;
+the pane primitives stay classifier-gated. See `docs/claude-permissions.md`.
 
 ## Kanata (keyboard remapping)
 

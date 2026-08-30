@@ -54,7 +54,7 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
   `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout. The
   `ExitPlanMode` branch reads `tool_input.planFilePath` and checks filename, status directory,
   `repo:` frontmatter and the `## Tasks` / `## Next` sections.
-- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 400k
+- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 300k
   of context. Always exits 0; it never blocks a prompt.
 - `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
   active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
@@ -86,10 +86,11 @@ Two rules learned the hard way:
 It is not run per render: Claude Code re-runs it on a 300ms trailing debounce whenever `tokenUsage`,
 the model, vim mode, effort or PR status changes, plus the optional `statusLine.refreshInterval`.
 
-The context segment colors on **absolute token counts**, not `used_percentage`: green below 300k,
-yellow at 300k, red plus an action hint at 400k. On a 1M window a percentage is useless as a warning
-because auto-compact does not fire until 967k. It reads `context_window.total_input_tokens`, which
-already includes cache reads and creation; adding `total_output_tokens` to it double-counts.
+The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
+yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning
+because auto-compact does not fire until 967k. `cap-context.sh` and `cap-status.sh` use the same two
+numbers for a crew. It reads `context_window.total_input_tokens`, which already includes cache reads
+and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
 
 ## Captain

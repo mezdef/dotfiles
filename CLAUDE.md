@@ -16,8 +16,9 @@ Work-specific scripts physically live in the package but are gitignored, so they
 locally without being published. See the gitignore block for the list.
 
 Context budget, the plan-file lifecycle contract, and the measurements behind both are in
-`docs/claude-context.md`. Read it before changing `statusline.sh` thresholds, the plan hooks, or
-`plan-active.sh`.
+`docs/claude-context.md`. **Read it before changing `statusline.sh` thresholds, the plan hooks, or
+`plan-active.sh`.** Token and cost accounting — the ledger, the price table, and the three
+transcript-reading traps — is in `docs/claude-usage.md`.
 
 `claude/project-skills/` holds per-project skills. They are **not** stowed (see
 `claude/.stow-local-ignore`) and must never land in `~/.claude/skills/`, which costs context in
@@ -125,6 +126,10 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
 - `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
   active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
   `herdr-agent-state.sh` under `matcher: "*"` is left alone.
+- `scripts/usage/usage-track.sh` — one script on four events. `Stop` (`asyncRewake`) reduces the
+  transcript incrementally into a sidecar; `SubagentStop` turns `agent_transcript_path` into a
+  ledger row; `SessionEnd` finalises, and fires on `/clear` and `/resume` rather than only on exit;
+  a third `SessionStart` entry sweeps sidecars whose session is gone. See `docs/claude-usage.md`.
 
 Thresholds, the 967k auto-compact derivation and the plan-lifecycle contract are in
 `docs/claude-context.md`.
@@ -151,6 +156,12 @@ Two rules learned the hard way:
 `statusline.sh` uses one `jq` fork and bash integer comparison. Do not add per-render subprocesses.
 It is not run per render: Claude Code re-runs it on a 300ms trailing debounce whenever `tokenUsage`,
 the model, vim mode, effort or PR status changes, plus the optional `statusLine.refreshInterval`.
+
+It renders context, session cost and a cache-hit ratio. Cost is `cost.total_cost_usd`, which
+already includes in-process subagent spend and which the statusline previously discarded;
+cache-hit is session-cumulative from the usage sidecar, not the last message's ratio, which sits
+near 99% in any long session. Both segments come from flat TSV sidecars read with bash builtins,
+so the single-fork rule holds. See `docs/claude-usage.md`.
 
 The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
 yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning
@@ -252,6 +263,14 @@ the path denies it wrote are gone, along with the jj working-copy pool. Writers 
 are sitting in, so they are sequenced rather than concurrent. `herdr pane send-keys` and
 `agent send-keys` are still deliberately **not** allowlisted, because either one is arbitrary
 command execution laundered through herdr. See `docs/claude-permissions.md`.
+
+**Cost is no longer read from `$CAP_DIR/context/<crew>.json`.** That file is overwritten on every
+render, and `SKILL.md` tells you to re-dispatch a stalled crew under the same id past 300k, so each
+re-dispatch silently discarded the previous session's spend — the recorded `pla-104` total is a
+floor, not a measurement. `cap-crews.sh list` now sums the usage ledger by crew. The per-crew JSON
+still carries `tokens`, which is a level and belongs to the running session, plus a `peak_ctx`
+running max, since context drops at a compaction. Its `usage` field is gone: it held one message's
+counts under a name implying cumulative totals. See `docs/claude-usage.md`.
 
 `docs/design/YYYY-MM-DD-<name>.md` paired 1:1 with a plan of the same name is the convention the
 plan phase writes to, and it is the same convention the rest of this repo already uses.

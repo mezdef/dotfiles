@@ -8,7 +8,7 @@ See `README.md` for the package inventory and the `.local` override pattern.
 ## Claude Code
 
 Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
-`settings.json`, `settings.local.json`, `CLAUDE.md`, `hooks/`, `skills/`, `scripts/`,
+`settings.json`, `settings.local.json`, `CLAUDE.md`, `agents/`, `hooks/`, `skills/`, `scripts/`,
 `output-styles/`, `statusline.sh`. Everything else under `~/.claude/` (`plans/`, `projects/`,
 `sessions/`, `crews/`, `history.jsonl`, caches) is machine state and stays untracked.
 
@@ -88,55 +88,68 @@ the model, vim mode, effort or PR status changes, plus the optional `statusLine.
 
 The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
 yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning
-because auto-compact does not fire until 967k. `cap-context.sh` and `cap-status.sh` use the same two
+because auto-compact does not fire until 967k. `cap-context.sh` and `cap-crews.sh` use the same two
 numbers for a crew. It reads `context_window.total_input_tokens`, which already includes cache reads
 and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
 
 ## Captain
 
-Herdr-backed crew orchestration. `/captain` drives one task through eight phases — define, survey,
-explore, plan, build, review, integrate, close — spawning a crew per phase, each in its own jj
-working copy behind its own permission profile. Design in
-`docs/design/2026-08-28-captain-crew-orchestration.md`.
+Phase orchestration over native agent definitions. `/captain` drives one task through eight phases —
+define, survey, explore, plan, build, review, integrate, close — dispatching a crew per phase. A
+crew is an ordinary Claude Code session wearing one of the 13 role definitions. Design in
+`docs/design/2026-08-31-captain-to-agent-definitions.md`, which supersedes the herdr-and-jj-pool
+architecture in `2026-08-28-captain-crew-orchestration.md`.
 
-Package layout, all stowed:
+The 13 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
+be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or
+`claude --agent librarian` for a whole session. The file name is what `--agent` takes; the
+`role:` frontmatter key is the three-letter crew-id prefix. `SKILL.md` adds only the phase order,
+the artifact convention and the gates.
 
-- `claude/.claude/skills/captain/` — `SKILL.md` is the front page. `roles.md` is the authoritative
-  role table, `artifacts.md` what each phase writes, `concurrency.md` what may run at once,
-  `recovery.md` what to do when herdr went away or a copy is stale. Per-role contracts are
-  `roles/<abbrev>.md` under `roles/_contract.md`
-- `claude/.claude/scripts/captain/` — the `cap-*.sh` scripts plus `lib-manifest.sh`, the shared
-  library the manifest-touching scripts source (eight of eleven; `cap-lease.sh`, `cap-context.sh` and
-  `cap-improve.sh` stand alone). `tests/stage<N>.sh` is the regression suite, one file per
-  release stage, and all of them run from the real repo rather than from a working copy
+Three runtimes, one definition:
 
-Thirteen roles across the eight phases, seven of them shipped. `roles.md` is the only complete list;
-the design's Appendix B and the plan's stage sections each omit some. Read `roles.md`, not either.
+| | Stdin | Survives your `/clear` |
+|---|---|---|
+| In-process subagent (`Agent(subagent_type: …)`) | no | no |
+| Background session (`cap-crews.sh start`, i.e. `claude --bg`) | not until attached | yes |
+| herdr pane running `claude attach <id>` | yes | yes |
+
+A background session runs to completion or blocks, then exits; `blocked` in `cap-crews.sh list` is
+the signal to attach and answer it. Nothing is waiting on a live process.
+
+Three scripts, ~600 lines, replacing the eleven that came before:
+
+- `cap-crews.sh` — `new`, `start`, `list`, `attach`. It keeps no manifest: `claude agents --json`
+  already tracks every session, so `list` joins that against `$CAP_DIR` rather than holding a second
+  copy of the same facts. Threshold policy lives here.
+- `cap-context.sh` — the per-crew statusLine, recording tokens, cost and effort into
+  `$CAP_DIR/context/<id>.json`. `claude agents --json` has no cost field, which is the only reason a
+  crew needs a settings file at all.
+- `cap-improve.sh` — the improvement loop, unchanged. It improves the captain rather than the
+  projects it runs. Entries are append-only in `~/.claude/crews/_improve/`, each naming the file it
+  wants changed; an entry that cannot name a target is refused. `cap-crews.sh list` records its own
+  anomalies and prints the recurrence footer. A fact about the work goes in the crew log instead.
+
+`tests/crews.sh` is the suite. It stubs `claude`, because the two things that needed live proof are
+settled and encoded in the script: **`claude --bg` ignores `--session-id`** (so the id is read back
+from what it prints) and **a background session does not inherit the launching shell's environment**
+(so `CREW_ID`, `CREW_ROLE` and `CAP_DIR` travel in the generated `settings.env`).
 
 **Runtime state is `~/.claude/crews/<slug>/` and is not version controlled.** One directory per
-project holding the manifest, the briefs, the crew logs, the survey and the generated per-crew
-settings. `_pool/` holds the working-copy claims, `_improve/` the improvement record and
-`_archive/` torn-down projects. Claude Code owns `~/.claude/projects/`, so the captain cannot use it.
+project holding `crews.tsv`, the briefs, the crew logs, the surveys, the questions file and the
+generated per-crew settings. `_improve/` holds the improvement record and `_archive/` torn-down
+projects. Claude Code owns `~/.claude/projects/`, so the captain cannot use it.
 
-Working copies come from a pool sized per repo in `claude/.claude/scripts/captain/pool.conf`, four
-for this one. They are dedicated `<repo>-lease-N` jj workspaces and never the user's own copy;
-sizes are bounded by disk, because build caches are unbounded.
+**Nothing enforces a role's boundaries.** The contract in each definition is the whole of it. The
+generated per-crew settings carry env and a statusLine, not permission rules; `cap-profile.sh` and
+the path denies it wrote are gone, along with the jj working-copy pool. Writers work in the copy you
+are sitting in, so they are sequenced rather than concurrent. `herdr pane send-keys` and
+`agent send-keys` are still deliberately **not** allowlisted, because either one is arbitrary
+command execution laundered through herdr. See `docs/claude-permissions.md`.
 
 `docs/design/YYYY-MM-DD-<name>.md` paired 1:1 with a plan of the same name is the convention the
 plan phase writes to, and it is the same convention the rest of this repo already uses.
-
-`cap-improve.sh` is the improvement loop, and it improves the captain rather than the projects it
-runs. Entries are append-only in `~/.claude/crews/_improve/`, each naming the file it wants changed
-and the dotfiles change id at the time; an entry that cannot name a target is refused. The status
-and wait scripts record their own anomalies, and `cap-status.sh` flags any target that reaches three
-entries in its footer. A fact about the work goes in the crew log instead.
-
-**The permission profiles are the only enforceable boundary in the design.** `cap-profile.sh`
-generates one per crew from the role file's frontmatter; nothing maps role to profile a second time.
-`herdr pane send-keys` and `agent send-keys` are deliberately **not** allowlisted, because either
-one is arbitrary command execution laundered through herdr. The `cap-*.sh` scripts are allowlisted;
-the pane primitives stay classifier-gated. See `docs/claude-permissions.md`.
 
 ## Kanata (keyboard remapping)
 

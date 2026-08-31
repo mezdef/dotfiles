@@ -125,28 +125,56 @@ Rationale and measurements in `docs/claude-context.md`.
 
 ## Captain
 
-Phase orchestration over native agent definitions. `/captain` drives one task through eight phases —
-define, survey, explore, plan, build, review, integrate, close — dispatching a crew per phase. A
-crew is an ordinary Claude Code session wearing one of the 11 role definitions. Design in
+Phase orchestration over native agent definitions. `/captain` drives one task through seven phases —
+define, survey, plan, build, review, integrate, close — dispatching a crew per phase, except the last
+two, which are the captain's own. A crew is an ordinary Claude Code session wearing one of the 6 role
+definitions. Design in
 `docs/design/2026-08-31-captain-to-agent-definitions.md`, which supersedes the herdr-and-jj-pool
 architecture in `2026-08-28-captain-crew-orchestration.md`.
 
-The 11 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
+The 6 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
 be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or
-`claude --agent librarian` for a whole session. The file name is what `--agent` takes; the
-`role:` frontmatter key is the three-letter crew-id prefix. `SKILL.md` adds only the phase order,
-the artifact convention and the gates.
+`claude --agent librarian` for a whole session. The file name is what `--agent` takes, and a crew id
+is that name plus the task slug — `adversary-plan-x`, not `arc-plan-x`. The `role:` frontmatter key
+is what is left of the old three-letter prefix: a shorter thing to type at `cap-crews.sh start`, and
+the marker distinguishing a crew role from `Explore.md`, which has no `role:`. `SKILL.md` adds only
+the phase order, the artifact convention and the gates.
 
-Thirteen became eleven, and the descriptions changed shape. `verifier` folded into `prober`: both
-were sonnet command-runners recording verbatim output and judging nothing, differing only in whether
-the input was an assumption ledger or a build plus suite, so `prober` now takes either and writes
-`probes.md` or `verify-<crew-id>.md` accordingly. `product-manager` folded into `planner` as stage
-one, keeping the five-field closing condition and the rule against naming a mechanism. `explorer`
-became `option-generator`, because it sat in the same listing as `Explore` while doing the opposite
-job. `test-writer` dropped to sonnet. And every description lost its "Dispatch explicitly" clause,
-reversing plan task A4: the roles are now meant to be auto-selected. The cost of that is
-`integrator`, which rewrites history in the copy everyone is sitting in and has nothing but its own
-contract stopping it.
+Thirteen became six, in three passes, and the direction throughout was that a role must earn a file.
+
+Merged because two definitions described one job: `verifier` into `checker` (both recorded verbatim
+command output and judged nothing, differing only in whether the input was an assumption list or a
+build plus suite); `product-manager` into `Plan` as stage one; `architecture-reviewer` and
+`code-reviewer` into `adversary`, which attacks any artifact's claims — every claim checked against
+its source as **holds**, **refuted** or **unsupported**, then the reasoning attacked; `test-writer`
+and `code-writer` into `builder`, which writes the test, watches it fail and commits it alone before
+implementing.
+
+Cut because the job was gone or belonged to the captain: `option-generator`, and the explore phase
+with it — never run in the one real project, whose Plan produced a 1,626-line plan with no
+`options.md` in breach of its own contract, so the option discipline moved inside `Plan` as a
+required `## Rejected approaches`. `integrator`, whose lens was combining changes across the jj
+working-copy pool that the previous changeset deleted; sequenced writers in one shared copy leave a
+linear stack, so integration is a captain step and the one rule worth keeping — never `jj resolve`,
+it opens an editor configured to fail — moved to `SKILL.md`. `scribe`, because ticking `## Tasks` is
+already a captain duty and its doc-against-code check is the adversary's survey case.
+
+Renamed: `explorer` to `option-generator` before it was cut, because it sat in the same listing as
+`Explore` doing the opposite job; `prober` to `checker`. Not `verifier` — that names an outcome for a
+role whose defining rules are that `inconclusive` is a result and that it must never report a pass it
+did not watch happen.
+
+Two of these merges traded a structural guarantee for a prose rule, and an `adversary` run on the
+design doc said so. Two definitions with different `phase:` keys could not be pointed at the wrong
+artifact; one definition with a "one dispatch, one artifact" sentence can be. Same for the
+test-before-code boundary. Accepted twice, for the same reason: nothing enforced a role's boundaries
+anyway.
+
+Every description lost its "Dispatch explicitly" clause, reversing plan task A4: the roles are meant
+to be auto-selected. That was riskiest while `integrator` existed, since it rewrote history in the
+copy everyone was sitting in; cutting it removed the worst case, and no definition rewrites history
+now. `builder` is what remains to watch — auto-selected without a plan step to build, it has nothing
+but its own contract telling it to stop.
 
 Three runtimes, one definition:
 

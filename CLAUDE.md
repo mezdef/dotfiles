@@ -173,12 +173,37 @@ Rationale and measurements in `docs/claude-context.md`.
 
 ## Captain
 
-Phase orchestration over native agent definitions. `/captain` drives one task through seven phases —
-define, survey, plan, build, review, integrate, close — dispatching a crew per phase, except the last
-two, which are the captain's own. A crew is an ordinary Claude Code session wearing one of the 6 role
-definitions. Design in
-`docs/design/2026-08-31-captain-to-agent-definitions.md`, which supersedes the herdr-and-jj-pool
-architecture in `2026-08-28-captain-crew-orchestration.md`.
+Step orchestration over native agent definitions. `/captain` drives one task through the steps it
+needs, dispatching a crew per step. A crew is an ordinary Claude Code session wearing one of the 6
+role definitions. Design in `docs/design/2026-08-31-captain-to-agent-definitions.md`, which
+supersedes the herdr-and-jj-pool architecture in `2026-08-28-captain-crew-orchestration.md`; the
+per-task step selection is in `2026-08-31-captain-adaptive-phases.md`.
+
+**No step is mandatory.** The catalogue is define, survey, plan, build, review, security, verify,
+integrate, close, plus `tdd` as a mode on build — ten rows, of which the last two steps are the
+captain's own rather than a crew's. The seven-phase sequence that came before ran everything on
+every task, so declining to plan a one-file change had no representation other than not doing it and
+saying nothing. Three of those rows are the old single `review` phase split apart, because reading a
+change, security-reading it and running its suite are independently worth skipping.
+
+The set is chosen once at the start — the captain proposes from the task and asks once, rather than
+prompting per step — and lives in `$CAP_DIR/phases.tsv`, so it survives a `/clear` and
+`cap-crews.sh list` can print it. Every row carries a state (`included`, `skipped`, `done`) and a
+reason. There is no `active` state: `cap-phases.sh next` derives it as the first row that is neither
+done nor skipped, because a state advanced by hand drifts out of step with the artifacts. A skip is
+revisable with `cap-phases.sh add <step> --reason "scope grew"`, and that reason column is the record
+of why the original judgement was wrong.
+
+Nothing enforces the manifest either. It records what was decided; doing a step marked skipped is not
+an error, it is just undocumented.
+
+**`tdd` is the one mode, and `builder` is the one definition it changes.** `builder.md` kept
+test-first as an absolute — write the test, watch it fail, commit it alone — which made it unusable
+on a repo with no suite or on a config change. It now has exactly one escape, the literal line
+`tests: none` in its brief, emitted by `cap-phases.sh modes builder` when the `tdd` row is skipped.
+A literal token rather than a prose condition is what makes it assertable in `tests/agents.sh`, and
+`builder`'s Never list forbids it granting itself the escape. That is a prose rule guarding a prose
+rule, which is the same trade the thirteen-to-six merge already made twice.
 
 The 6 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
 be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or
@@ -235,11 +260,17 @@ Three runtimes, one definition:
 A background session runs to completion or blocks, then exits; `blocked` in `cap-crews.sh list` is
 the signal to attach and answer it. Nothing is waiting on a live process.
 
-Three scripts, ~600 lines, replacing the eleven that came before:
+Four scripts, ~750 lines, replacing the eleven that came before:
 
-- `cap-crews.sh` — `new`, `start`, `list`, `attach`. It keeps no manifest: `claude agents --json`
+- `cap-crews.sh` — `new`, `start`, `list`, `attach`. It keeps no crew manifest: `claude agents --json`
   already tracks every session, so `list` joins that against `$CAP_DIR` rather than holding a second
-  copy of the same facts. Threshold policy lives here.
+  copy of the same facts. Threshold policy lives here. `list` also prints one `PHASES:` line from
+  `phases.tsv` — one awk over one file, so resuming after a `/clear` is one command, not two.
+- `cap-phases.sh` — the step manifest: `init`, `list`, `skip`, `add`, `done`, `next`, `modes`,
+  `catalogue`. The catalogue is a literal array at the top of the script, and `tests/agents.sh`
+  checks every row `SKILL.md` names is a row the script knows, so the skill cannot document a step no
+  command can mark done. It refuses the incoherent — an unknown id, skipping a `done` step, finishing
+  a `skipped` one — and warns rather than refuses when `tdd` is included with `build` skipped.
 - `cap-context.sh` — the per-crew statusLine, recording tokens, cost and effort into
   `$CAP_DIR/context/<id>.json`. `claude agents --json` has no cost field, which is the only reason a
   crew needs a settings file at all.
@@ -254,8 +285,8 @@ from what it prints) and **a background session does not inherit the launching s
 (so `CREW_ID`, `CREW_ROLE` and `CAP_DIR` travel in the generated `settings.env`).
 
 **Runtime state is `~/.claude/crews/<slug>/` and is not version controlled.** One directory per
-project holding `crews.tsv`, the briefs, the crew logs, the surveys, the questions file and the
-generated per-crew settings. `_improve/` holds the improvement record and `_archive/` torn-down
+project holding `crews.tsv`, `phases.tsv`, the briefs, the crew logs, the surveys, the questions file
+and the generated per-crew settings. `_improve/` holds the improvement record and `_archive/` torn-down
 projects. Claude Code owns `~/.claude/projects/`, so the captain cannot use it.
 
 **Nothing enforces a role's boundaries.** The contract in each definition is the whole of it. The

@@ -24,6 +24,36 @@ Context budget, the plan-file lifecycle contract, and the measurements behind bo
 every session of every project; they are symlinked into the consuming repo instead. Memory is
 owned by Claude Code's built-in prompt, not a skill. Details in `docs/claude-permissions.md`.
 
+### Agent definitions
+
+`claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. Verified against 2.1.231 by reading
+the binary and by live dispatch.
+
+Definitions are merged into a map keyed by the frontmatter `name:`, in this order, last write
+winning: **built-in → plugin → userSettings (`~/.claude/agents/`) → projectSettings
+(`.claude/agents/`) → flagSettings → policySettings.** So a definition named after one of Claude
+Code's own agents (`Explore`, `Plan`, `general-purpose`, `claude`, `statusline-setup`) replaces it
+wholesale — prompt, tools and model — and the agent list shows one entry, not two.
+
+`Explore.md` is the one override here. A built-in Explore declares `model: "inherit"` and the only
+adjustment is an upper cap: on a model above opus it drops to opus, otherwise it inherits. On
+`opus[1m]` that means excerpt grepping at opus prices. A non-built-in definition has its declared
+`model:` honoured verbatim, so ours pins `haiku`. Confirmed by `modelUsage` in `stream-json`:
+`claude-haiku-4-5` for the subagent, `claude-opus-5[1m]` for the session.
+`CLAUDE_CODE_DISABLE_EXPLORE_INHERIT_CAP` only removes the cap; it cannot lower the model.
+
+Two things the override cannot keep. The frontmatter schema has no `omitClaudeMd`, so unlike the
+built-in it does receive both CLAUDE.md files on every dispatch. And the prompt is a copy, so a
+newer Claude Code improving its own Explore prompt will not reach ours. `agentType === "Explore"`
+is special-cased by name regardless of source, so git status is still stripped from its context.
+
+Supported frontmatter keys, from the schema: `name`, `description`, `tools`, `disallowedTools`,
+`model`, `effort`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`,
+`memory`, `background`, `isolation`, `observer`. `effort:` takes `low|medium|high|xhigh|max` and is
+carried on the definition, so the 13 crew roles do not need `--effort` at dispatch — the design doc
+records it as unverified documentation, which was true then and is not now. Unknown keys are
+tolerated, which is what lets `role:`, `phase:` and `log_sections:` ride along.
+
 ### Settings and permissions
 
 `settings.json` is verified against Claude Code 2.1.231, installed via Homebrew cask (trails npm by
@@ -97,15 +127,26 @@ Rationale and measurements in `docs/claude-context.md`.
 
 Phase orchestration over native agent definitions. `/captain` drives one task through eight phases —
 define, survey, explore, plan, build, review, integrate, close — dispatching a crew per phase. A
-crew is an ordinary Claude Code session wearing one of the 13 role definitions. Design in
+crew is an ordinary Claude Code session wearing one of the 11 role definitions. Design in
 `docs/design/2026-08-31-captain-to-agent-definitions.md`, which supersedes the herdr-and-jj-pool
 architecture in `2026-08-28-captain-crew-orchestration.md`.
 
-The 13 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
+The 11 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
 be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or
 `claude --agent librarian` for a whole session. The file name is what `--agent` takes; the
 `role:` frontmatter key is the three-letter crew-id prefix. `SKILL.md` adds only the phase order,
 the artifact convention and the gates.
+
+Thirteen became eleven, and the descriptions changed shape. `verifier` folded into `prober`: both
+were sonnet command-runners recording verbatim output and judging nothing, differing only in whether
+the input was an assumption ledger or a build plus suite, so `prober` now takes either and writes
+`probes.md` or `verify-<crew-id>.md` accordingly. `product-manager` folded into `planner` as stage
+one, keeping the five-field closing condition and the rule against naming a mechanism. `explorer`
+became `option-generator`, because it sat in the same listing as `Explore` while doing the opposite
+job. `test-writer` dropped to sonnet. And every description lost its "Dispatch explicitly" clause,
+reversing plan task A4: the roles are now meant to be auto-selected. The cost of that is
+`integrator`, which rewrites history in the copy everyone is sitting in and has nothing but its own
+contract stopping it.
 
 Three runtimes, one definition:
 

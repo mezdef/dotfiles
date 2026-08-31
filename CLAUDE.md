@@ -54,6 +54,42 @@ carried on the definition, so the 13 crew roles do not need `--effort` at dispat
 records it as unverified documentation, which was true then and is not now. Unknown keys are
 tolerated, which is what lets `role:`, `phase:` and `log_sections:` ride along.
 
+### Planning
+
+**Planning has one entry point: `/planning`.** It is the process, and it dispatches the four roles
+that do the work as background crews — `Plan` stage one for the problem statement, `librarian` in
+parallel for the surveys, `Plan` stage two for the choice and the two documents, `adversary` to
+attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
+The default round cap is one attack-and-amend; `Plan`'s own contract allows three before what is
+unresolved goes to the user, and that is a ceiling rather than a target.
+
+Format versus process. `/planning` owns the process and adds no naming, location or section rule of
+its own. `/writing-plans`, `/writing-design-docs` and `/managing-plans` own the format, and `Plan`
+invokes them itself — the skill never does. Those three still auto-invoke on their own words, so a
+prompt about writing a plan can pull one in beside `/planning`; the tie-break, written into
+`/planning`, is that it owns the process and you do not reach the format skills directly. Making them
+`disable-model-invocation: true` was the alternative and was rejected: writing a plan by hand would
+stop pulling the format rules in.
+
+Background crews rather than in-process subagents, because the loop is long enough that a plan-phase
+session hits a context boundary before it ends, and a `--bg` crew survives a `/clear`. That needs a
+`$CAP_DIR`, so outside a `/captain` run the skill makes its own with `cap-crews.sh new`. Inside one,
+`$CAP_DIR` is already set and `/captain`'s define and survey phases are steps the skill finds already
+done — its gates are readable off the files, so it enters part-way without redispatching. `/captain`'s
+plan phase is one table row naming the skill; it no longer describes the sequence.
+
+**A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
+digit is replaced by the word at that position in whatever arguments the skill was invoked with —
+`/planning`'s cost table read `confirming.90` instead of `$3.90` the first time it was loaded with
+arguments. Named variables such as `$CAP_DIR` are untouched. So money in a skill body is written
+`USD 3.90`, and `tests/agents.sh` fails any skill or agent definition carrying the sequence.
+
+The cost section is measured, not estimated: `pla-104` reached a first reviewed draft for about $110,
+and the numbers are per crew in the skill. The lesson in them is that **model tier is the smaller
+lever**. Sonnet ran $0.036–$0.061 per 1k of context against opus at $0.074–$0.094, about 2x, while
+context read varied 4.5x across crews — three sonnet `librarian` crews cost $27.88 together, more
+than half the opus planner. A tight read-first list saves more than a cheaper model does.
+
 ### Settings and permissions
 
 `settings.json` is verified against Claude Code 2.1.231, installed via Homebrew cask (trails npm by

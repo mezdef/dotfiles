@@ -62,7 +62,14 @@ that do the work as background crews — `Plan` stage one for the problem statem
 parallel for the surveys, `Plan` stage two for the choice and the two documents, `adversary` to
 attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
 The default round cap is one attack-and-amend; `Plan`'s own contract allows three before what is
-unresolved goes to the user, and that is a ceiling rather than a target.
+unresolved goes to the user, and that is a ceiling rather than a target. A `/captain` run on the
+`epic` tier asks for two rounds in the brief, which the skill already allows without changing.
+
+**`Plan` stage one now opens with `/brainstorming` unless its brief says `discovery: none`.** Only
+`/captain` emits that line, and only on the `fix` tier, so a standalone `/planning` run always gets
+the dialogue. That is the intended default rather than an oversight — the skill's own guidance
+already rules it out for a one-file change, an obvious bug or a decision with no trade-off, so
+anything reaching it is work whose shape is worth agreeing first.
 
 Format versus process. `/planning` owns the process and adds no naming, location or section rule of
 its own. `/writing-plans`, `/writing-design-docs` and `/managing-plans` own the format, and `Plan`
@@ -190,9 +197,12 @@ role definitions. Design in `docs/design/2026-08-31-captain-to-agent-definitions
 supersedes the herdr-and-jj-pool architecture in `2026-08-28-captain-crew-orchestration.md`; the
 per-task step selection is in `2026-08-31-captain-adaptive-phases.md`.
 
-**No step is mandatory.** The catalogue is define, survey, plan, build, review, security, verify,
-integrate, close, plus `tdd` as a mode on build — ten rows, of which the last two steps are the
-captain's own rather than a crew's. The seven-phase sequence that came before ran everything on
+**One step is mandatory and the rest are not.** The catalogue is define, survey, plan, build, review,
+security, verify, integrate, close, plus `tdd` as a mode on build and `brainstorm` as a mode on
+define — eleven rows, of which the last two steps are the captain's own rather than a crew's.
+`cap-phases.sh skip plan` refuses: every task gets a plan the requester can read before any code is
+written, and a sixth catalogue field carries that so the refusal is data rather than a sentence
+`SKILL.md` has to be trusted to follow. The seven-phase sequence that came before ran everything on
 every task, so declining to plan a one-file change had no representation other than not doing it and
 saying nothing. Three of those rows are the old single `review` phase split apart, because reading a
 change, security-reading it and running its suite are independently worth skipping.
@@ -261,19 +271,54 @@ seven files, so rewording one leaves the others failing rather than silently div
 
 Selection was rewritten with it. The first version's heuristic table needed code knowledge for seven
 of its ten rows and made having read the code the reason to skip the crew that would have; it is
-deleted rather than patched. The captain now restates the task, asks four questions none of which is
-answerable by reading, walks the catalogue out loud with a reason per row, and writes the manifest.
-"Not sure" includes `survey` and puts the question in the `librarian` brief, so uncertainty about the
-code routes to a crew instead of into the captain's context. None of it is enforced: `/captain` is a
-skill, so it has no `tools:` line and its session keeps every tool it had.
+deleted rather than patched. The captain restates the task, asks, walks the catalogue out loud with a
+reason per row, and writes the manifest. "Not sure" includes `survey` and puts the question in the
+`librarian` brief, so uncertainty about the code routes to a crew instead of into the captain's
+context. None of it is enforced: `/captain` is a skill, so it has no `tools:` line and its session
+keeps every tool it had.
 
-**`tdd` is the one mode, and `builder` is the one definition it changes.** `builder.md` kept
-test-first as an absolute — write the test, watch it fail, commit it alone — which made it unusable
-on a repo with no suite or on a config change. It now has exactly one escape, the literal line
-`tests: none` in its brief, emitted by `cap-phases.sh modes builder` when the `tdd` row is skipped.
-A literal token rather than a prose condition is what makes it assertable in `tests/agents.sh`, and
-`builder`'s Never list forbids it granting itself the escape. That is a prose rule guarding a prose
-rule, which is the same trade the thirteen-to-six merge already made twice.
+**Selection asks two questions now, and the first one is a tier: fix, feature or epic.** The four it
+replaced asked what kind of work, how big, whether the approach was settled and what it touched, and
+then mapped the answers to rows in prose — so the mapping lived only in `SKILL.md` and could not be
+asserted against the script. The tier lives in `cap-phases.sh` as a `TIERS` array, is applied by
+`cap-phases.sh init --tier <tier>` (required; a bare `init` is refused), is recorded in
+`$CAP_DIR/tier`, and prints on `cap-crews.sh list`. It asks what the work **is** rather than how big
+it is, because a one-file change can still be a feature and it is featureness that decides whether
+the shape needs agreeing — not the file count.
+
+A fix skips `define` and `brainstorm`, because its outcome is already named. An epic adds `security`,
+because breadth is what makes a boundary easy to miss. A feature settles nothing on its own: it keeps
+the thorough defaults and the second question does the rest. Only the rows a tier genuinely decides
+are written, each with a reason naming the tier, so `cap-phases.sh list` explains itself.
+
+**The tier's `review` row is a default, not a refusal.** Only `plan` is enforced. A feature starts
+with `review` included and a skip has to be argued for and recorded, which is weaker than the
+`plan` guarantee and is the deliberate limit of the `required` field: it is per catalogue row, so it
+cannot say "required on a feature, optional on a fix".
+
+**The plan stop is three-way.** `cap-phases.sh reject <step> --reason` already sent a step back,
+leaving it `included`, counting the attempt and keeping the tab open; nothing offered it. The plan
+gate now reads approve / change this / attack it again, and the rejection count in column four is the
+record of how many rounds the plan took. This is the one step where the requester reads the whole
+artifact and forms an opinion, so it is the one that needed somewhere to put it.
+
+**There are two modes, `tdd` on `build` and `brainstorm` on `define`, and each changes one
+definition.** `builder.md` kept test-first as an absolute — write the test, watch it fail, commit it
+alone — which made it unusable on a repo with no suite or on a config change. It has exactly one
+escape, the literal line `tests: none` in its brief, emitted by `cap-phases.sh modes builder` when
+the `tdd` row is skipped. A literal token rather than a prose condition is what makes it assertable
+in `tests/agents.sh`, and `builder`'s Never list forbids it granting itself the escape. That is a
+prose rule guarding a prose rule, which is the same trade the thirteen-to-six merge already made
+twice.
+
+`brainstorm` is the same shape for `Plan` stage one, with `discovery: none` as its escape. **A mode
+emits its line when it is skipped, not when it is included**, so silence is the thorough default:
+no line means test-first, and no line means run the discovery dialogue. Two things had to give for
+this to work. `Plan`'s Never list forbade invoking `/brainstorming` at all, on the reasoning that a
+crew re-entering the loop dispatches crews of its own — true of `/captain` and `/planning`, not of a
+dialogue skill that dispatches nothing, so it is carved out for stage one only. And
+`brainstorming/SKILL.md` ends by invoking `/writing-plans`, which inside a captain run is a later
+step someone else owns; with `$CAP_DIR` set it now stops at `problem.md` instead.
 
 The 6 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
 be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or

@@ -164,6 +164,17 @@ anything you control, from a median 61% under 100k of context read to 97% over 1
 reading only says the session has run a while. `usage-report.sh efficiency` answers it after the
 fact. See `docs/claude-usage.md`.
 
+**Crew spend rides in a bracket after the cost**, `[󱃾 3 | 412k | $44.00*]`, whenever the session's
+directory has a pointer under `~/.claude/crews/_active/`. `cap-crews.sh new` writes that pointer,
+because a statusline spawned by Claude Code never sees the captain's `$CAP_DIR`. Still one fork: the
+figures are summed from `$CAP_DIR/context/<crew>.peak`, bare integers `cap-context.sh` already
+writes, with a glob and a `read` per file. It closes a real gap — the `stripe-idempotency-key` run
+held 1,284k of crew context against an 84k captain session, none of it in view. Peaks rather than
+live levels, so a finished run still reads as expensive, and coloured on the worst single crew, since
+300k is an instruction to re-dispatch *that* crew. Blocked state and live crew cost are deliberately
+absent: both need a fork, and a stamped copy of either goes quiet exactly when it matters. The `*`
+says the cost is as of the last `cap-crews.sh list`.
+
 The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
 yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning
 because auto-compact does not fire until 967k. `cap-context.sh` and `cap-crews.sh` use the same two
@@ -367,8 +378,9 @@ from what it prints) and **a background session does not inherit the launching s
 
 **Runtime state is `~/.claude/crews/<slug>/` and is not version controlled.** One directory per
 project holding `crews.tsv`, `phases.tsv`, the briefs, the crew logs, the surveys, the questions file
-and the generated per-crew settings. `_improve/` holds the improvement record and `_archive/` torn-down
-projects. Claude Code owns `~/.claude/projects/`, so the captain cannot use it.
+and the generated per-crew settings. `_improve/` holds the improvement record, `_archive/` torn-down
+projects, and `_active/` the repo-to-project pointers the session statusline reads. Claude Code owns
+`~/.claude/projects/`, so the captain cannot use it.
 
 **Nothing enforces a role's boundaries.** The contract in each definition is the whole of it. The
 generated per-crew settings carry env and a statusLine, not permission rules; `cap-profile.sh` and
@@ -380,7 +392,9 @@ command execution laundered through herdr. See `docs/claude-permissions.md`.
 **Cost is no longer read from `$CAP_DIR/context/<crew>.json`.** That file is overwritten on every
 render, and `SKILL.md` tells you to re-dispatch a stalled crew under the same id past 300k, so each
 re-dispatch silently discarded the previous session's spend — the recorded `pla-104` total is a
-floor, not a measurement. `cap-crews.sh list` now sums the usage ledger by crew. The per-crew JSON
+floor, not a measurement. `cap-crews.sh list` now sums the usage ledger by crew, and stamps that total into
+`$CAP_DIR/rollup.cost` for the statusline, which cannot afford the same fork per render. The
+per-crew JSON
 still carries `tokens`, which is a level and belongs to the running session, plus a `peak_ctx`
 running max, since context drops at a compaction. Its `usage` field is gone: it held one message's
 counts under a name implying cumulative totals. See `docs/claude-usage.md`.

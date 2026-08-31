@@ -197,6 +197,35 @@ of why the original judgement was wrong.
 Nothing enforces the manifest either. It records what was decided; doing a step marked skipped is not
 an error, it is just undocumented.
 
+**Every included step stops for a sign-off, and the sign-off is checked against a transcript.**
+`cap-phases.sh done` refuses unless the gate artifact exists, `--signoff "<their words>"` is given,
+and `cap-signoff.sh` finds a human. Two routes count: an `AskUserQuestion` in the captain's own
+transcript, or a second human turn in a crew's. The second is the stronger one and the one to design
+for — a never-attached `--bg` crew's transcript holds exactly one string-content `user` record, its
+launch prompt, and everything else with `type: "user"` is a `tool_result`. Measured across six real
+transcripts: three background crews at 1, 1, 1 and three interactive sessions at 7, 10, 7. The
+captain cannot write into another session's file, so a second turn is proof a person was there.
+
+That route exists because of how the captain is now constrained: it may not read repo files, so it
+relaying a summary of a design doc is worse than the requester reading the doc in the crew's tab.
+Crews get `cap-phases.sh signoff-brief <step>` in their brief, which tells them to write the artifact
+and then ask rather than exit — they show as `blocked`, the channel `cap-crews.sh list` and `attach`
+already handle. `cap-phases.sh reject` sends a step back with a reason and a count, leaving it
+`included` and the tab open.
+
+Every signal must be newer than `max(step.since, newest artifact mtime)`, since approval cannot
+predate the work. `since` is the manifest's fifth column, written on every state change, which is
+also what gives `build`, `integrate` and `close` — the three steps with no artifact under `$CAP_DIR`
+— something to compare against.
+
+`hooks/captain-signoff.sh` is **the first `PreToolUse` hook in this repo**. It denies `done` when
+unverified and denies writing `phases.tsv` any other way, because `sed -i` on a file the captain may
+write is the obvious way round. It fails open on anything unexpected: this guards a process, it is
+not a security boundary. Its `timeout` must exceed a transcript read — a cancelled hook has its
+output discarded, which here would silently allow the thing it exists to deny.
+
+Design in `docs/design/2026-08-31-captain-step-signoff.md`.
+
 **The captain has a contract now, `## What the captain does not do`, and it is absolute.** It was the
 only participant without one — all six roles end with a `Never:` list and all six carry the same
 "Delegate reading to subagents" sentence, while `SKILL.md` had neither, which is how a run ended up
@@ -276,7 +305,7 @@ Three runtimes, one definition:
 A background session runs to completion or blocks, then exits; `blocked` in `cap-crews.sh list` is
 the signal to attach and answer it. Nothing is waiting on a live process.
 
-Four scripts, ~750 lines, replacing the eleven that came before:
+Five scripts, ~1000 lines, replacing the eleven that came before:
 
 - `cap-crews.sh` — `new`, `start`, `list`, `watch`, `attach`. It keeps no crew manifest:
   `claude agents --json` already tracks every session, so `list` joins that against `$CAP_DIR` rather
@@ -301,8 +330,11 @@ Four scripts, ~750 lines, replacing the eleven that came before:
 
   The pane id key was probed live: the herdr skill documents `.result.pane.pane_id`, which is
   `pane split`'s shape. `tab create` returns it under `root_pane`.
-- `cap-phases.sh` — the step manifest: `init`, `list`, `skip`, `add`, `done`, `next`, `modes`,
-  `catalogue`. The catalogue is a literal array at the top of the script, and `tests/agents.sh`
+- `cap-signoff.sh` — `verify <step>`, answering "was a human actually here" from transcripts rather
+  than from a claim. Exit 1 is an honest no; exit 2 is its own error, which the hook distinguishes so
+  a broken verifier does not read as a refusal.
+- `cap-phases.sh` — the step manifest: `init`, `list`, `skip`, `add`, `done`, `reject`, `next`,
+  `modes`, `signoff-brief`, `catalogue`. The catalogue is a literal array at the top of the script, and `tests/agents.sh`
   checks every row `SKILL.md` names is a row the script knows, so the skill cannot document a step no
   command can mark done. It refuses the incoherent — an unknown id, skipping a `done` step, finishing
   a `skipped` one — and warns rather than refuses when `tdd` is included with `build` skipped.

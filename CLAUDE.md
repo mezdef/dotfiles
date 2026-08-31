@@ -278,10 +278,29 @@ the signal to attach and answer it. Nothing is waiting on a live process.
 
 Four scripts, ~750 lines, replacing the eleven that came before:
 
-- `cap-crews.sh` — `new`, `start`, `list`, `attach`. It keeps no crew manifest: `claude agents --json`
-  already tracks every session, so `list` joins that against `$CAP_DIR` rather than holding a second
-  copy of the same facts. Threshold policy lives here. `list` also prints one `PHASES:` line from
-  `phases.tsv` — one awk over one file, so resuming after a `/clear` is one command, not two.
+- `cap-crews.sh` — `new`, `start`, `list`, `watch`, `attach`. It keeps no crew manifest:
+  `claude agents --json` already tracks every session, so `list` joins that against `$CAP_DIR` rather
+  than holding a second copy of the same facts. Threshold policy lives here. `list` also prints one
+  `PHASES:` line from `phases.tsv` — one awk over one file, so resuming after a `/clear` is one
+  command, not two.
+
+  **It opens a herdr tab per crew.** `claude --bg` is detached and has no pane, and `attach` used to
+  only print `claude attach <id>` for you to paste, so a dispatched crew was unwatchable without
+  manual work. `start` now runs `herdr tab create --cwd "$PWD" --label <crew-id> --no-focus`, reads
+  `.result.root_pane.pane_id`, and `herdr pane run <pane> "claude attach <short-id>"`. `--no-focus`
+  always, so a fanned-out `librarian` cannot steal focus five times; `--no-watch` opts out.
+  `watch [<crew-id>...]` does the same after the fact, and bare `watch` targets every crew the
+  harness reports `blocked`.
+
+  **This needs no new permission, and that is the design rather than a loophole.** The herdr calls
+  are inside the script, and `settings.json` already allowlists `Bash(bash …/captain/cap-*.sh*)`.
+  `docs/claude-permissions.md` says why that is the right boundary: a script validates its arguments
+  instead of interpolating caller input into a `herdr` call. `pane send-keys` and `agent send-keys`
+  stay denied. Anything that fails — no `HERDR_ENV`, a herdr call erroring — falls back to printing
+  the attach line and exits 0, because a monitoring convenience must never fail a dispatch.
+
+  The pane id key was probed live: the herdr skill documents `.result.pane.pane_id`, which is
+  `pane split`'s shape. `tab create` returns it under `root_pane`.
 - `cap-phases.sh` — the step manifest: `init`, `list`, `skip`, `add`, `done`, `next`, `modes`,
   `catalogue`. The catalogue is a literal array at the top of the script, and `tests/agents.sh`
   checks every row `SKILL.md` names is a row the script knows, so the skill cannot document a step no

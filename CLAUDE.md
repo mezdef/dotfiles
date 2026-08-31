@@ -157,11 +157,12 @@ Two rules learned the hard way:
 It is not run per render: Claude Code re-runs it on a 300ms trailing debounce whenever `tokenUsage`,
 the model, vim mode, effort or PR status changes, plus the optional `statusLine.refreshInterval`.
 
-It renders context, session cost and a cache-hit ratio. Cost is `cost.total_cost_usd`, which
-already includes in-process subagent spend and which the statusline previously discarded;
-cache-hit is session-cumulative from the usage sidecar, not the last message's ratio, which sits
-near 99% in any long session. Both segments come from flat TSV sidecars read with bash builtins,
-so the single-fork rule holds. See `docs/claude-usage.md`.
+It renders context and session cost. Cost is `cost.total_cost_usd`, which already includes
+in-process subagent spend and which the statusline previously discarded. A cache-hit segment was
+tried and removed: measured across 632 sessions the ratio tracks session length rather than
+anything you control, from a median 61% under 100k of context read to 97% over 10M, so a high
+reading only says the session has run a while. `usage-report.sh efficiency` answers it after the
+fact. See `docs/claude-usage.md`.
 
 The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
 yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning

@@ -197,6 +197,22 @@ of why the original judgement was wrong.
 Nothing enforces the manifest either. It records what was decided; doing a step marked skipped is not
 an error, it is just undocumented.
 
+**The captain has a contract now, `## What the captain does not do`, and it is absolute.** It was the
+only participant without one — all six roles end with a `Never:` list and all six carry the same
+"Delegate reading to subagents" sentence, while `SKILL.md` had neither, which is how a run ended up
+with the captain reading the code and briefing nobody. No `Read`, `Grep` or `Glob` on a repo file, no
+`Edit`, no `jj diff`, including at `integrate` where the reading is a `checker` dispatch even though
+the step is the captain's. `tests/agents.sh` asserts the shared sentence is byte-identical across all
+seven files, so rewording one leaves the others failing rather than silently diverging.
+
+Selection was rewritten with it. The first version's heuristic table needed code knowledge for seven
+of its ten rows and made having read the code the reason to skip the crew that would have; it is
+deleted rather than patched. The captain now restates the task, asks four questions none of which is
+answerable by reading, walks the catalogue out loud with a reason per row, and writes the manifest.
+"Not sure" includes `survey` and puts the question in the `librarian` brief, so uncertainty about the
+code routes to a crew instead of into the captain's context. None of it is enforced: `/captain` is a
+skill, so it has no `tools:` line and its session keeps every tool it had.
+
 **`tdd` is the one mode, and `builder` is the one definition it changes.** `builder.md` kept
 test-first as an absolute — write the test, watch it fail, commit it alone — which made it unusable
 on a repo with no suite or on a config change. It now has exactly one escape, the literal line

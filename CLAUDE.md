@@ -218,6 +218,20 @@ predate the work. `since` is the manifest's fifth column, written on every state
 also what gives `build`, `integrate` and `close` — the three steps with no artifact under `$CAP_DIR`
 — something to compare against.
 
+**Sign-off is also when a tab is torn down.** Nothing closed one before: `open_tab` printed the tab
+id and discarded it, so `crews.tsv` could not say which tab belonged to which crew, and two real runs
+left six crew tabs sitting idle across two workspaces. `crews.tsv` is four columns now — crew id,
+harness id, tab, step — and `cap-phases.sh done` calls `cap-crews.sh close --step` once the step is
+agreed. `cap-crews.sh down [--archive]` ends the project; archiving is opt-in because a resumed run
+needs the directory where `new` put it, and it is what finally makes `_archive/` real rather than
+aspirational.
+
+**`close` never touches a `blocked` crew.** That one is waiting for you, and closing it discards both
+the question and the only session that can answer it. Nor does it close before sign-off: after the
+contract change the captain may not read repo files, so the crew's tab is the review surface, and
+route B approval happens inside it. Outside herdr, or on a row from before the column change, there
+is nothing to close and it exits clean.
+
 `hooks/captain-signoff.sh` is **the first `PreToolUse` hook in this repo**. It denies `done` when
 unverified and denies writing `phases.tsv` any other way, because `sed -i` on a file the captain may
 write is the obvious way round. It fails open on anything unexpected: this guards a process, it is

@@ -61,12 +61,11 @@ winning: **built-in → plugin → userSettings (`~/.claude/agents/`) → projec
 Code's own agents (`Explore`, `Plan`, `general-purpose`, `claude`, `statusline-setup`) replaces it
 wholesale — prompt, tools and model — and the agent list shows one entry, not two.
 
-`Explore.md` is the one override here. A built-in Explore declares `model: "inherit"` and the only
-adjustment is an upper cap: on a model above opus it drops to opus, otherwise it inherits. On
-`opus[1m]` that means excerpt grepping at opus prices. A non-built-in definition has its declared
-`model:` honoured verbatim, so ours pins `haiku`. Confirmed by `modelUsage` in `stream-json`:
-`claude-haiku-4-5` for the subagent, `claude-opus-5[1m]` for the session.
-`CLAUDE_CODE_DISABLE_EXPLORE_INHERIT_CAP` only removes the cap; it cannot lower the model.
+`Explore.md` is the one override here, and it exists for the `model: haiku` pin: a built-in Explore
+inherits the session model, so on `opus[1m]` it greps excerpts at opus prices. **It also owns the
+report contract** — `path:line` citations, a 600-word budget, bounded reads — so a dispatch prompt
+does not restate any of that. Mechanics and the measurements behind the contract are in
+`docs/captain.md`.
 
 ### Planning
 

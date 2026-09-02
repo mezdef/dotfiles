@@ -52,7 +52,7 @@ The default round cap is one attack-and-amend; `Plan`'s own contract allows thre
 unresolved goes to the user, and that is a ceiling rather than a target. A `/captain` run on the
 `epic` tier asks for two rounds in the brief, which the skill already allows without changing.
 
-**`Plan` stage one now opens with `/brainstorming` unless its brief says `discovery: none`.** Only
+**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Only
 `/captain` emits that line, and only on the `fix` tier, so a standalone `/planning` run always gets
 the dialogue. That is the intended default rather than an oversight — the skill's own guidance
 already rules it out for a one-file change, an obvious bug or a decision with no trade-off, so

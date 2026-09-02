@@ -83,7 +83,7 @@ already rules it out for a one-file change, an obvious bug or a decision with no
 anything reaching it is work whose shape is worth agreeing first.
 
 Format versus process. `/planning` owns the process and adds no naming, location or section rule of
-its own. `/writing-plans`, `/writing-design-docs` and `/managing-plans` own the format, and `Plan`
+its own. `/writing-plans`, `/writing-design-docs` and `/workstreams` own the format and the lifecycle, and `Plan`
 invokes them itself — the skill never does. Those three still auto-invoke on their own words, so a
 prompt about writing a plan can pull one in beside `/planning`; the tie-break, written into
 `/planning`, is that it owns the process and you do not reach the format skills directly. Making them

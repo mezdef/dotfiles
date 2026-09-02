@@ -5,7 +5,7 @@ GNU Stow-managed dotfiles. Each top-level directory is a stow package that symli
 
 See `README.md` for the package inventory and the `.local` override pattern.
 
-Repo vocabulary lives in `CONTEXT.md` at the root, and a single reversible decision in
+Repo vocabulary lives in `CONTEXT.md` at the root, and a decision that is hard to reverse in
 `docs/adr/NNNN-slug.md`. `domain-modeling` owns both formats and creates each on the first entry,
 so an absent file means nothing has needed one yet.
 

@@ -43,24 +43,11 @@ adjustment is an upper cap: on a model above opus it drops to opus, otherwise it
 `claude-haiku-4-5` for the subagent, `claude-opus-5[1m]` for the session.
 `CLAUDE_CODE_DISABLE_EXPLORE_INHERIT_CAP` only removes the cap; it cannot lower the model.
 
-Two things the override cannot keep. The frontmatter schema has no `omitClaudeMd`, so unlike the
-built-in it does receive both CLAUDE.md files on every dispatch. And the prompt is a copy, so a
-newer Claude Code improving its own Explore prompt will not reach ours. `agentType === "Explore"`
-is special-cased by name regardless of source, so git status is still stripped from its context.
-
-Supported frontmatter keys, from the schema: `name`, `description`, `tools`, `disallowedTools`,
-`model`, `effort`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `initialPrompt`,
-`memory`, `background`, `isolation`, `observer`. `effort:` takes `low|medium|high|xhigh|max` and is
-carried on the definition, so the 13 crew roles do not need `--effort` at dispatch — the design doc
-records it as unverified documentation, which was true then and is not now. Unknown keys are
-tolerated, which is what lets `role:`, `phase:` and `log_sections:` ride along.
-
 ### Planning
 
-**Planning has one entry point: `/planning`.** It is the process, and it dispatches the four roles
-that do the work as background crews — `Plan` stage one for the problem statement, `librarian` in
-parallel for the surveys, `Plan` stage two for the choice and the two documents, `adversary` to
-attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
+**Planning has one entry point: `/planning`.** It is the process, and it dispatches the three roles
+that do the work as background crews — `Plan` stage one for the Overview tier of the design doc,
+`Plan` stage two for the choice and the two documents, `adversary` to attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
 The default round cap is one attack-and-amend; `Plan`'s own contract allows three before what is
 unresolved goes to the user, and that is a ceiling rather than a target. A `/captain` run on the
 `epic` tier asks for two rounds in the brief, which the skill already allows without changing.
@@ -82,8 +69,8 @@ stop pulling the format rules in.
 Background crews rather than in-process subagents, because the loop is long enough that a plan-phase
 session hits a context boundary before it ends, and a `--bg` crew survives a `/clear`. That needs a
 `$CAP_DIR`, so outside a `/captain` run the skill makes its own with `cap-crews.sh new`. Inside one,
-`$CAP_DIR` is already set and `/captain`'s define and survey phases are steps the skill finds already
-done — its gates are readable off the files, so it enters part-way without redispatching. `/captain`'s
+`$CAP_DIR` is already set and `/captain`'s define step is one the skill finds already done — its
+gate is readable off the files, so it enters part-way without redispatching. `/captain`'s
 plan phase is one table row naming the skill; it no longer describes the sequence.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
@@ -92,17 +79,7 @@ digit is replaced by the word at that position in whatever arguments the skill w
 arguments. Named variables such as `$CAP_DIR` are untouched. So money in a skill body is written
 `USD 3.90`, and `tests/agents.sh` fails any skill or agent definition carrying the sequence.
 
-The cost section is measured from the usage ledger, and it supersedes an earlier set taken from the
-per-crew JSON that was wrong by up to 7x per crew. `pla-104` reached a first reviewed draft for $89
-in crew spend across six crews. **The two expensive crews are the whole bill**: `Plan` stage two and
-`adversary` are $74.73 of $89.25, while the three sonnet `librarian` crews are $10.76 together, 12%
-of the run. Model tier is the smaller lever — sonnet ran $0.036–$0.061 per 1k of context against
-opus at $0.074–$0.094, about 2x, while context read varied 4.5x across crews.
-
-**A survey does not stop the reading.** `Plan` stage two read 54M cache tokens and peaked at 485k
-with all three surveys already written, and 480 of its 526 source-reading calls went at the repo.
-The surveys bought that nobody re-derived what they said, and that a later task can skip the read;
-they did not buy a smaller planner. The read-first list is now injected rather than remembered.
+Cost, and what the two expensive crews were, is in `docs/captain.md`.
 
 ### Settings and permissions
 
@@ -198,310 +175,21 @@ Rationale and measurements in `docs/claude-context.md`.
 ## Captain
 
 Step orchestration over native agent definitions. `/captain` drives one task through the steps it
-needs, dispatching a crew per step. A crew is an ordinary Claude Code session wearing one of the 6
-role definitions. Design in `docs/design/2026-08-31-captain-to-agent-definitions.md`, which
-supersedes the herdr-and-jj-pool architecture in `2026-08-28-captain-crew-orchestration.md`; the
-per-task step selection is in `2026-08-31-captain-adaptive-phases.md`.
+needs, dispatching a crew per step — a crew being an ordinary Claude Code session wearing one of the
+five role definitions in `claude/.claude/agents/`. The skill is
+`claude/.claude/skills/captain/SKILL.md`, the scripts are `claude/.claude/scripts/captain/cap-*.sh`,
+and runtime state is untracked under `~/.claude/crews/<slug>/`.
 
-**One step is mandatory and the rest are not.** The catalogue is define, survey, plan, build, review,
-security, verify, integrate, close, plus `tdd` as a mode on build and `brainstorm` as a mode on
-define — eleven rows, of which the last two steps are the captain's own rather than a crew's.
-`cap-phases.sh skip plan` refuses: every task gets a plan the requester can read before any code is
-written, and a sixth catalogue field carries that so the refusal is data rather than a sentence
-`SKILL.md` has to be trusted to follow. The seven-phase sequence that came before ran everything on
-every task, so declining to plan a one-file change had no representation other than not doing it and
-saying nothing. Three of those rows are the old single `review` phase split apart, because reading a
-change, security-reading it and running its suite are independently worth skipping.
+**The captain does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or `jj diff` on anything
+in the repo, including at `integrate`, where the step is the captain's but the reading is not.
+Reading is a crew dispatch. This rule stays in steering because it is the one a session must not
+have to look up.
 
-The set is chosen once at the start — the captain proposes from the task and asks once, rather than
-prompting per step — and lives in `$CAP_DIR/phases.tsv`, so it survives a `/clear` and
-`cap-crews.sh list` can print it. Every row carries a state (`included`, `skipped`, `done`) and a
-reason. There is no `active` state: `cap-phases.sh next` derives it as the first row that is neither
-done nor skipped, because a state advanced by hand drifts out of step with the artifacts. A skip is
-revisable with `cap-phases.sh add <step> --reason "scope grew"`, and that reason column is the record
-of why the original judgement was wrong.
+**Nothing enforces a role's boundaries.** Every contract is prose in a definition, so a boundary
+crossed is crossed.
 
-Nothing enforces the manifest either. It records what was decided; doing a step marked skipped is not
-an error, it is just undocumented.
-
-**Every artifact a run has written is injected into the next crew's brief.** `cap-crews.sh start`
-composes title, then `cap-phases.sh modes <role>`, then a `## Read first` block naming
-`survey/problem.md`, `survey/decisions.md`, the three newest crew logs, every task survey and the
-fresh index entries for any `--area` named. Nothing did this before: the read-first list was prose
-advice in two skills, generated by no code, and it showed. In the `stripe-idempotency-key` run both
-surveys were read by the captain and by no crew at all, while all three builders went at
-`charge.ts` directly; in `role-boundaries`, where the captain hand-wrote the paths in, three crews
-read them. Crew logs are in the block because they are what crews already reach for — one builder
-log was read by five sessions other than its author, against zero for either stripe survey.
-
-**`cap-crews.sh restaff <crew-id>` is what the 300k checkpoint was always for.** All seven contracts
-said "update the log fully and report" and nothing consumed it; 209KB of crew logs existed and only
-a human read them. It parses the log's frontmatter with a continuation-aware reader — `fm()` stops
-at the first line and real logs fold `blockers:` over two — and dispatches `<id>-2` so both
-generations stay separate in the ledger. It refuses a `done` crew, and a `blocked` one, without
-`--force`; unlike `close` it destroys nothing, so the blocked case is a default rather than a wall.
-
-**`survey` is included only when the index is not fresh.** `cap-index.sh plan <area>...` prints the
-state per area and then the command to paste, so the row is settled by a fact read off files rather
-than by the captain judging code it may not read. The gate asks for a *fresh* index entry, and
-`cap-signoff.sh` accepts the generated stub the librarian's `record --link` leaves under
-`$CAP_DIR/survey/` — that stub is why `survey_own` still finds an artifact at all.
-
-**A survey does not stop the reading, and the contracts no longer claim it does.** `Plan` stage two
-read 54M cache tokens and peaked at 485k with all three surveys written, making 480 of its 526
-source-reading calls straight at the repo. The shared delegation sentence lost its superlative in
-all seven files: what a crew never reads beats what it delegates, context read varies 4.5x across
-crews against 2x for model tier, and the librarians were 12% of the `pla-104` bill.
-
-**Every included step stops for a sign-off, and the sign-off is checked against a transcript.**
-`cap-phases.sh done` refuses unless the gate artifact exists, `--signoff "<their words>"` is given,
-and `cap-signoff.sh` finds a human. Two routes count: an `AskUserQuestion` in the captain's own
-transcript, or a second human turn in a crew's. The second is the stronger one and the one to design
-for — a never-attached `--bg` crew's transcript holds exactly one string-content `user` record, its
-launch prompt, and everything else with `type: "user"` is a `tool_result`. Measured across six real
-transcripts: three background crews at 1, 1, 1 and three interactive sessions at 7, 10, 7. The
-captain cannot write into another session's file, so a second turn is proof a person was there.
-
-That route exists because of how the captain is now constrained: it may not read repo files, so it
-relaying a summary of a design doc is worse than the requester reading the doc in the crew's tab.
-Crews get `cap-phases.sh signoff-brief <step>` in their brief, which tells them to write the artifact
-and then ask rather than exit — they show as `blocked`, the channel `cap-crews.sh list` and `attach`
-already handle. `cap-phases.sh reject` sends a step back with a reason and a count, leaving it
-`included` and the tab open.
-
-Every signal must be newer than `max(step.since, newest artifact mtime)`, since approval cannot
-predate the work. `since` is the manifest's fifth column, written on every state change, which is
-also what gives `build`, `integrate` and `close` — the three steps with no artifact under `$CAP_DIR`
-— something to compare against.
-
-**Sign-off is also when a tab is torn down.** Nothing closed one before: `open_tab` printed the tab
-id and discarded it, so `crews.tsv` could not say which tab belonged to which crew, and two real runs
-left six crew tabs sitting idle across two workspaces. `crews.tsv` is four columns now — crew id,
-harness id, tab, step — and `cap-phases.sh done` calls `cap-crews.sh close --step` once the step is
-agreed. `cap-crews.sh down [--archive]` ends the project; archiving is opt-in because a resumed run
-needs the directory where `new` put it, and it is what finally makes `_archive/` real rather than
-aspirational.
-
-**`close` never touches a `blocked` crew.** That one is waiting for you, and closing it discards both
-the question and the only session that can answer it. Nor does it close before sign-off: after the
-contract change the captain may not read repo files, so the crew's tab is the review surface, and
-route B approval happens inside it. Outside herdr, or on a row from before the column change, there
-is nothing to close and it exits clean.
-
-`hooks/captain-signoff.sh` is **the first `PreToolUse` hook in this repo**. It denies `done` when
-unverified and denies writing `phases.tsv` any other way, because `sed -i` on a file the captain may
-write is the obvious way round. It fails open on anything unexpected: this guards a process, it is
-not a security boundary. Its `timeout` must exceed a transcript read — a cancelled hook has its
-output discarded, which here would silently allow the thing it exists to deny.
-
-Design in `docs/design/2026-08-31-captain-step-signoff.md`.
-
-**The captain has a contract now, `## What the captain does not do`, and it is absolute.** It was the
-only participant without one — all six roles end with a `Never:` list and all six carry the same
-"Delegate reading to subagents" sentence, while `SKILL.md` had neither, which is how a run ended up
-with the captain reading the code and briefing nobody. No `Read`, `Grep` or `Glob` on a repo file, no
-`Edit`, no `jj diff`, including at `integrate` where the reading is a `checker` dispatch even though
-the step is the captain's. `tests/agents.sh` asserts the shared sentence is byte-identical across all
-seven files, so rewording one leaves the others failing rather than silently diverging.
-
-Selection was rewritten with it. The first version's heuristic table needed code knowledge for seven
-of its ten rows and made having read the code the reason to skip the crew that would have; it is
-deleted rather than patched. The captain restates the task, asks, walks the catalogue out loud with a
-reason per row, and writes the manifest. "Not sure" includes `survey` and puts the question in the
-`librarian` brief, so uncertainty about the code routes to a crew instead of into the captain's
-context. None of it is enforced: `/captain` is a skill, so it has no `tools:` line and its session
-keeps every tool it had.
-
-**Selection asks two questions now, and the first one is a tier: fix, feature or epic.** The four it
-replaced asked what kind of work, how big, whether the approach was settled and what it touched, and
-then mapped the answers to rows in prose — so the mapping lived only in `SKILL.md` and could not be
-asserted against the script. The tier lives in `cap-phases.sh` as a `TIERS` array, is applied by
-`cap-phases.sh init --tier <tier>` (required; a bare `init` is refused), is recorded in
-`$CAP_DIR/tier`, and prints on `cap-crews.sh list`. It asks what the work **is** rather than how big
-it is, because a one-file change can still be a feature and it is featureness that decides whether
-the shape needs agreeing — not the file count.
-
-A fix skips `define` and `brainstorm`, because its outcome is already named. An epic adds `security`,
-because breadth is what makes a boundary easy to miss. A feature settles nothing on its own: it keeps
-the thorough defaults and the second question does the rest. Only the rows a tier genuinely decides
-are written, each with a reason naming the tier, so `cap-phases.sh list` explains itself.
-
-**The tier's `review` row is a default, not a refusal.** Only `plan` is enforced. A feature starts
-with `review` included and a skip has to be argued for and recorded, which is weaker than the
-`plan` guarantee and is the deliberate limit of the `required` field: it is per catalogue row, so it
-cannot say "required on a feature, optional on a fix".
-
-**The plan stop is three-way.** `cap-phases.sh reject <step> --reason` already sent a step back,
-leaving it `included`, counting the attempt and keeping the tab open; nothing offered it. The plan
-gate now reads approve / change this / attack it again, and the rejection count in column four is the
-record of how many rounds the plan took. This is the one step where the requester reads the whole
-artifact and forms an opinion, so it is the one that needed somewhere to put it.
-
-**There are two modes, `tdd` on `build` and `brainstorm` on `define`, and each changes one
-definition.** `builder.md` kept test-first as an absolute — write the test, watch it fail, commit it
-alone — which made it unusable on a repo with no suite or on a config change. It has exactly one
-escape, the literal line `tests: none` in its brief, emitted by `cap-phases.sh modes builder` when
-the `tdd` row is skipped. A literal token rather than a prose condition is what makes it assertable
-in `tests/agents.sh`, and `builder`'s Never list forbids it granting itself the escape. That is a
-prose rule guarding a prose rule, which is the same trade the thirteen-to-six merge already made
-twice.
-
-`brainstorm` is the same shape for `Plan` stage one, with `discovery: none` as its escape. **A mode
-emits its line when it is skipped, not when it is included**, so silence is the thorough default:
-no line means test-first, and no line means run the discovery dialogue. Two things had to give for
-this to work. `Plan`'s Never list forbade invoking `/brainstorming` at all, on the reasoning that a
-crew re-entering the loop dispatches crews of its own — true of `/captain` and `/planning`, not of a
-dialogue skill that dispatches nothing, so it is carved out for stage one only. And
-`brainstorming/SKILL.md` ends by invoking `/writing-plans`, which inside a captain run is a later
-step someone else owns; with `$CAP_DIR` set it now stops at `problem.md` instead.
-
-The 6 roles live in `claude/.claude/agents/`, stowed to `~/.claude/agents/`, so **any of them can
-be used without the skill**: `Agent(subagent_type: "librarian")` in any session, or
-`claude --agent librarian` for a whole session. The file name is what `--agent` takes, and a crew id
-is that name plus the task slug — `adversary-plan-x`, not `arc-plan-x`. The `role:` frontmatter key
-is what is left of the old three-letter prefix: a shorter thing to type at `cap-crews.sh start`, and
-the marker distinguishing a crew role from `Explore.md`, which has no `role:`. `SKILL.md` adds only
-the phase order, the artifact convention and the gates.
-
-Thirteen became six, in three passes, and the direction throughout was that a role must earn a file.
-
-Merged because two definitions described one job: `verifier` into `checker` (both recorded verbatim
-command output and judged nothing, differing only in whether the input was an assumption list or a
-build plus suite); `product-manager` into `Plan` as stage one; `architecture-reviewer` and
-`code-reviewer` into `adversary`, which attacks any artifact's claims — every claim checked against
-its source as **holds**, **refuted** or **unsupported**, then the reasoning attacked; `test-writer`
-and `code-writer` into `builder`, which writes the test, watches it fail and commits it alone before
-implementing.
-
-Cut because the job was gone or belonged to the captain: `option-generator`, and the explore phase
-with it — never run in the one real project, whose Plan produced a 1,626-line plan with no
-`options.md` in breach of its own contract, so the option discipline moved inside `Plan` as a
-required `## Rejected approaches`. `integrator`, whose lens was combining changes across the jj
-working-copy pool that the previous changeset deleted; sequenced writers in one shared copy leave a
-linear stack, so integration is a captain step and the one rule worth keeping — never `jj resolve`,
-it opens an editor configured to fail — moved to `SKILL.md`. `scribe`, because ticking `## Tasks` is
-already a captain duty and its doc-against-code check is the adversary's survey case.
-
-Renamed: `explorer` to `option-generator` before it was cut, because it sat in the same listing as
-`Explore` doing the opposite job; `prober` to `checker`. Not `verifier` — that names an outcome for a
-role whose defining rules are that `inconclusive` is a result and that it must never report a pass it
-did not watch happen.
-
-Two of these merges traded a structural guarantee for a prose rule, and an `adversary` run on the
-design doc said so. Two definitions with different `phase:` keys could not be pointed at the wrong
-artifact; one definition with a "one dispatch, one artifact" sentence can be. Same for the
-test-before-code boundary. Accepted twice, for the same reason: nothing enforced a role's boundaries
-anyway.
-
-Every description lost its "Dispatch explicitly" clause, reversing plan task A4: the roles are meant
-to be auto-selected. That was riskiest while `integrator` existed, since it rewrote history in the
-copy everyone was sitting in; cutting it removed the worst case, and no definition rewrites history
-now. `builder` is what remains to watch — auto-selected without a plan step to build, it has nothing
-but its own contract telling it to stop.
-
-Three runtimes, one definition:
-
-| | Stdin | Survives your `/clear` |
-|---|---|---|
-| In-process subagent (`Agent(subagent_type: …)`) | no | no |
-| Background session (`cap-crews.sh start`, i.e. `claude --bg`) | not until attached | yes |
-| herdr pane running `claude attach <id>` | yes | yes |
-
-A background session runs to completion or blocks, then exits; `blocked` in `cap-crews.sh list` is
-the signal to attach and answer it. Nothing is waiting on a live process.
-
-Six scripts, replacing the eleven that came before:
-
-- `cap-crews.sh` — `new`, `start`, `restaff`, `list`, `watch`, `attach`. It keeps no crew manifest:
-  `claude agents --json` already tracks every session, so `list` joins that against `$CAP_DIR` rather
-  than holding a second copy of the same facts. Threshold policy lives here. `list` also prints one
-  `PHASES:` line from `phases.tsv` — one awk over one file, so resuming after a `/clear` is one
-  command, not two.
-
-  **It opens a herdr tab per crew.** `claude --bg` is detached and has no pane, and `attach` used to
-  only print `claude attach <id>` for you to paste, so a dispatched crew was unwatchable without
-  manual work. `start` now runs `herdr tab create --cwd "$PWD" --label <crew-id> --no-focus`, reads
-  `.result.root_pane.pane_id`, and `herdr pane run <pane> "claude attach <short-id>"`. `--no-focus`
-  always, so a fanned-out `librarian` cannot steal focus five times; `--no-watch` opts out.
-  `watch [<crew-id>...]` does the same after the fact, and bare `watch` targets every crew the
-  harness reports `blocked`.
-
-  **This needs no new permission, and that is the design rather than a loophole.** The herdr calls
-  are inside the script, and `settings.json` already allowlists `Bash(bash …/captain/cap-*.sh*)`.
-  `docs/claude-permissions.md` says why that is the right boundary: a script validates its arguments
-  instead of interpolating caller input into a `herdr` call. `pane send-keys` and `agent send-keys`
-  stay denied. Anything that fails — no `HERDR_ENV`, a herdr call erroring — falls back to printing
-  the attach line and exits 0, because a monitoring convenience must never fail a dispatch.
-
-  The pane id key was probed live: the herdr skill documents `.result.pane.pane_id`, which is
-  `pane split`'s shape. `tab create` returns it under `root_pane`.
-- `cap-signoff.sh` — `verify <step>`, answering "was a human actually here" from transcripts rather
-  than from a claim. Exit 1 is an honest no; exit 2 is its own error, which the hook distinguishes so
-  a broken verifier does not read as a refusal.
-- `cap-phases.sh` — the step manifest: `init`, `list`, `skip`, `add`, `done`, `reject`, `next`,
-  `modes`, `signoff-brief`, `catalogue`. The catalogue is a literal array at the top of the script, and `tests/agents.sh`
-  checks every row `SKILL.md` names is a row the script knows, so the skill cannot document a step no
-  command can mark done. It refuses the incoherent — an unknown id, skipping a `done` step, finishing
-  a `skipped` one — and warns rather than refuses when `tdd` is included with `build` skipped.
-- `cap-index.sh` — the durable per-repo context index: `record`, `check`, `plan`, `brief`, `gaps`,
-  `lint`, `rebuild`, `drop`. One entry per surveyed area under `~/.claude/context/<mangled-root>/`,
-  untracked, read by every later task in the same working copy. **Freshness is mtime and the
-  revision is only reported**: in a colocated jj repo git HEAD tracks the working copy's *parent*,
-  so a HEAD-relative diff calls an entry fresh while its cited file has been rewritten. The decision
-  path is bash builtins, measured at 4 subprocesses for 13 entries and 4 for 1. Its ratio gate at
-  0.35 is what stops an entry restating its source: 100k of TypeScript compressed to 15.6k, while
-  36.5k of agent definitions "compressed" to 31.0k. Not to be confused with
-  `$CAP_DIR/context/<crew>.json`, which is crew telemetry.
-- `cap-context.sh` — the per-crew statusLine, recording tokens, cost and effort into
-  `$CAP_DIR/context/<id>.json`. `claude agents --json` has no cost field, which is the only reason a
-  crew needs a settings file at all.
-- `cap-improve.sh` — the improvement loop, unchanged. It improves the captain rather than the
-  projects it runs. Entries are append-only in `~/.claude/crews/_improve/`, each naming the file it
-  wants changed; an entry that cannot name a target is refused. `cap-crews.sh list` records its own
-  anomalies and prints the recurrence footer. A fact about the work goes in the crew log instead.
-
-`tests/crews.sh` is the suite. It stubs `claude`, because the two things that needed live proof are
-settled and encoded in the script: **`claude --bg` ignores `--session-id`** (so the id is read back
-from what it prints) and **a background session does not inherit the launching shell's environment**
-(so `CREW_ID`, `CREW_ROLE` and `CAP_DIR` travel in the generated `settings.env`).
-
-**Runtime state is `~/.claude/crews/<slug>/` and is not version controlled.** One directory per
-project holding `crews.tsv`, `phases.tsv`, the briefs (composed and `.src.md` as given),
-the crew logs, the survey stubs, `survey/decisions.md`, the questions file
-and the generated per-crew settings. `survey/decisions.md` closes a blocking improvement entry: only
-librarian answers had a landing place, so a user answer lived in the captain-to-crew message alone
-and `questions.md` recorded that one was relayed but never what it said. `_improve/` holds the improvement record, `_archive/` torn-down
-projects, and `_active/` the repo-to-project pointers the session statusline reads. Claude Code owns
-`~/.claude/projects/`, so the captain cannot use it.
-
-**Nothing enforces a role's boundaries.** The contract in each definition is the whole of it. The
-generated per-crew settings carry env and a statusLine, not permission rules; `cap-profile.sh` and
-the path denies it wrote are gone, along with the jj working-copy pool. Writers work in the copy you
-are sitting in, so they are sequenced rather than concurrent. `herdr pane send-keys` and
-`agent send-keys` are still deliberately **not** allowlisted, because either one is arbitrary
-command execution laundered through herdr. See `docs/claude-permissions.md`.
-
-**Cost is no longer read from `$CAP_DIR/context/<crew>.json`.** That file is overwritten on every
-render, and `SKILL.md` tells you to re-dispatch a stalled crew under the same id past 300k, so each
-re-dispatch silently discarded the previous session's spend — the recorded `pla-104` total is a
-floor, not a measurement. `cap-crews.sh list` now sums the usage ledger by crew, and stamps that total into
-`$CAP_DIR/rollup.cost` for the statusline, which cannot afford the same fork per render. The
-per-crew JSON
-still carries `tokens`, which is a level and belongs to the running session, plus a `peak_ctx`
-running max, since context drops at a compaction. Its `usage` field is gone: it held one message's
-counts under a name implying cumulative totals. See `docs/claude-usage.md`.
-
-**The durable index is `~/.claude/context/<mangled-working-copy-root>/`**, untracked, one entry per
-surveyed area, and it is the second-order saving rather than the first. The measured gain is
-within a run: `charge-path.md` had six potential consumers and got zero, and one $0.43 librarian
-displacing six $0.159 `Explore` dispatches pays back at about three readers. Across runs is so far
-unmeasured, since no repo has had two captain runs. The working-copy root and not
-`--git-common-dir`, because freshness belongs to a working copy at a revision and the four
-`work-app` worktrees sit at different ones; path-mangled and not a basename, because
-`apps/work-app` inside `work-app-2` collides.
-
-`docs/design/YYYY-MM-DD-<name>.md` paired 1:1 with a plan of the same name is the convention the
-plan phase writes to, and it is the same convention the rest of this repo already uses.
+Rationale, measurements and the script inventory are in `docs/captain.md`. **Read it before changing
+a step gate, a sign-off route, a role definition, a `cap-*.sh` script, or the crew statusline.**
 
 ## Kanata (keyboard remapping)
 

@@ -169,11 +169,15 @@ live levels, so a finished run still reads as expensive, and coloured on the wor
 absent: both need a fork, and a stamped copy of either goes quiet exactly when it matters. The `*`
 says the cost is as of the last `cap-crews.sh list`.
 
-The context segment colors on **absolute token counts**, not `used_percentage`: green below 200k,
-yellow at 200k, red plus an action hint at 300k. On a 1M window a percentage is useless as a warning
-because auto-compact does not fire until 967k. `cap-context.sh` and `cap-crews.sh` use the same two
-numbers for a crew. It reads `context_window.total_input_tokens`, which already includes cache reads
-and creation; adding `total_output_tokens` to it double-counts.
+The context segment colors on **absolute token counts**: green below 200k, yellow at 200k, red plus
+an action hint at 300k. **The percentage it prints is measured against that 300k budget, not against
+the context window** — `context_window.used_percentage` is not read by either statusline, because on
+a 1M window it makes the reset point read as 30% when auto-compact does not fire until 967k. So red
+and 100% arrive together, and past the budget the figure is left uncapped: 420k renders 140%. It is a
+whole percent by bash integer arithmetic, which adds no fork. `cap-context.sh` and
+`cap-crews.sh` use the same two numbers for a crew, so a crew pane reads 100% at the point
+`cap-crews.sh` says to checkpoint it. Both read `context_window.total_input_tokens`, which already
+includes cache reads and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
 
 ## Captain

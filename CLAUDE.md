@@ -29,6 +29,27 @@ transcript-reading traps — is in `docs/claude-usage.md`.
 every session of every project; they are symlinked into the consuming repo instead. Memory is
 owned by Claude Code's built-in prompt, not a skill. Details in `docs/claude-permissions.md`.
 
+#### npx-installed skills
+
+They land in `~/.agents/skills/` and are linked into the package as
+`../../../../.agents/skills/<name>`. **Four levels, not two.** `~/.claude/skills` is itself a stow
+symlink into this package, so `..` resolves through the real path; an installer that assumes a real
+directory writes a two-level target that dangles, and a dangling skill fails silently — it simply
+does not appear in the session's skill list. Check with `find claude -type l ! -exec test -e {} \;
+-print` after any install.
+
+They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
+them references and nobody has installed is fixed by installing that skill, which is why
+`tests/agents.sh` exempts symlinked skills from the reference check and holds the repo-owned ones to
+it — `/code-implement`, named three times by `writing-code-quick`, had never existed.
+
+`tdd` and `diagnosing-bugs` replaced the local `test-driven-development` and `systematic-debugging`,
+which were duplicates that contradicted each other on whether refactoring belongs inside the
+red-green loop. `builder`, `adversary` and the `Skill Usage` list in the personal `CLAUDE.md` name
+the npx pair, and `~/.claude/skills/tdd/tests.md` is the anti-pattern reference the two roles read
+rather than invoke. Note that `tdd` is now both a skill name and a `/captain` phase mode, so name the
+skill as "the `/tdd` skill" anywhere the mode is also in view.
+
 ### Agent definitions
 
 `claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. Verified against 2.1.231 by reading

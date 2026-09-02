@@ -19,9 +19,9 @@ Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 Work-specific scripts physically live in the package but are gitignored, so they are stowed
 locally without being published. See the gitignore block for the list.
 
-Context budget, the plan-file lifecycle contract, and the measurements behind both are in
+Context budget, the workstream lifecycle contract, and the measurements behind both are in
 `docs/claude-context.md`. **Read it before changing `statusline.sh` thresholds, the plan hooks, or
-`plan-active.sh`.** Token and cost accounting — the ledger, the price table, and the three
+`ws.sh`.** Token and cost accounting — the ledger, the price table, and the three
 transcript-reading traps — is in `docs/claude-usage.md`.
 
 `claude/project-skills/` holds per-project skills. They are **not** stowed (see
@@ -179,8 +179,10 @@ reading only says the session has run a while. `usage-report.sh efficiency` answ
 fact. See `docs/claude-usage.md`.
 
 **Crew spend rides in a bracket after the cost**, `[󱃾 3 | 412k | $44.00*]`, whenever the session's
-directory has a pointer under `~/.claude/crews/_active/`. `cap-crews.sh new` writes that pointer,
-because a statusline spawned by Claude Code never sees the captain's `$CAP_DIR`. Still one fork: the
+repo has a `.current` pointer beside its workstreams. A statusline spawned by Claude Code never
+sees the captain's `$CAP_DIR`, so it resolves the repo key the way `ws.sh` does, by walking up from
+its own cwd for a `.jj` or `.git` marker with builtins only. Two implementations of one rule, and
+`tests/crews.sh` asserts they agree. Still one fork: the
 figures are summed from `$CAP_DIR/context/<crew>.peak`, bare integers `cap-context.sh` already
 writes, with a glob and a `read` per file. It closes a real gap — the `stripe-idempotency-key` run
 held 1,284k of crew context against an 84k captain session, none of it in view. Peaks rather than
@@ -206,7 +208,7 @@ Step orchestration over native agent definitions. `/captain` drives one task thr
 needs, dispatching a crew per step — a crew being an ordinary Claude Code session wearing one of the
 five role definitions in `claude/.claude/agents/`. The skill is
 `claude/.claude/skills/captain/SKILL.md`, the scripts are `claude/.claude/scripts/captain/cap-*.sh`,
-and runtime state is untracked under `~/.claude/crews/<slug>/`.
+and `$CAP_DIR` is the workstream `ws.sh` returns, untracked under `~/.claude/work/<repo>/`.
 
 **The captain does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or `jj diff` on anything
 in the repo, including at `integrate`, where the step is the captain's but the reading is not.

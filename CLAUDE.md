@@ -50,6 +50,33 @@ the npx pair, and `~/.claude/skills/tdd/tests.md` is the anti-pattern reference 
 rather than invoke. Note that `tdd` is now both a skill name and a `/captain` phase mode, so name the
 skill as "the `/tdd` skill" anywhere the mode is also in view.
 
+### Prose rules
+
+Two files, one boundary. `claude/.claude/output-styles/direct.md` owns register, length, typography
+and the banned-word list, and is always loaded via `outputStyle: "Direct"`.
+`claude/.claude/skills/writing-design-docs/plain-language.md` owns the sentence-level limits and is
+read on demand, reachable only through `/writing-design-docs`. **It cannot gain a pointer from
+`writing-for-agents`**, which is upstream-owned and whose file an npx update replaces, so this
+section is the pointer instead: read `plain-language.md` before writing prose into a skill, a
+`CLAUDE.md`, or a doc under `docs/`. The personal
+`claude/.claude/CLAUDE.md` keeps only the push-back rule; its banned-word list moved into
+`direct.md`, because two always-loaded files carrying one list spent context to say a thing twice.
+
+**The rules bind chat and anything written from now on. Existing files are frozen and are not
+rewritten to conform.** So this file's 39 em dashes, `docs/captain.md`'s 49 and the 40 uses of
+"real" across the docs are exempt rather than debt. No file can show the difference between an
+exempt line and a breach, which is why the freeze is recorded here.
+
+`unslop`, a hand-vendored copy of `pstack/skills/unslop/SKILL.md` from `cursor/plugins`, was
+removed on 2026-09-03 the day it landed. Twenty-two of its thirty-one items duplicated the two
+files above, item 8 near-verbatim against `direct.md`. Item 26 bans `harness`, `surface` and
+`scaffolding`, which the docs here use as settled vocabulary; item 13 also bans parentheses; and
+its "Adding soul" section asks for "let some mess in", against `direct.md`'s structure rules. By
+`writing-for-agents:74` it is also built the wrong way round, as thirty-one prohibitions rather
+than positive targets. The eight items worth keeping are now rules 18 to 25 of `plain-language.md`,
+with the colon and adverb rules also in `direct.md` since both apply to chat. Re-vendoring it
+restores the duplication, so do not.
+
 ### Agent definitions
 
 `claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. Verified against 2.1.231 by reading

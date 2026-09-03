@@ -22,7 +22,7 @@ locally without being published. See the gitignore block for the list.
 Context budget, the workstream lifecycle contract, and the measurements behind both are in
 `docs/claude-context.md`. **Read it before changing `statusline.sh` thresholds, the plan hooks, or
 `ws.sh`.** Token and cost accounting — the ledger, the price table, and the three
-transcript-reading traps — is in `docs/claude-usage.md`.
+transcript-reading traps — is in `docs/claude-metrics.md`.
 
 `claude/project-skills/` holds per-project skills. They are **not** stowed (see
 `claude/.stow-local-ignore`) and must never land in `~/.claude/skills/`, which costs context in
@@ -140,10 +140,16 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
 - `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
   active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
   `herdr-agent-state.sh` under `matcher: "*"` is left alone.
-- `scripts/usage/usage-track.sh` — one script on four events. `Stop` (`asyncRewake`) reduces the
+- `scripts/metrics/metrics-track.sh` — one script on four events. `Stop` (`asyncRewake`) reduces the
   transcript incrementally into a sidecar; `SubagentStop` turns `agent_transcript_path` into a
   ledger row; `SessionEnd` finalises, and fires on `/clear` and `/resume` rather than only on exit;
-  a third `SessionStart` entry sweeps sidecars whose session is gone. See `docs/claude-usage.md`.
+  a third `SessionStart` entry sweeps sidecars whose session is gone. See `docs/claude-metrics.md`.
+
+**A hook whose `command` path is wrong fails silently** — Claude Code does not surface it, so the
+only symptom is that whatever it recorded stops arriving. `scripts/tests/settings.sh` asserts every
+`command` in `settings.json` resolves to an executable file both in the package and at its stowed
+path, and that all four events still name `metrics-track.sh`. Run it after touching `settings.json`
+or renaming anything a hook calls.
 
 Thresholds, the 967k auto-compact derivation and the plan-lifecycle contract are in
 `docs/claude-context.md`.
@@ -175,8 +181,12 @@ It renders context and session cost. Cost is `cost.total_cost_usd`, which alread
 in-process subagent spend and which the statusline previously discarded. A cache-hit segment was
 tried and removed: measured across 632 sessions the ratio tracks session length rather than
 anything you control, from a median 61% under 100k of context read to 97% over 10M, so a high
-reading only says the session has run a while. `usage-report.sh efficiency` answers it after the
-fact. See `docs/claude-usage.md`.
+reading only says the session has run a while. `metrics-report.sh efficiency` answers it after the
+fact. See `docs/claude-metrics.md`.
+
+The cost sidecar it writes goes through `metrics_cost_stamp` in `scripts/metrics/metrics-cost.sh`,
+shared with `cap-context.sh`. That writer is a separate file from `metrics-lib.sh` because sourcing
+the library forks at source time and its own writer forks `mkdir`; both callers run on a render.
 
 **Crew spend rides in a bracket after the cost**, `[󱃾 3 | 412k | $44.00*]`, whenever the session's
 repo has a `.current` pointer beside its workstreams. A statusline spawned by Claude Code never

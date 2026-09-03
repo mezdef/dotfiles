@@ -35,8 +35,15 @@ They land in `~/.agents/skills/` and are linked into the package as
 `../../../../.agents/skills/<name>`. **Four levels, not two.** `~/.claude/skills` is itself a stow
 symlink into this package, so `..` resolves through the real path; an installer that assumes a real
 directory writes a two-level target that dangles, and a dangling skill fails silently — it simply
-does not appear in the session's skill list. Check with `find claude -type l ! -exec test -e {} \;
--print` after any install.
+does not appear in the session's skill list.
+
+**`scripts/skills/skills-link.sh fix` after any install**, and never repoint one by hand: the depth
+is stated once, in that script. `check` is the same sweep without the writes, and it reports three
+things — a link that does not resolve, a link that resolves by the wrong route, and a skill
+installed but never linked. `scripts/tests/agents.sh` calls `check`, so a broken link now fails the
+suite. It did not before: `code-review`, `implement`, `to-spec` and `to-tickets` sat dangling
+through a 643-assertion run, and `/code-review` is named by `/planning`'s `## After the plan` table.
+A real directory of the same name is repo-owned and `fix` never replaces it with a link.
 
 They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
 them references and nobody has installed is fixed by installing that skill, which is why
@@ -47,8 +54,7 @@ it — `/code-implement`, named three times by `writing-code-quick`, had never e
 which were duplicates that contradicted each other on whether refactoring belongs inside the
 red-green loop. `builder`, `adversary` and the `Skill Usage` list in the personal `CLAUDE.md` name
 the npx pair, and `~/.claude/skills/tdd/tests.md` is the anti-pattern reference the two roles read
-rather than invoke. Note that `tdd` is now both a skill name and a `/captain` phase mode, so name the
-skill as "the `/tdd` skill" anywhere the mode is also in view.
+rather than invoke.
 
 ### Prose rules
 
@@ -100,14 +106,15 @@ does not restate any of that. Mechanics and the measurements behind the contract
 that do the work as background crews — `Plan` stage one for the Overview tier of the design doc,
 `Plan` stage two for the choice and the two documents, `adversary` to attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
 The default round cap is one attack-and-amend; `Plan`'s own contract allows three before what is
-unresolved goes to the user, and that is a ceiling rather than a target. A `/captain` run on the
-`epic` tier asks for two rounds in the brief, which the skill already allows without changing.
+unresolved goes to the user, and that is a ceiling rather than a target. A brief may ask for a
+second round; the skill already allows it without changing.
 
-**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Only
-`/captain` emits that line, and only on the `fix` tier, so a standalone `/planning` run always gets
-the dialogue. That is the intended default rather than an oversight — the skill's own guidance
-already rules it out for a one-file change, an obvious bug or a decision with no trade-off, so
-anything reaching it is work whose shape is worth agreeing first.
+**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Nothing emits
+that line any more — `cap-phases.sh modes` did, and it went with `/captain` — so the brief's author
+writes it, and a run that does not write it gets the dialogue. That is the intended default rather
+than an oversight: the skill's own guidance already rules it out for a one-file change, an obvious
+bug or a decision with no trade-off, so anything reaching it is work whose shape is worth agreeing
+first.
 
 Format versus process. `/planning` owns the process and adds no naming, location or section rule of
 its own. `/writing-plans`, `/writing-design-docs` and `/workstreams` own the format and the lifecycle, and `Plan`
@@ -117,12 +124,17 @@ prompt about writing a plan can pull one in beside `/planning`; the tie-break, w
 `disable-model-invocation: true` was the alternative and was rejected: writing a plan by hand would
 stop pulling the format rules in.
 
-Background crews rather than in-process subagents, because the loop is long enough that a plan-phase
-session hits a context boundary before it ends, and a `--bg` crew survives a `/clear`. That needs a
-`$CAP_DIR`, so outside a `/captain` run the skill makes its own with `cap-crews.sh new`. Inside one,
-`$CAP_DIR` is already set and `/captain`'s define step is one the skill finds already done — its
-gate is readable off the files, so it enters part-way without redispatching. `/captain`'s
-plan phase is one table row naming the skill; it no longer describes the sequence.
+Background crews rather than in-process subagents, because the loop is long enough that the session
+hits a context boundary before it ends, and a `--bg` crew survives a `/clear`. That needs a
+`$CAP_DIR`, so the skill makes its own with `cap-crews.sh new` unless one is already set, in which
+case it checks each gate against the files already there and enters part-way rather than
+redispatching.
+
+**`/planning` also owns what follows the plan.** Its `## After the plan` table names build, review,
+security, verify, integrate and close, and says to write each one the task needs in as a step in
+`PLAN.md`. That is deliberate: `/captain`'s manifest was the only thing recording that a review had
+been *skipped* rather than forgotten, and `PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that
+record lives now.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
 digit is replaced by the word at that position in whatever arguments the skill was invoked with —
@@ -247,12 +259,12 @@ the library forks at source time and its own writer forks `mkdir`; both callers 
 
 **Crew spend rides in a bracket after the cost**, `[󱃾 3 | 412k | $44.00*]`, whenever the session's
 repo has a `.current` pointer beside its workstreams. A statusline spawned by Claude Code never
-sees the captain's `$CAP_DIR`, so it resolves the repo key the way `ws.sh` does, by walking up from
+sees a dispatching session's `$CAP_DIR`, so it resolves the repo key the way `ws.sh` does, by walking up from
 its own cwd for a `.jj` or `.git` marker with builtins only. Two implementations of one rule, and
 `tests/crews.sh` asserts they agree. Still one fork: the
 figures are summed from `$CAP_DIR/context/<crew>.peak`, bare integers `cap-context.sh` already
 writes, with a glob and a `read` per file. It closes a real gap — the `stripe-idempotency-key` run
-held 1,284k of crew context against an 84k captain session, none of it in view. Peaks rather than
+held 1,284k of crew context against an 84k dispatching session, none of it in view. Peaks rather than
 live levels, so a finished run still reads as expensive, and coloured on the worst single crew, since
 300k is an instruction to re-dispatch *that* crew. Blocked state and live crew cost are deliberately
 absent: both need a fork, and a stamped copy of either goes quiet exactly when it matters. The `*`
@@ -269,24 +281,34 @@ whole percent by bash integer arithmetic, which adds no fork. `cap-context.sh` a
 includes cache reads and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
 
-## Captain
+## Crews
 
-Step orchestration over native agent definitions. `/captain` drives one task through the steps it
-needs, dispatching a crew per step — a crew being an ordinary Claude Code session wearing one of the
-five role definitions in `claude/.claude/agents/`. The skill is
-`claude/.claude/skills/captain/SKILL.md`, the scripts are `claude/.claude/scripts/captain/cap-*.sh`,
-and `$CAP_DIR` is the workstream `ws.sh` returns, untracked under `~/.claude/work/<repo>/`.
+Role dispatch over native agent definitions. A crew is an ordinary Claude Code session wearing one
+of the six role definitions in `claude/.claude/agents/`, started by
+`claude/.claude/scripts/captain/cap-crews.sh`. `$CAP_DIR` is the workstream `ws.sh` returns,
+untracked under `~/.claude/work/<repo>/`.
 
-**The captain does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or `jj diff` on anything
-in the repo, including at `integrate`, where the step is the captain's but the reading is not.
-Reading is a crew dispatch. This rule stays in steering because it is the one a session must not
-have to look up.
+**`/captain` was retired on 2026-09-03.** It was a step catalogue above the plan loop, and one run
+of it spent USD 75 and 3h22m for zero lines of code because nothing in the loop could see the size
+of the change. `/planning` is the entry point; its `## After the plan` table names what follows a
+plan. `skills/captain/`, `cap-phases.sh`, `cap-signoff.sh` and `hooks/captain-signoff.sh` are gone.
+`cap-crews.sh` and `cap-context.sh` stay: `/planning` dispatches with the first and `statusline.sh`
+reads what the second writes. ADR 0003 records the decision.
+
+**A session that dispatches crews does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or
+`jj diff` on anything in the repo, including while integrating, where the step is yours but the
+reading is not. Reading is a dispatch. This rule stays in steering because it is the one a session
+must not have to look up.
 
 **Nothing enforces a role's boundaries.** Every contract is prose in a definition, so a boundary
 crossed is crossed.
 
-Rationale, measurements and the script inventory are in `docs/captain.md`. **Read it before changing
-a step gate, a sign-off route, a role definition, a `cap-*.sh` script, or the crew statusline.**
+**Never run `jj resolve`.** It opens an editor, the editor here is configured to fail, and a session
+stuck in one looks alive from outside. Resolve a conflict by editing the markers jj wrote into the
+files, then let the next command snapshot it. A fact about this repo rather than about a role.
+
+Rationale, measurements and the script inventory are in `docs/captain.md`, which kept its filename.
+**Read it before changing a role definition, a `cap-*.sh` script, or the crew statusline.**
 
 ## Kanata (keyboard remapping)
 

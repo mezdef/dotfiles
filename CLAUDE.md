@@ -145,6 +145,18 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
   ledger row; `SessionEnd` finalises, and fires on `/clear` and `/resume` rather than only on exit;
   a third `SessionStart` entry sweeps sidecars whose session is gone. See `docs/claude-metrics.md`.
 
+`scripts/metrics/` also holds `metrics-note.sh` (record a cause the transcript cannot see),
+`metrics-baseline.sh` (the exact token cost of a file, by differential probe — costs money,
+gated behind `--yes`, never call it from a hook) and `thresholds.json` (what makes a number
+bad, as data so a diff can review a change to one).
+
+**A retrospective or a change to a skill, an agent definition or a steering file opens with
+`/metrics`.** It reads the ledger and the friction stream and reports what breached a threshold,
+so those changes are argued from evidence rather than from memory. `/retro` owns the taxonomy
+and `/metrics` supplies the numbers; you do not reach `metrics-report.sh` directly for that
+purpose. The skill's description is scoped to trigger on retrospective and skill-authoring
+language and deliberately not on "what did this cost", which is `metrics-report.sh spend`.
+
 **A hook whose `command` path is wrong fails silently** — Claude Code does not surface it, so the
 only symptom is that whatever it recorded stops arriving. `scripts/tests/settings.sh` asserts every
 `command` in `settings.json` resolves to an executable file both in the package and at its stowed

@@ -40,7 +40,7 @@ does not appear in the session's skill list. Check with `find claude -type l ! -
 
 They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
 them references and nobody has installed is fixed by installing that skill, which is why
-`tests/agents.sh` exempts symlinked skills from the reference check and holds the repo-owned ones to
+`scripts/tests/agents.sh` exempts symlinked skills from the reference check and holds the repo-owned ones to
 it — `/code-implement`, named three times by `writing-code-quick`, had never existed.
 
 `tdd` and `diagnosing-bugs` replaced the local `test-driven-development` and `systematic-debugging`,
@@ -101,7 +101,7 @@ plan phase is one table row naming the skill; it no longer describes the sequenc
 digit is replaced by the word at that position in whatever arguments the skill was invoked with —
 `/planning`'s cost table read `confirming.90` instead of `$3.90` the first time it was loaded with
 arguments. Named variables such as `$CAP_DIR` are untouched. So money in a skill body is written
-`USD 3.90`, and `tests/agents.sh` fails any skill or agent definition carrying the sequence.
+`USD 3.90`, and `scripts/tests/agents.sh` fails any skill or agent definition carrying the sequence.
 
 Cost, and what the two expensive crews were, is in `docs/captain.md`.
 
@@ -149,6 +149,24 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
 `metrics-baseline.sh` (the exact token cost of a file, by differential probe — costs money,
 gated behind `--yes`, never call it from a hook) and `thresholds.json` (what makes a number
 bad, as data so a diff can review a change to one).
+
+### Self-improvement
+
+`/self-improve` audits the setup through four lenses — evidence from the ledger, conformance
+against the installed Claude Code version, fit of each definition to its job, and structure the
+repo contradicts about itself. It ranks findings and stops; picking is yours, and what you pick
+goes to a workstream and `/planning`.
+
+`scripts/improve/improve-record.sh` is the record behind it, append-only at
+`~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused** —
+that filter is the difference between a record and a write-only lessons log. `kind` is open and
+never checked against a list, because a loop that cannot say "this should not exist" only accretes.
+Three entries against one target is a design defect; `cap-crews.sh list` prints that footer.
+
+It was `captain/cap-improve.sh` until 2026-09-03 and never once written to, because a recorder only
+a captain run can reach records only what a captain run notices. `docs/claude-improve.md` has the
+schema, the two design constraints and why the four lenses are the four. **Read it before changing
+a lens, the record's fields, or the recurrence threshold.**
 
 **A retrospective or a change to a skill, an agent definition or a steering file opens with
 `/metrics`.** It reads the ledger and the friction stream and reports what breached a threshold,

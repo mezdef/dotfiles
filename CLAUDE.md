@@ -99,8 +99,14 @@ security, verify, integrate and close, and each one the task needs is written in
 `PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that record lives.
 
 **The `adversary` and `checker` round inside `/planning` is offered, not run.** The loop ends when
-`Plan` reports the draft. The three review roles stay installed and reachable by name. What changed
-on 2026-09-23 is that dispatching one is the caller's decision. ADR 0005 has the ledger figures.
+`Plan` reports the draft. Both roles stay installed and reachable by name. What changed on
+2026-09-23 is that dispatching one is the caller's decision. ADR 0005 has the ledger figures.
+
+**`security-reviewer` is retired, same day.** Its one mandatory step ran `/security-review`, a skill
+that has never existed on this machine, and a hardcoded exemption in `scripts/tests/agents.sh` hid
+that for months. The security row in `## After the plan` is `/code-review` now, and `/code-review`
+has no security axis, so the row is only worth ticking if the dispatch names the boundary and asks
+for the input tracing. ADR 0006 records what that gives up.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
 digit is replaced by the word at that position in the skill's arguments, so money in a skill body is
@@ -158,7 +164,7 @@ threshold.**
 ## Crews
 
 Role dispatch over native agent definitions. A crew is an ordinary Claude Code session wearing one
-of the six role definitions in `claude/.claude/agents/`, started by
+of the five role definitions in `claude/.claude/agents/`, started by
 `claude/.claude/scripts/captain/cap-crews.sh`. `$CAP_DIR` is the workstream `ws.sh` returns,
 untracked under `~/.claude/work/<repo>/`.
 

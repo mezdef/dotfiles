@@ -58,30 +58,17 @@ rather than invoke.
 
 ### Prose rules
 
-Two files, one boundary. `claude/.claude/output-styles/direct.md` owns register, length, typography
-and the banned-word list, and is always loaded via `outputStyle: "Direct"`.
+The personal `claude/.claude/CLAUDE.md` records what `direct.md` owns and is loaded in every repo,
+so it is not restated here. What only this repo can say:
 `claude/.claude/skills/writing-design-docs/plain-language.md` owns the sentence-level limits and is
-read on demand, reachable only through `/writing-design-docs`. **It cannot gain a pointer from
-`writing-for-agents`**, which is upstream-owned and whose file an npx update replaces, so this
-section is the pointer instead: read `plain-language.md` before writing prose into a skill, a
-`CLAUDE.md`, or a doc under `docs/`. The personal
-`claude/.claude/CLAUDE.md` keeps only the push-back rule; its banned-word list moved into
-`direct.md`, because two always-loaded files carrying one list spent context to say a thing twice.
+read on demand through `/writing-design-docs`. **It cannot gain a pointer from `writing-for-agents`**,
+which is upstream-owned and whose file an npx update replaces, so this section is the pointer
+instead: read `plain-language.md` before writing prose into a skill, a `CLAUDE.md`, or a doc under
+`docs/`.
 
 **The rules bind chat and anything written from now on. Existing files are frozen and are not
-rewritten to conform.** So this file's 39 em dashes, `docs/captain.md`'s 49 and the 40 uses of
-"real" across the docs are exempt rather than debt. No file can show the difference between an
-exempt line and a breach, which is why the freeze is recorded here.
-
-`unslop`, a hand-vendored copy of `pstack/skills/unslop/SKILL.md` from `cursor/plugins`, was
-removed on 2026-09-03 the day it landed. Twenty-two of its thirty-one items duplicated the two
-files above, item 8 near-verbatim against `direct.md`. Item 26 bans `harness`, `surface` and
-`scaffolding`, which the docs here use as settled vocabulary; item 13 also bans parentheses; and
-its "Adding soul" section asks for "let some mess in", against `direct.md`'s structure rules. By
-`writing-for-agents:74` it is also built the wrong way round, as thirty-one prohibitions rather
-than positive targets. The eight items worth keeping are now rules 18 to 25 of `plain-language.md`,
-with the colon and adverb rules also in `direct.md` since both apply to chat. Re-vendoring it
-restores the duplication, so do not.
+rewritten to conform.** No file can show the difference between an exempt line and a breach, which
+is why the freeze is recorded here.
 
 ### Agent definitions
 
@@ -150,19 +137,6 @@ Cost, and what the two expensive crews were, is in `docs/captain.md`.
 ~20 versions; `autoUpdates` has no effect). Permission rules, the deny/ask/allow layering, the
 allowlist derivation, and the version-gated settings are documented in
 `docs/claude-permissions.md`. **Read that file before editing `settings.json`.**
-
-### MCP servers
-
-`.mcp.json` at the repo root defines this repo's servers and is tracked. Playwright is defined
-there but **not** in `enabledMcpjsonServers`, because loading it costs ~370 tokens of context
-per session and nothing here uses it (`md-preview` drives a plain Bun server, not a browser
-driver). Enable it per-session if a task genuinely needs browser automation. Everything else lives
-per-project in the untracked 142KB `~/.claude.json`, so it is not version controlled and has
-drifted: the `work-app` worktrees disagree on the Linear server name (`lienar-server` is
-a typo, and `-2`/`-4` define both `linear` and `linear-server`). Clean that up in those repos with
-their own `.mcp.json`.
-
-Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on next start.
 
 ### Hooks
 
@@ -310,29 +284,8 @@ files, then let the next command snapshot it. A fact about this repo rather than
 Rationale, measurements and the script inventory are in `docs/captain.md`, which kept its filename.
 **Read it before changing a role definition, a `cap-*.sh` script, or the crew statusline.**
 
-## Kanata (keyboard remapping)
-
-Handles home row mods, hyper key, spotlight remap, and scroll bindings. Config is `.kbd` files
-in `kanata/.config/kanata/`.
-
-**To edit:** modify `.kbd` files, then restart kanata: `sudo launchctl kickstart -k system/com.jtroo.kanata`
-
-Key files (all included from `kanata.kbd`):
-- `kanata.kbd` — entry point, defcfg, defsrc, includes
-- `hyper.kbd` — caps lock → hyper (ctrl+opt+cmd), tap → esc
-- `home-row-mods.kbd` — per-finger timing, typing layer, spotlight
-- `layers.kbd` — `deflayermap` blocks for every layer; one file per layer name
-- `scroll.kbd` — page up/down and top/bottom bindings
-
-Not stowed (excluded via `kanata/.stow-local-ignore`): `README.md`, `scripts/`, and the plists.
-- `com.jtroo.kanata.plist` — LaunchDaemon, installed to `/Library/LaunchDaemons/` via
-  `sudo ./kanata/scripts/install-daemon.sh`
-- `com.jtroo.kanata-watcher.plist` — restarts kanata when a keyboard is connected
-- `com.jtroo.kanata-restarter.plist` — runs `scripts/restart-kanata.sh`
-
-See `kanata/README.md` for setup, daemon management, and rollback.
-
 ## Karabiner
+
 
 **Not used for remapping** — kanata does that. Karabiner-Elements must stay installed only
 because kanata depends on its **Karabiner-DriverKit-VirtualHIDDevice** driver. The package
@@ -340,40 +293,15 @@ exists to preserve `karabiner.json` so Karabiner doesn't prompt for setup on lau
 
 Do not add remapping rules here. See `karabiner/README.md`.
 
-## Zsh
+## Package notes
 
-`~/.zshenv` sets `ZDOTDIR=$HOME/.config/zsh`; everything else lives under `zsh/.config/zsh/`.
+Every other package keeps its own rules in a `CLAUDE.md` beside it, which costs nothing at startup
+and loads when a file in that directory is read: `kanata/`, `zsh/`, `atuin/`, `ghostty/`, `tmux/`,
+`herdr/`.
 
-- `.zprofile` — login shell, PATH and exported env
-- `.zshrc` — interactive shell: plugins, keybinds, tool inits, aliases
-- `prompt.zsh` — prompt symbol, directory, cmd duration, vi-mode cursor
-- `theme.zsh` — catppuccin colors, sourced by `prompt.zsh` and others
-- `jj.zsh` — `jjw` workspace helper
+Three rules stay here, because each one has to fire before its package is opened:
 
-Tool inits go through `_cache_init` (`.zshrc:31`), which caches a tool's init output to
-`~/.cache/zsh/` so subsequent shells source a file instead of forking the command. Adding a
-tool init without it costs ~10ms per shell. `rr` clears the cache and reloads.
-
-## Atuin (shell history)
-
-Config: `atuin/.config/atuin/config.toml`. Initialized at `.zshrc:193` with
-`--disable-up-arrow`; bound to ctrl-r for both viins and vicmd.
-
-The history database and sync key live in `~/.local/share/atuin/` and are deliberately **not**
-version-controlled — `key` is a secret and `history.db` is machine state.
-
-## Ghostty (terminal)
-
-Config: `ghostty/.config/ghostty/config`. Includes keybind remaps for tmux compatibility
-(ctrl+/, ctrl+\, ctrl+backspace send specific byte sequences).
-
-## Tmux
-
-Config: `tmux/.config/tmux/tmux.conf`. Prefix-less keybindings for common actions (splits,
-copy mode, plugins). Helper scripts in `tmux/.config/tmux/scripts/`. Plugins are gitignored.
-
-## Herdr (terminal multiplexer)
-
-Config: `herdr/.config/herdr/config.toml`. Keybinds intentionally mirror `tmux.conf`.
-Validate with `herdr config check`; apply with `herdr server reload-config` or prefix+r.
-Plugins live in `herdr/.config/herdr/plugins/`.
+- **Keyboard remapping is kanata's, not karabiner's.** Detail in `kanata/CLAUDE.md`.
+- **A zsh tool init goes through `_cache_init`** (`.zshrc:31`) or it costs ~10ms per shell.
+- **Atuin's `key` is a secret** and `history.db` is machine state. Both live in
+  `~/.local/share/atuin/` and are deliberately not version controlled.

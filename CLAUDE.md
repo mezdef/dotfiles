@@ -95,8 +95,12 @@ that line any more, so the brief's author writes it.
 
 **`/planning` also owns what follows the plan.** Its `## After the plan` table names build, review,
 security, verify, integrate and close, and each one the task needs is written in as a step in
-`PLAN.md`. A row left out is a decision, and `PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that
-record lives.
+`PLAN.md`. Every row is a judgement call, review included. A row left out is a decision, and
+`PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that record lives.
+
+**The `adversary` and `checker` round inside `/planning` is offered, not run.** The loop ends when
+`Plan` reports the draft. The three review roles stay installed and reachable by name. What changed
+on 2026-09-23 is that dispatching one is the caller's decision. ADR 0005 has the ledger figures.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
 digit is replaced by the word at that position in the skill's arguments, so money in a skill body is

@@ -72,64 +72,39 @@ is why the freeze is recorded here.
 
 ### Agent definitions
 
-`claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. Verified against 2.1.231 by reading
-the binary and by live dispatch.
+`claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`.
 
-Definitions are merged into a map keyed by the frontmatter `name:`, in this order, last write
-winning: **built-in → plugin → userSettings (`~/.claude/agents/`) → projectSettings
-(`.claude/agents/`) → flagSettings → policySettings.** So a definition named after one of Claude
-Code's own agents (`Explore`, `Plan`, `general-purpose`, `claude`, `statusline-setup`) replaces it
-wholesale — prompt, tools and model — and the agent list shows one entry, not two.
+**A definition named after one of Claude Code's own agents replaces it wholesale** — prompt, tools
+and model — because definitions merge into a map keyed by the frontmatter `name:`. `Explore.md` is
+the one override here and it exists for the `model: haiku` pin; it also owns the report contract, so
+a dispatch prompt does not restate `path:line` citations, the word budget or bounded reads.
 
-`Explore.md` is the one override here, and it exists for the `model: haiku` pin: a built-in Explore
-inherits the session model, so on `opus[1m]` it greps excerpts at opus prices. **It also owns the
-report contract** — `path:line` citations, a 600-word budget, bounded reads — so a dispatch prompt
-does not restate any of that. Mechanics and the measurements behind the contract are in
-`docs/captain.md`.
+The merge order, the mechanics and the measurements behind the contract are in `docs/captain.md`.
+**Read it before changing a definition.**
 
 ### Planning
 
-**Planning has one entry point: `/planning`.** It is the process, and it dispatches the three roles
-that do the work as background crews — `Plan` stage one for the Overview tier of the design doc,
-`Plan` stage two for the choice and the two documents, `adversary` to attack them, `checker` to run what the adversary could not settle by reading, then `Plan` to amend.
-The default round cap is one attack-and-amend; `Plan`'s own contract allows three before what is
-unresolved goes to the user, and that is a ceiling rather than a target. A brief may ask for a
-second round; the skill already allows it without changing.
-
-**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Nothing emits
-that line any more — `cap-phases.sh modes` did, and it went with `/captain` — so the brief's author
-writes it, and a run that does not write it gets the dialogue. That is the intended default rather
-than an oversight: the skill's own guidance already rules it out for a one-file change, an obvious
-bug or a decision with no trade-off, so anything reaching it is work whose shape is worth agreeing
-first.
+**Planning has one entry point: `/planning`.**
 
 Format versus process. `/planning` owns the process and adds no naming, location or section rule of
-its own. `/writing-plans`, `/writing-design-docs` and `/workstreams` own the format and the lifecycle, and `Plan`
-invokes them itself — the skill never does. Those three still auto-invoke on their own words, so a
-prompt about writing a plan can pull one in beside `/planning`; the tie-break, written into
-`/planning`, is that it owns the process and you do not reach the format skills directly. Making them
-`disable-model-invocation: true` was the alternative and was rejected: writing a plan by hand would
-stop pulling the format rules in.
+its own; `/writing-plans`, `/writing-design-docs` and `/workstreams` own the format and the
+lifecycle, and `Plan` invokes them itself. You do not reach them directly.
 
-Background crews rather than in-process subagents, because the loop is long enough that the session
-hits a context boundary before it ends, and a `--bg` crew survives a `/clear`. That needs a
-`$CAP_DIR`, so the skill makes its own with `cap-crews.sh new` unless one is already set, in which
-case it checks each gate against the files already there and enters part-way rather than
-redispatching.
+**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Nothing emits
+that line any more, so the brief's author writes it.
 
 **`/planning` also owns what follows the plan.** Its `## After the plan` table names build, review,
-security, verify, integrate and close, and says to write each one the task needs in as a step in
-`PLAN.md`. That is deliberate: `/captain`'s manifest was the only thing recording that a review had
-been *skipped* rather than forgotten, and `PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that
-record lives now.
+security, verify, integrate and close, and each one the task needs is written in as a step in
+`PLAN.md`. A row left out is a decision, and `PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that
+record lives.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
-digit is replaced by the word at that position in whatever arguments the skill was invoked with —
-`/planning`'s cost table read `confirming.90` instead of `$3.90` the first time it was loaded with
-arguments. Named variables such as `$CAP_DIR` are untouched. So money in a skill body is written
-`USD 3.90`, and `scripts/tests/agents.sh` fails any skill or agent definition carrying the sequence.
+digit is replaced by the word at that position in the skill's arguments, so money in a skill body is
+written `USD 3.90`, and `scripts/tests/agents.sh` fails any skill or agent definition carrying the
+sequence. Named variables such as `$CAP_DIR` are untouched.
 
-Cost, and what the two expensive crews were, is in `docs/captain.md`.
+The round cap, why crews run in the background, cost, and what the two expensive crews were are in
+`docs/captain.md`. **Read it before changing the loop.**
 
 ### Settings and permissions
 
@@ -140,120 +115,41 @@ allowlist derivation, and the version-gated settings are documented in
 
 ### Hooks
 
-- `agent-finish.sh` — Stop event, `asyncRewake: true`. Runs `bun lint --fix` then `bun type` in
-  node projects. **Contract: exit 2 with findings on stderr to wake Claude, exit 0 to stay
-  silent.** Plain stdout at exit 0 is discarded by Claude Code, so anything meant for the model
-  must go to stderr with exit 2.
-- `plan-lifecycle-hook.sh` — PostToolUse, `matcher: "ExitPlanMode|Write|Edit"`. Emits reminders as
-  `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout. The
-  `ExitPlanMode` branch reads `tool_input.planFilePath` and checks filename, status directory,
-  `repo:` frontmatter and the `## Tasks` / `## Next` sections.
-- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 200k
-  of context. Always exits 0; it never blocks a prompt.
-- `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
-  active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
-  `herdr-agent-state.sh` under `matcher: "*"` is left alone.
-- `scripts/metrics/metrics-track.sh` — one script on four events. `Stop` (`asyncRewake`) reduces the
-  transcript incrementally into a sidecar; `SubagentStop` turns `agent_transcript_path` into a
-  ledger row; `SessionEnd` finalises, and fires on `/clear` and `/resume` rather than only on exit;
-  a third `SessionStart` entry sweeps sidecars whose session is gone. See `docs/claude-metrics.md`.
+Six hooks in `settings.json`. **A hook whose `command` path is wrong fails silently**, so
+`scripts/tests/settings.sh` asserts every `command` resolves to an executable both in the package
+and at its stowed path. Run it after touching `settings.json` or renaming anything a hook calls.
 
-`scripts/metrics/` also holds `metrics-note.sh` (record a cause the transcript cannot see),
-`metrics-baseline.sh` (the exact token cost of a file, by differential probe — costs money,
-gated behind `--yes`, never call it from a hook) and `thresholds.json` (what makes a number
-bad, as data so a diff can review a change to one).
+**Never give a Stop hook a `timeout` shorter than the work it runs**, and do slow post-turn work
+with `asyncRewake` rather than a synchronous Stop hook.
+
+The inventory, each hook's contract, which events deliver plain stdout, and the two rules learned
+the hard way are in `docs/claude-context.md`. **Read it before changing a hook.**
 
 ### Self-improvement
 
-`/self-improve` audits the setup through four lenses — evidence from the ledger, conformance
-against the installed Claude Code version, fit of each definition to its job, and structure the
-repo contradicts about itself. It ranks findings and stops; picking is yours, and what you pick
-goes to a workstream and `/planning`.
+`/self-improve` audits the setup through four lenses and ranks findings; picking is yours, and what
+you pick goes to a workstream and `/planning`.
 
 `scripts/improve/improve-record.sh` is the record behind it, append-only at
-`~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused** —
-that filter is the difference between a record and a write-only lessons log. `kind` is open and
-never checked against a list, because a loop that cannot say "this should not exist" only accretes.
-Three entries against one target is a design defect; `cap-crews.sh list` prints that footer.
+`~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused.**
+Three entries against one target is a design defect, and `cap-crews.sh list` prints that footer.
 
-It was `captain/cap-improve.sh` until 2026-09-03 and never once written to, because a recorder only
-a captain run can reach records only what a captain run notices. `docs/claude-improve.md` has the
-schema, the two design constraints and why the four lenses are the four. **Read it before changing
-a lens, the record's fields, or the recurrence threshold.**
-
-**A retrospective or a change to a skill, an agent definition or a steering file opens with
-`/metrics`.** It reads the ledger and the friction stream and reports what breached a threshold,
-so those changes are argued from evidence rather than from memory. `/retro` owns the taxonomy
-and `/metrics` supplies the numbers; you do not reach `metrics-report.sh` directly for that
-purpose. The skill's description is scoped to trigger on retrospective and skill-authoring
-language and deliberately not on "what did this cost", which is `metrics-report.sh spend`.
-
-**A hook whose `command` path is wrong fails silently** — Claude Code does not surface it, so the
-only symptom is that whatever it recorded stops arriving. `scripts/tests/settings.sh` asserts every
-`command` in `settings.json` resolves to an executable file both in the package and at its stowed
-path, and that all four events still name `metrics-track.sh`. Run it after touching `settings.json`
-or renaming anything a hook calls.
-
-Thresholds, the 967k auto-compact derivation and the plan-lifecycle contract are in
-`docs/claude-context.md`.
-
-Only three events deliver plain exit-0 stdout to the model: `SessionStart`, `UserPromptSubmit` and
-`UserPromptExpansion`. Everything else needs `hookSpecificOutput.additionalContext`, which is
-supported on `PreToolUse`, `PostToolUse`, `Stop`, `SubagentStop`, `Notification` and others, but
-**not** on `PreCompact` or `PostCompact`.
-
-Two rules learned the hard way:
-
-1. **Never give a Stop hook a `timeout` shorter than the work it runs.** A cancelled hook has its
-   output discarded, and a cancelled `eslint --cache` never writes `.eslintcache`, so every run
-   stays cold forever. Cold eslint in `work-app` is ~68s against a 60s timeout; it never
-   converged and blocked every turn end.
-2. **Do slow post-turn work with `asyncRewake`, not a synchronous Stop hook.** It runs detached and
-   only interrupts on failure.
-
-`agent-finish.sh` takes a per-worktree `mkdir` lock, because `eslint --cache` and
-`tsc --incremental` share mutable state across concurrent sessions in the same tree.
+`docs/claude-improve.md` has the schema, the two design constraints and why the four lenses are the
+four. **Read it before changing a lens, the record's fields, or the recurrence threshold.**
 
 ### Statusline
 
-`statusline.sh` uses one `jq` fork and bash integer comparison. Do not add per-render subprocesses.
-It is not run per render: Claude Code re-runs it on a 300ms trailing debounce whenever `tokenUsage`,
-the model, vim mode, effort or PR status changes, plus the optional `statusLine.refreshInterval`.
+`statusline.sh` uses one `jq` fork and bash integer comparison. **Do not add per-render
+subprocesses.** It renders context and session cost, and crew spend rides in a bracket after the
+cost when the repo has a workstream pointer.
 
-It renders context and session cost. Cost is `cost.total_cost_usd`, which already includes
-in-process subagent spend and which the statusline previously discarded. A cache-hit segment was
-tried and removed: measured across 632 sessions the ratio tracks session length rather than
-anything you control, from a median 61% under 100k of context read to 97% over 10M, so a high
-reading only says the session has run a while. `metrics-report.sh efficiency` answers it after the
-fact. See `docs/claude-metrics.md`.
+The context segment colours on absolute tokens, green below 200k, yellow at 200k, red plus an action
+hint at 300k, and **the percentage is measured against that 300k budget rather than the context
+window**.
 
-The cost sidecar it writes goes through `metrics_cost_stamp` in `scripts/metrics/metrics-cost.sh`,
-shared with `cap-context.sh`. That writer is a separate file from `metrics-lib.sh` because sourcing
-the library forks at source time and its own writer forks `mkdir`; both callers run on a render.
-
-**Crew spend rides in a bracket after the cost**, `[󱃾 3 | 412k | $44.00*]`, whenever the session's
-repo has a `.current` pointer beside its workstreams. A statusline spawned by Claude Code never
-sees a dispatching session's `$CAP_DIR`, so it resolves the repo key the way `ws.sh` does, by walking up from
-its own cwd for a `.jj` or `.git` marker with builtins only. Two implementations of one rule, and
-`tests/crews.sh` asserts they agree. Still one fork: the
-figures are summed from `$CAP_DIR/context/<crew>.peak`, bare integers `cap-context.sh` already
-writes, with a glob and a `read` per file. It closes a real gap — the `stripe-idempotency-key` run
-held 1,284k of crew context against an 84k dispatching session, none of it in view. Peaks rather than
-live levels, so a finished run still reads as expensive, and coloured on the worst single crew, since
-300k is an instruction to re-dispatch *that* crew. Blocked state and live crew cost are deliberately
-absent: both need a fork, and a stamped copy of either goes quiet exactly when it matters. The `*`
-says the cost is as of the last `cap-crews.sh list`.
-
-The context segment colors on **absolute token counts**: green below 140k, yellow at 140k, red plus
-an action hint at 200k. **The percentage it prints is measured against that 200k budget, not against
-the context window** — `context_window.used_percentage` is not read by either statusline, because on
-a 1M window it makes the reset point read as 20% when auto-compact does not fire until 967k. So red
-and 100% arrive together, and past the budget the figure is left uncapped: 300k renders 150%. It is a
-whole percent by bash integer arithmetic, which adds no fork. The crew bracket keeps its own pair,
-`CREW_AMBER`/`CREW_RED` at 200k/300k, matching `cap-context.sh` and `cap-crews.sh`, so a crew pane
-reads 100% at the point `cap-crews.sh` says to checkpoint it. Both read `context_window.total_input_tokens`, which already
-includes cache reads and creation; adding `total_output_tokens` to it double-counts.
-Rationale and measurements in `docs/claude-context.md`.
+Thresholds, the 967k auto-compact derivation, the measurements behind the crew bracket and the
+segments that were tried and removed are in `docs/claude-context.md`. **Read it before changing a
+threshold.**
 
 ## Crews
 

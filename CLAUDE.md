@@ -174,7 +174,7 @@ Adding a server to a tracked `.mcp.json` requires a one-time approval prompt on 
   `hookSpecificOutput.additionalContext` JSON, since PostToolUse also discards plain stdout. The
   `ExitPlanMode` branch reads `tool_input.planFilePath` and checks filename, status directory,
   `repo:` frontmatter and the `## Tasks` / `## Next` sections.
-- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 300k
+- `context-budget.sh` — UserPromptSubmit, `timeout: 5`. Reminds you to reset the session past 200k
   of context. Always exits 0; it never blocks a prompt.
 - `plan-rehydrate.sh` — SessionStart, `matcher: "startup|clear|compact"`, `timeout: 5`. Injects the
   active plan's resume digest. Registered as a **second** `SessionStart` entry so the vendor-managed
@@ -270,14 +270,14 @@ live levels, so a finished run still reads as expensive, and coloured on the wor
 absent: both need a fork, and a stamped copy of either goes quiet exactly when it matters. The `*`
 says the cost is as of the last `cap-crews.sh list`.
 
-The context segment colors on **absolute token counts**: green below 200k, yellow at 200k, red plus
-an action hint at 300k. **The percentage it prints is measured against that 300k budget, not against
+The context segment colors on **absolute token counts**: green below 140k, yellow at 140k, red plus
+an action hint at 200k. **The percentage it prints is measured against that 200k budget, not against
 the context window** — `context_window.used_percentage` is not read by either statusline, because on
-a 1M window it makes the reset point read as 30% when auto-compact does not fire until 967k. So red
-and 100% arrive together, and past the budget the figure is left uncapped: 420k renders 140%. It is a
-whole percent by bash integer arithmetic, which adds no fork. `cap-context.sh` and
-`cap-crews.sh` use the same two numbers for a crew, so a crew pane reads 100% at the point
-`cap-crews.sh` says to checkpoint it. Both read `context_window.total_input_tokens`, which already
+a 1M window it makes the reset point read as 20% when auto-compact does not fire until 967k. So red
+and 100% arrive together, and past the budget the figure is left uncapped: 300k renders 150%. It is a
+whole percent by bash integer arithmetic, which adds no fork. The crew bracket keeps its own pair,
+`CREW_AMBER`/`CREW_RED` at 200k/300k, matching `cap-context.sh` and `cap-crews.sh`, so a crew pane
+reads 100% at the point `cap-crews.sh` says to checkpoint it. Both read `context_window.total_input_tokens`, which already
 includes cache reads and creation; adding `total_output_tokens` to it double-counts.
 Rationale and measurements in `docs/claude-context.md`.
 

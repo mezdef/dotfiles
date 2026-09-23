@@ -79,49 +79,20 @@ is why the freeze is recorded here.
 
 ### Agent definitions
 
-`claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`.
-
-**A definition named after one of Claude Code's own agents replaces it wholesale** — prompt, tools
-and model — because definitions merge into a map keyed by the frontmatter `name:`. `Explore.md` is
-the one override here and it exists for the `model: haiku` pin; it also owns the report contract, so
-a dispatch prompt does not restate `path:line` citations, the word budget or bounded reads.
-
-The merge order, the mechanics and the measurements behind the contract are in `docs/captain.md`.
-**Read it before changing a definition.**
+`claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. **A definition named after one of
+Claude Code's own agents replaces it wholesale**, prompt, tools and model, because definitions
+merge into a map keyed by the frontmatter `name:`. `Explore.md` is the one override here, for its
+`model: haiku` pin. **Read `docs/captain.md` before changing a definition.**
 
 ### Planning
 
-**Planning has one entry point: `/planning`.**
-
-Format versus process. `/planning` owns the process and adds no naming, location or section rule of
-its own; `/writing-plans`, `/writing-design-docs` and `/workstreams` own the format and the
-lifecycle, and `Plan` invokes them itself. You do not reach them directly.
-
-**`Plan` stage one opens with `grilling` unless its brief says `discovery: none`.** Nothing emits
-that line any more, so the brief's author writes it.
-
-**`/planning` also owns what follows the plan.** Its `## After the plan` table names build, review,
-security, verify, integrate and close, and each one the task needs is written in as a step in
-`PLAN.md`. Every row is a judgement call, review included. A row left out is a decision, and
-`PLAN.md` plus `PROGRESS.md`'s `## Tasks` is where that record lives.
-
-**The `adversary` and `checker` round inside `/planning` is offered, not run.** The loop ends when
-`Plan` reports the draft. Both roles stay installed and reachable by name. What changed on
-2026-09-23 is that dispatching one is the caller's decision. ADR 0005 has the ledger figures.
-
-**`security-reviewer` is retired, same day.** Its one mandatory step ran `/security-review`, a skill
-that has never existed on this machine, and a hardcoded exemption in `scripts/tests/agents.sh` hid
-that from 2026-09-03 to 2026-09-23. The security row in `## After the plan` is `/code-review` now, and `/code-review`
-has no security axis, so the row is only worth ticking if the dispatch names the boundary and asks
-for the input tracing. ADR 0006 records what that gives up.
+**Planning has one entry point: `/planning`.** It owns the process and what follows the plan.
+`/writing-plans`, `/writing-design-docs` and `/workstreams` own the format, and `Plan` reaches
+them itself.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
-digit is replaced by the word at that position in the skill's arguments, so money in a skill body is
-written `USD 3.90`, and `scripts/tests/agents.sh` fails any skill or agent definition carrying the
-sequence. Named variables such as `$CAP_DIR` are untouched.
-
-The round cap, why crews run in the background, cost, and what the two expensive crews were are in
-`docs/captain.md`. **Read it before changing the loop.**
+digit is replaced by the word at that position in the skill's arguments, so money in a skill body
+is written `USD 3.90`. Named variables such as `$CAP_DIR` are untouched.
 
 ### Settings and permissions
 
@@ -170,32 +141,19 @@ threshold.**
 
 ## Crews
 
-Role dispatch over native agent definitions. A crew is an ordinary Claude Code session wearing one
-of the five role definitions in `claude/.claude/agents/`, started by
-`claude/.claude/scripts/captain/cap-crews.sh`. `$CAP_DIR` is the workstream `ws.sh` returns,
-untracked under `~/.claude/work/<repo>/`.
-
-**`/captain` was retired on 2026-09-03.** It was a step catalogue above the plan loop, and one run
-of it spent USD 75 and 3h22m for zero lines of code because nothing in the loop could see the size
-of the change. `/planning` is the entry point; its `## After the plan` table names what follows a
-plan. `skills/captain/`, `cap-phases.sh`, `cap-signoff.sh` and `hooks/captain-signoff.sh` are gone.
-`cap-crews.sh` and `cap-context.sh` stay: `/planning` dispatches with the first and `statusline.sh`
-reads what the second writes. ADR 0003 records the decision.
+A crew is an ordinary session wearing one of the five role definitions in `agents/`, started by
+`scripts/captain/cap-crews.sh`. `$CAP_DIR` is the workstream `ws.sh` returns.
 
 **A session that dispatches crews does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or
 `jj diff` on anything in the repo, including while integrating, where the step is yours but the
-reading is not. Reading is a dispatch. This rule stays in steering because it is the one a session
-must not have to look up.
+reading is not. Reading is a dispatch.
 
-**Nothing enforces a role's boundaries.** Every contract is prose in a definition, so a boundary
-crossed is crossed.
+**Never run `jj resolve`.** It opens an editor, the editor here is configured to fail, and a
+stuck session looks alive from outside. Edit the conflict markers instead and let the next command
+snapshot it.
 
-**Never run `jj resolve`.** It opens an editor, the editor here is configured to fail, and a session
-stuck in one looks alive from outside. Resolve a conflict by editing the markers jj wrote into the
-files, then let the next command snapshot it. A fact about this repo rather than about a role.
-
-Rationale, measurements and the script inventory are in `docs/captain.md`, which kept its filename.
-**Read it before changing a role definition, a `cap-*.sh` script, or the crew statusline.**
+**Read `docs/captain.md`** before changing a role definition, a `cap-*.sh` script, or the crew
+statusline.
 
 ## Karabiner
 

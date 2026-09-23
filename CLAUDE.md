@@ -104,7 +104,7 @@ security, verify, integrate and close, and each one the task needs is written in
 
 **`security-reviewer` is retired, same day.** Its one mandatory step ran `/security-review`, a skill
 that has never existed on this machine, and a hardcoded exemption in `scripts/tests/agents.sh` hid
-that for months. The security row in `## After the plan` is `/code-review` now, and `/code-review`
+that from 2026-09-03 to 2026-09-23. The security row in `## After the plan` is `/code-review` now, and `/code-review`
 has no security axis, so the row is only worth ticking if the dispatch names the boundary and asks
 for the input tracing. ADR 0006 records what that gives up.
 

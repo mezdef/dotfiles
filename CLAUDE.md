@@ -103,16 +103,17 @@ allowlist derivation, and the version-gated settings are documented in
 
 ### Hooks
 
-Eight hooks in `settings.json`. **A hook whose `command` path is wrong fails silently**, so
+Seven hooks in `settings.json`. **A hook whose `command` path is wrong fails silently**, so
 `scripts/tests/settings.sh` asserts every `command` resolves to an executable both in the package
 and at its stowed path. Run it after touching `settings.json` or renaming anything a hook calls.
 
-**Every repo gets a workstream, and a plan is approved inside one or not at all.**
-`workstream-required.sh` on UserPromptSubmit is the only enforcement point that fires in every
-mode, and `plan-intercept.sh` denies `ExitPlanMode` until the workstream holds a `PLAN.md`. Plan
-mode picks its own path and no setting redirects it into `~/.claude/work`, so the harness's
-`~/.claude/plans/<slug>.md` is a staging file and the deny is the interception. Read
-`docs/claude-context.md`'s **Plan mode owns its own path** before touching either hook.
+**Every repo gets a workstream, and an approved plan is filed into it by the hook, not by the
+session.** `workstream-required.sh` on UserPromptSubmit is the only enforcement point that fires
+in every mode. Plan mode picks its own path and no setting redirects it into `~/.claude/work`, so
+`plan-lifecycle.sh` copies the plan out of `~/.claude/plans/<slug>.md` at PostToolUse.
+**Do not turn this back into a gate.** A PreToolUse deny on `ExitPlanMode` works and is useless:
+plan mode is read-only, so the session cannot satisfy it and every run burns the cap. Read
+`docs/claude-context.md`'s **Plan mode owns its own path** before touching any of it.
 
 **Never give a Stop hook a `timeout` shorter than the work it runs**, and do slow post-turn work
 with `asyncRewake` rather than a synchronous Stop hook.

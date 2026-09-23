@@ -56,6 +56,13 @@ red-green loop. `builder`, `adversary` and the `Skill Usage` list in the persona
 the npx pair, and `~/.claude/skills/tdd/tests.md` is the anti-pattern reference the two roles read
 rather than invoke.
 
+**Removal is two deletions, not one.** `fix` relinks anything installed but unlinked, so dropping
+the package link alone restores the skill on the next run. Delete the `~/.agents/skills/<name>`
+install and its `.skill-lock.json` entry too, then assert both in `scripts/tests/agents.sh`. The npx
+`claude-handoff` went that way on 2026-09-23, replaced by the repo-owned `/handoff`: it spawned a
+`claude --bg` agent, which is the opposite of handing off through `/clear`, and its sibling
+`skills/productivity/handoff` writes to the OS temp dir against the path contract.
+
 ### Prose rules
 
 The personal `claude/.claude/CLAUDE.md` records what `direct.md` owns and is loaded in every repo,

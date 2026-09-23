@@ -96,7 +96,7 @@ is written `USD 3.90`. Named variables such as `$WORKSTREAM_DIR` are untouched.
 
 ### Settings and permissions
 
-`settings.json` is verified against Claude Code 2.1.231, installed via Homebrew cask (trails npm by
+`settings.json` is verified against Claude Code 2.1.267, installed via Homebrew cask (trails npm by
 ~20 versions; `autoUpdates` has no effect). Permission rules, the deny/ask/allow layering, the
 allowlist derivation, and the version-gated settings are documented in
 `docs/claude-permissions.md`. **Read that file before editing `settings.json`.**
@@ -128,16 +128,23 @@ four. **Read it before changing a lens, the record's fields, or the recurrence t
 ### Statusline
 
 `statusline.sh` uses one `jq` fork and bash integer comparison. **Do not add per-render
-subprocesses.** It renders context and session cost, and worker spend rides in a bracket after the
-cost when the repo has a workstream pointer.
+subprocesses.** The line is `<vim mode> 󰚩 <model> (<effort>) | 󰮯 <tokens> (<pct>%) | $<cost>`, with
+worker spend **right-aligned at the far edge** when the repo has a workstream pointer.
 
-The context segment colours on absolute tokens, green below 200k, yellow at 200k, red plus an action
-hint at 300k, and **the percentage is measured against that 300k budget rather than the context
-window**.
+The context segment colours on absolute tokens, green below 140k, yellow at 140k, red at 200k, and
+**the percentage is measured against that 200k budget rather than the context window**.
 
-Thresholds, the 967k auto-compact derivation, the measurements behind the worker bracket and the
+Right-alignment reads `$COLUMNS`, which Claude Code exports because it captures stdout rather than
+attaching it to a tty. **The pad is measured against a plain copy of the left side, never the
+coloured one**, or the ANSI bytes are counted as visible width.
+
+The vim mode is the only built-in chrome row that can be suppressed, via
+`statusLine.hideVimModeIndicator`; the script renders it instead. The background-shells counter and
+the permission-mode indicator reach neither the payload nor a setting.
+
+Thresholds, the 967k auto-compact derivation, the measurements behind the worker block and the
 segments that were tried and removed are in `docs/claude-context.md`. **Read it before changing a
-threshold.**
+threshold or the line layout.**
 
 ## Workers
 

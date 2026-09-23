@@ -14,14 +14,14 @@ so an absent file means nothing has needed one yet.
 Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:
 `settings.json`, `settings.local.json`, `CLAUDE.md`, `agents/`, `hooks/`, `skills/`, `scripts/`,
 `output-styles/`, `statusline.sh`. Everything else under `~/.claude/` (`plans/`, `projects/`,
-`sessions/`, `crews/`, `history.jsonl`, caches) is machine state and stays untracked.
+`sessions/`, `workers/`, `history.jsonl`, caches) is machine state and stays untracked.
 
 Work-specific scripts physically live in the package but are gitignored, so they are stowed
 locally without being published. See the gitignore block for the list.
 
 Context budget, the workstream lifecycle contract, and the measurements behind both are in
 `docs/claude-context.md`. **Read it before changing `statusline.sh` thresholds, the plan hooks, or
-`ws.sh`.** Token and cost accounting — the ledger, the price table, and the three
+`workstream.sh`.** Token and cost accounting — the ledger, the price table, and the three
 transcript-reading traps — is in `docs/claude-metrics.md`.
 
 `claude/project-skills/` holds per-project skills. They are **not** stowed (see
@@ -82,7 +82,7 @@ is why the freeze is recorded here.
 `claude/.claude/agents/*.md`, stowed to `~/.claude/agents/`. **A definition named after one of
 Claude Code's own agents replaces it wholesale**, prompt, tools and model, because definitions
 merge into a map keyed by the frontmatter `name:`. `Explore.md` is the one override here, for its
-`model: haiku` pin. **Read `docs/captain.md` before changing a definition.**
+`model: haiku` pin. **Read `docs/workers.md` before changing a definition.**
 
 ### Planning
 
@@ -92,7 +92,7 @@ them itself.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
 digit is replaced by the word at that position in the skill's arguments, so money in a skill body
-is written `USD 3.90`. Named variables such as `$CAP_DIR` are untouched.
+is written `USD 3.90`. Named variables such as `$WORKSTREAM_DIR` are untouched.
 
 ### Settings and permissions
 
@@ -120,7 +120,7 @@ you pick goes to a workstream and `/planning`.
 
 `scripts/improve/improve-record.sh` is the record behind it, append-only at
 `~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused.**
-Three entries against one target is a design defect, and `cap-crews.sh list` prints that footer.
+Three entries against one target is a design defect, and `workers.sh list` prints that footer.
 
 `docs/claude-improve.md` has the schema, the two design constraints and why the four lenses are the
 four. **Read it before changing a lens, the record's fields, or the recurrence threshold.**
@@ -128,23 +128,23 @@ four. **Read it before changing a lens, the record's fields, or the recurrence t
 ### Statusline
 
 `statusline.sh` uses one `jq` fork and bash integer comparison. **Do not add per-render
-subprocesses.** It renders context and session cost, and crew spend rides in a bracket after the
+subprocesses.** It renders context and session cost, and worker spend rides in a bracket after the
 cost when the repo has a workstream pointer.
 
 The context segment colours on absolute tokens, green below 200k, yellow at 200k, red plus an action
 hint at 300k, and **the percentage is measured against that 300k budget rather than the context
 window**.
 
-Thresholds, the 967k auto-compact derivation, the measurements behind the crew bracket and the
+Thresholds, the 967k auto-compact derivation, the measurements behind the worker bracket and the
 segments that were tried and removed are in `docs/claude-context.md`. **Read it before changing a
 threshold.**
 
-## Crews
+## Workers
 
-A crew is an ordinary session wearing one of the five role definitions in `agents/`, started by
-`scripts/captain/cap-crews.sh`. `$CAP_DIR` is the workstream `ws.sh` returns.
+A worker is an ordinary session wearing one of the five role definitions in `agents/`, started by
+`scripts/workstream/workers.sh`. `$WORKSTREAM_DIR` is the workstream `workstream.sh` returns.
 
-**A session that dispatches crews does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or
+**A session that dispatches workers does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or
 `jj diff` on anything in the repo, including while integrating, where the step is yours but the
 reading is not. Reading is a dispatch.
 
@@ -152,7 +152,7 @@ reading is not. Reading is a dispatch.
 stuck session looks alive from outside. Edit the conflict markers instead and let the next command
 snapshot it.
 
-**Read `docs/captain.md`** before changing a role definition, a `cap-*.sh` script, or the crew
+**Read `docs/workers.md`** before changing a role definition, a script under `scripts/workstream/`, or the worker
 statusline.
 
 ## Karabiner

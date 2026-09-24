@@ -157,8 +157,14 @@ threshold or the line layout.**
 
 ## Workers
 
-A worker is an ordinary session wearing one of the five role definitions in `agents/`, started by
-`scripts/workstream/workers.sh`. `$WORKSTREAM_DIR` is the workstream `workstream.sh` returns.
+A worker is one of the five role definitions in `agents/`, dispatched in process with
+`Agent(subagent_type: "<role>")` against a brief `workstream.sh brief` composed. `$WORKSTREAM_DIR`
+is the workstream `workstream.sh` returns.
+
+**A dispatch survives your `/clear`; the command it is waiting on does not.** Measured 2026-09-24:
+the subagent is re-parented to the new session and its report lands there, while its foreground
+Bash child is SIGKILLed a second after the clear. A brief that parks state in a running process
+loses it.
 
 **A session that dispatches workers does not read repo files.** No `Read`, `Grep`, `Glob`, `Edit` or
 `jj diff` on anything in the repo, including while integrating, where the step is yours but the
@@ -168,8 +174,8 @@ reading is not. Reading is a dispatch.
 stuck session looks alive from outside. Edit the conflict markers instead and let the next command
 snapshot it.
 
-**Read `docs/workers.md`** before changing a role definition, a script under `scripts/workstream/`, or the worker
-statusline.
+**Read `docs/workers.md`** before changing a role definition, `scripts/workstream/workstream.sh`,
+or `metrics-report.sh workstream`, which stamps what the statusline reads.
 
 ## Karabiner
 

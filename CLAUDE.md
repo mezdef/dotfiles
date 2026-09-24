@@ -128,7 +128,8 @@ you pick goes to a workstream and `/planning`.
 
 `scripts/improve/improve-record.sh` is the record behind it, append-only at
 `~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused.**
-Three entries against one target is a design defect, and `workers.sh list` prints that footer.
+Three entries against one target is a design defect, and `metrics-report.sh workstream` prints
+that footer.
 
 `docs/claude-improve.md` has the schema, the two design constraints and why the four lenses are the
 four. **Read it before changing a lens, the record's fields, or the recurrence threshold.**

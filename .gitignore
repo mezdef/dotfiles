@@ -24,6 +24,6 @@ claude/.claude/scripts/query-logs-development.ts
 claude/.claude/scripts/dev-with-logging.sh
 claude/.claude/settings.local.json
 
-# Captain runtime state, if it is ever created inside the package rather than ~/.claude/
-claude/.claude/crews/
+# Worker runtime state, if it is ever created inside the package rather than ~/.claude/
+claude/.claude/workers/
 __pycache__/

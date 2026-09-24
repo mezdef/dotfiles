@@ -42,7 +42,7 @@ is stated once, in that script. `check` is the same sweep without the writes, an
 things — a link that does not resolve, a link that resolves by the wrong route, and a skill
 installed but never linked. `scripts/tests/agents.sh` calls `check`, so a broken link now fails the
 suite. It did not before: `code-review`, `implement`, `to-spec` and `to-tickets` sat dangling
-through a 643-assertion run, and `/code-review` is named by `/planning`'s `## After the plan` table.
+through a 643-assertion run, and `/code-review` is named by `/workstreams`'s `## After the plan` table.
 A real directory of the same name is repo-owned and `fix` never replaces it with a link.
 
 They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
@@ -86,9 +86,13 @@ merge into a map keyed by the frontmatter `name:`. `Explore.md` is the one overr
 
 ### Planning
 
-**Planning has one entry point: `/planning`.** It owns the process and what follows the plan.
-`/writing-plans`, `/writing-design-docs` and `/workstreams` own the format, and `Plan` reaches
-them itself.
+**Planning has one entry point: plan mode.** It authors the plan and `plan-lifecycle.sh` files it
+into the workstream. `/workstreams` owns the lifecycle and `## After the plan`; `/writing-plans`
+and `/writing-design-docs` own the format.
+
+**A worker is dispatched by hand, never by a process.** `adversary` and `checker` are offered only
+when you or the user judge them worth it, and `scripts/tests/agents.sh` asserts no skill
+auto-invokes either. `docs/workers.md` is the single page for the roles and their figures.
 
 **A SKILL.md body gets positional-argument expansion at load.** A dollar sign followed by a single
 digit is replaced by the word at that position in the skill's arguments, so money in a skill body
@@ -124,7 +128,7 @@ the hard way are in `docs/claude-context.md`. **Read it before changing a hook.*
 ### Self-improvement
 
 `/self-improve` audits the setup through four lenses and ranks findings; picking is yours, and what
-you pick goes to a workstream and `/planning`.
+you pick goes to a workstream and then to plan mode.
 
 `scripts/improve/improve-record.sh` is the record behind it, append-only at
 `~/.claude/improve/record.jsonl`. **An entry names the file it wants changed or it is refused.**

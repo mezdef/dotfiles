@@ -48,7 +48,8 @@ A real directory of the same name is repo-owned and `fix` never replaces it with
 They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
 them references and nobody has installed is fixed by installing that skill, which is why
 `scripts/tests/agents.sh` exempts symlinked skills from the reference check and holds the repo-owned ones to
-it — `/code-implement`, named three times by `writing-code-quick`, had never existed.
+it. The check is per repo: `/code-implement` resolves in `work-app`, where every
+checkout owns a copy, and has never existed here.
 
 `tdd` and `diagnosing-bugs` replaced the local `test-driven-development` and `systematic-debugging`,
 which were duplicates that contradicted each other on whether refactoring belongs inside the

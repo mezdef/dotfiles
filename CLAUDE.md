@@ -42,7 +42,8 @@ is stated once, in that script. `check` is the same sweep without the writes, an
 things — a link that does not resolve, a link that resolves by the wrong route, and a skill
 installed but never linked. `scripts/tests/agents.sh` calls `check`, so a broken link now fails the
 suite. It did not before: `code-review`, `implement`, `to-spec` and `to-tickets` sat dangling
-through a 643-assertion run, and `/code-review` is named by `/workstreams`'s `## After the plan` table.
+through a 643-assertion run, and `/code-review` is named by the `## After the plan` table in
+`/workstreams`' `BUILD-PHASE.md`.
 A real directory of the same name is repo-owned and `fix` never replaces it with a link.
 
 They are upstream-owned, so a fix belongs upstream: an update replaces the file. A `/name` one of
@@ -88,8 +89,8 @@ merge into a map keyed by the frontmatter `name:`. `Explore.md` is the one overr
 ### Planning
 
 **Planning has one entry point: plan mode.** It authors the plan and `plan-lifecycle.sh` files it
-into the workstream. `/workstreams` owns the lifecycle and `## After the plan`; `/writing-plans`
-and `/writing-design-docs` own the format.
+into the workstream. `/workstreams` owns the lifecycle, and its `BUILD-PHASE.md` owns
+`## After the plan`; `/writing-plans` and `/writing-design-docs` own the format.
 
 **A worker is dispatched by hand, never by a process.** `adversary` and `checker` are offered only
 when you or the user judge them worth it, and `scripts/tests/agents.sh` asserts no skill

@@ -108,7 +108,7 @@ allowlist derivation, and the version-gated settings are documented in
 
 ### Hooks
 
-Seven hooks in `settings.json`. **A hook whose `command` path is wrong fails silently**, so
+Seven hook commands in `settings.json`, across ten registrations. **A hook whose `command` path is wrong fails silently**, so
 `scripts/tests/settings.sh` asserts every `command` resolves to an executable both in the package
 and at its stowed path. Run it after touching `settings.json` or renaming anything a hook calls.
 

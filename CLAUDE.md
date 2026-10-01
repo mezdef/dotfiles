@@ -98,6 +98,7 @@ merge into a map keyed by the frontmatter `name:`. `Explore.md` is the one overr
 **Planning has one entry point: plan mode.** It authors the plan and `plan-lifecycle.sh` files it
 into the workstream. `/workstreams` owns the lifecycle, and its `BUILD-PHASE.md` owns
 `## After the plan`; `/writing-plans` and `/writing-design-docs` own the format.
+`/reviewing-plans` reviews each section in chat, so `ExitPlanMode` is the final sign-off only.
 
 **A worker is dispatched by hand, never by a process.** `adversary` and `checker` are offered only
 when you or the user judge them worth it, and `scripts/tests/agents.sh` asserts no skill

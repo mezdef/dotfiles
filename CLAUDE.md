@@ -5,10 +5,9 @@ GNU Stow-managed dotfiles. Each top-level directory is a stow package that symli
 
 See `README.md` for the package inventory and the `.local` override pattern.
 
-Repo vocabulary lives in `docs/CONTEXT.md` under `workstream.sh repo-dir`, and a new decision that
-is hard to reverse in `docs/adr/NNNN-slug.md` beside it. The ADRs already tracked in this repo's
-`docs/adr/` are edited in place. `domain-modeling` owns both formats, and
-`hooks/domain-docs-redirect.sh` turns its untracked repo-root writes toward the repo-level copy.
+Repo vocabulary lives in the tracked `CONTEXT.md` at the root and is edited in place. A new ADR goes
+to `docs/adr/NNNN-slug.md` under `workstream.sh repo-dir`, because `hooks/domain-docs-redirect.sh`
+denies an untracked one in the working tree. `domain-modeling` owns both formats.
 
 ## Claude Code
 

@@ -74,17 +74,11 @@ install and its `.skill-lock.json` entry too, then assert both in `scripts/tests
 
 ### Prose rules
 
-The personal `claude/.claude/CLAUDE.md` records what `direct.md` owns and is loaded in every repo,
-so it is not restated here. What only this repo can say:
 `claude/.claude/skills/writing-design-docs/plain-language.md` owns the sentence-level limits and is
 read on demand through `/writing-design-docs`. **It cannot gain a pointer from `writing-for-agents`**,
 which is upstream-owned and whose file an npx update replaces, so this section is the pointer
 instead: read `plain-language.md` before writing prose into a skill, a `CLAUDE.md`, or a doc under
 `docs/`.
-
-**The rules bind chat and anything written from now on. Existing files are frozen and are not
-rewritten to conform.** No file can show the difference between an exempt line and a breach, which
-is why the freeze is recorded here.
 
 ### Agent definitions
 

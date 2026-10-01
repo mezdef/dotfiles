@@ -9,6 +9,13 @@ Repo vocabulary lives in the tracked `CONTEXT.md` at the root and is edited in p
 to `docs/adr/NNNN-slug.md` under `workstream.sh repo-dir`, because `hooks/domain-docs-redirect.sh`
 denies an untracked one in the working tree. `domain-modeling` owns both formats.
 
+## Commits
+
+Conventional commits: `type(scope): imperative summary`, under 72 characters. `type` is `feat`,
+`fix`, `test`, `refactor` or `docs`. `scope` is the area touched, such as `claude`, `workstream`
+or a stow package name. A change in progress is described `wip - <description>` until it is
+committed. `/jj` owns the jj mechanics.
+
 ## Claude Code
 
 Package root is `claude/.claude/`. Stow symlinks each entry into `~/.claude/`:

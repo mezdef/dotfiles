@@ -4,6 +4,13 @@
 name = "Marc de Ferranti"
 email = "personal@example.com"
 
+[revset-aliases]
+"closest_bookmark(to)" = "heads(::to & bookmarks())"
+
+[aliases]
+wip = ["log", "-r", "trunk()..@", "--no-graph"]
+tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
+
 [merge-tools.nvimdiff]
 program = "nvim"
 

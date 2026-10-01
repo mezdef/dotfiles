@@ -5,9 +5,10 @@ GNU Stow-managed dotfiles. Each top-level directory is a stow package that symli
 
 See `README.md` for the package inventory and the `.local` override pattern.
 
-Repo vocabulary lives in `CONTEXT.md` at the root, and a decision that is hard to reverse in
-`docs/adr/NNNN-slug.md`. `domain-modeling` owns both formats and creates each on the first entry,
-so an absent file means nothing has needed one yet.
+Repo vocabulary lives in `docs/CONTEXT.md` under `workstream.sh repo-dir`, and a new decision that
+is hard to reverse in `docs/adr/NNNN-slug.md` beside it. The ADRs already tracked in this repo's
+`docs/adr/` are edited in place. `domain-modeling` owns both formats, and
+`hooks/domain-docs-redirect.sh` turns its untracked repo-root writes toward the repo-level copy.
 
 ## Claude Code
 
@@ -109,7 +110,7 @@ allowlist derivation, and the version-gated settings are documented in
 
 ### Hooks
 
-Seven hook commands in `settings.json`, across ten registrations. **A hook whose `command` path is wrong fails silently**, so
+Eight hook commands in `settings.json`, across eleven registrations. **A hook whose `command` path is wrong fails silently**, so
 `scripts/tests/settings.sh` asserts every `command` resolves to an executable both in the package
 and at its stowed path. Run it after touching `settings.json` or renaming anything a hook calls.
 

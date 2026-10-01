@@ -11,10 +11,15 @@ denies an untracked one in the working tree. `domain-modeling` owns both formats
 
 ## Commits
 
-Conventional commits: `type(scope): imperative summary`, under 72 characters. `type` is `feat`,
-`fix`, `test`, `refactor` or `docs`. `scope` is the area touched, such as `claude`, `workstream`
-or a stow package name. A change in progress is described `wip - <description>` until it is
-committed. `/jj` owns the jj mechanics.
+Conventional commits: `type(scope): imperative summary`, first line at most 72 characters.
+
+- `type` is `feat`, `fix`, `test`, `refactor` or `docs`, and no others.
+- `scope` is free-form and lowercase, naming the area touched. A stow package name is the usual
+  one, or an area such as `claude` or `workstream`.
+- A change in progress is described `wip - <description>` and is never pushed.
+- A change Claude wrote ends with a `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer.
+
+Nothing enforces it. This section is the record. `/jj` owns the jj mechanics.
 
 ## Claude Code
 

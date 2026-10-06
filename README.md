@@ -83,12 +83,6 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 
    Reinstall the npx skills into `~/.agents/skills/`, then link them with
    `~/.claude/scripts/skills/skills-link.sh fix`. `settings.local.json` is per machine and gitignored.
-   `settings.json` and `scripts/metrics/metrics-lib.sh` name `/Users/me` literally, so
-   on Linux link that path to the home directory until they don't:
-
-   ```sh
-   sudo mkdir -p /Users && sudo ln -s "$HOME" /Users/me
-   ```
 
 9. macOS only:
    - kanata: install the daemon and grant the permissions in [`kanata/README.md`](kanata/README.md).

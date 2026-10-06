@@ -73,9 +73,6 @@ export KEYTIMEOUT=1
 ZVM_LAZY_KEYBINDINGS=false
 # prompt.zsh owns the cursor (block in both modes, green normal / white insert).
 ZVM_CURSOR_STYLE_ENABLED=false
-# Yank to macOS clipboard — auto-detects pbcopy/pbpaste. Replaces the hand-rolled
-# vi-yank-clip widgets and also covers yiw/y$/visual-y, not just y and Y.
-ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 # Visual-mode selection highlight. The plugin has no theme integration, just raw
 # hex, so wire it to catppuccin from theme.zsh (default is a hardcoded #cc0000).
 ZVM_VI_HIGHLIGHT_BACKGROUND=$CAT_MAUVE

@@ -46,7 +46,7 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 
    ```sh
    mkdir -p ~/.config ~/.claude ~/.local/bin ~/.local/share
-   stow atuin bat claude git herdr jj jjui nvim sesh tmux zsh
+   stow atuin bat claude git herdr jj jjui nvim tmux zsh
    ```
 
    On macOS, also stow the macOS-only packages:
@@ -114,7 +114,6 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 | `karabiner` | Not used for remapping — kept only for the DriverKit driver kanata needs |
 | `macos` | System defaults (`.macos`), wallpaper scripts, nvim-opener, LaunchAgents |
 | `nvim` | LazyVim-based Neovim config |
-| `sesh` | Session manager |
 | `tmux` | Multiplexer; prefix-less keybinds, helper scripts |
 | `zsh` | Shell: `.zshenv`, `.zprofile`, `.zshrc`, prompt, theme, jj helpers |
 

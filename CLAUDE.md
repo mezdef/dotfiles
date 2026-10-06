@@ -17,7 +17,8 @@ Conventional commits: `type(scope): imperative summary`, first line at most 72 c
 - `scope` is free-form and lowercase, naming the area touched. A stow package name is the usual
   one, or an area such as `claude` or `workstream`.
 - A change in progress is described `wip - <description>` and is never pushed.
-- A change Claude wrote ends with a `Co-Authored-By: Claude <model> <noreply@anthropic.com>` trailer.
+- No commit carries a `Co-Authored-By` trailer, whoever wrote it. `attribution` in `settings.json`
+  stops Claude Code adding one.
 
 Nothing enforces it. This section is the record. `/jj` owns the jj mechanics.
 

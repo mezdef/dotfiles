@@ -131,6 +131,13 @@
 #   "^secret-cmd",
 #   "^innocuous-cmd .*--secret=.+",
 # ]
+history_filter = [
+  "postgres(ql)?://",
+  "mysql://",
+  "mongodb(\\+srv)?://",
+  "(?i)\\b(password|passwd|secret|token|api_key)=",
+  "(?i)authorization:",
+]
 
 ## prevent commands run with cwd matching any of these regexes from being written
 ## to history. Note that these regular expressions are unanchored, i.e. if they don't

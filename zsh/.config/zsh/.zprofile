@@ -4,13 +4,19 @@
 #
 # Homebrew environment — hardcoded instead of `eval "$(brew shellenv)"` to avoid
 # a ~40ms fork to the brew binary on every login shell start.
-export HOMEBREW_PREFIX="/opt/homebrew"
-export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
-export HOMEBREW_REPOSITORY="/opt/homebrew"
-fpath[1,0]="/opt/homebrew/share/zsh/site-functions"
-path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+# Linux is Homebrew on Linux under WSL; .zshrc and tmux.conf read HOMEBREW_PREFIX.
+if [[ $OSTYPE == darwin* ]]; then
+  export HOMEBREW_PREFIX="/opt/homebrew"
+  export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX"
+else
+  export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+  export HOMEBREW_REPOSITORY="$HOMEBREW_PREFIX/Homebrew"
+fi
+export HOMEBREW_CELLAR="$HOMEBREW_PREFIX/Cellar"
+fpath[1,0]="$HOMEBREW_PREFIX/share/zsh/site-functions"
+path=($HOMEBREW_PREFIX/bin $HOMEBREW_PREFIX/sbin $path)
 [ -z "${MANPATH-}" ] || export MANPATH=":${MANPATH#:}"
-export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
+export INFOPATH="$HOMEBREW_PREFIX/share/info:${INFOPATH:-}"
 
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"

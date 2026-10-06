@@ -50,10 +50,10 @@ fi
 # Plugins
 ################################################################################
 
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # zsh-patina: Rust-daemon syntax highlighter, replaces zsh-syntax-highlighting.
 # ~5ms lower input_lag (1.9ms vs 7ms) due to async daemon architecture.
-_cache_init zsh-patina.zsh /opt/homebrew/bin/zsh-patina activate
+_cache_init zsh-patina.zsh $HOMEBREW_PREFIX/bin/zsh-patina activate
 
 ################################################################################
 # Prompt & Vi Mode
@@ -80,7 +80,7 @@ ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 # hex, so wire it to catppuccin from theme.zsh (default is a hardcoded #cc0000).
 ZVM_VI_HIGHLIGHT_BACKGROUND=$CAT_MAUVE
 ZVM_VI_HIGHLIGHT_FOREGROUND=$CAT_BASE
-source /opt/homebrew/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+source $HOMEBREW_PREFIX/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT # start every line in insert, as before
 
 # zvm_init rebinds the keymaps at the first prompt, so re-apply our bindings

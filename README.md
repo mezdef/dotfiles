@@ -18,6 +18,86 @@ Stow mirrors the directory structure inside each package into the target. To get
 `~/.config/tmux/tmux.conf`, the file must live at `dotfiles/tmux/.config/tmux/tmux.conf` —
 stow strips the package directory (`tmux/`) and recreates everything beneath it relative to `~/`.
 
+## Setup
+
+macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; see
+[`docs/windows.md`](docs/windows.md).
+
+1. Install Homebrew from <https://brew.sh>. On Linux, install its prerequisites first and keep the
+   default prefix, `/home/linuxbrew/.linuxbrew`, which `.zprofile` expects:
+
+   ```sh
+   sudo apt update && sudo apt install -y build-essential procps curl file git
+   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+   ```
+
+2. Clone and install the tools the packages call. On Linux the Brewfile adds `zsh`, `git` and `jq`
+   and skips kanata and the casks.
+
+   ```sh
+   git clone git@github.com:mezdef/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   brew bundle
+   ```
+
+3. Create the target directories, then stow. A directory missing at stow time becomes one symlink
+   into the repo, and whatever an app writes there later lands in the repo. `~/.claude` holds
+   Claude Code's session state and `~/.local/share` holds atuin's history and key.
+
+   ```sh
+   mkdir -p ~/.config ~/.claude ~/.local/bin ~/.local/share
+   stow atuin bat claude git herdr jj jjui nvim sesh tmux zsh
+   ```
+
+   On macOS, also stow the macOS-only packages:
+
+   ```sh
+   mkdir -p ~/Library/LaunchAgents
+   stow ghostty kanata karabiner macos
+   ```
+
+   `docs/` and `raycast/` are not packages.
+4. On Linux, make brew's zsh the login shell:
+
+   ```sh
+   command -v zsh | sudo tee -a /etc/shells
+   chsh -s "$(command -v zsh)"
+   ```
+
+5. Create `.zprofile.local` and `.zshrc.local` (see [Local Override Pattern](#local-override-pattern)),
+   then open a new terminal.
+6. tmux plugins:
+
+   ```sh
+   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+   ~/.config/tmux/plugins/tpm/bin/install_plugins
+   ```
+
+7. atuin: `atuin login -u <user>`. The key comes from the old machine and is never committed.
+8. Claude Code. On macOS the Brewfile installs it. On Linux, use the installer from
+   <https://code.claude.com/docs/en/setup>:
+
+   ```sh
+   curl -fsSL https://claude.ai/install.sh | bash
+   ```
+
+   Reinstall the npx skills into `~/.agents/skills/`, then link them with
+   `~/.claude/scripts/skills/skills-link.sh fix`. `settings.local.json` is per machine and gitignored.
+   `settings.json` and `scripts/metrics/metrics-lib.sh` name `/Users/me` literally, so
+   on Linux link that path to the home directory until they don't:
+
+   ```sh
+   sudo mkdir -p /Users && sudo ln -s "$HOME" /Users/me
+   ```
+
+9. macOS only:
+   - kanata: install the daemon and grant the permissions in [`kanata/README.md`](kanata/README.md).
+     `brew bundle` and step 3 already did its `brew install` and `stow`.
+   - Run `~/.macos` for system defaults and `~/.local/share/nvim-opener/build.sh` for the
+     NvimOpener app.
+   - `launchctl bootstrap gui/$(id -u) <plist>` for each plist in `~/Library/LaunchAgents/com.marc.*`.
+     The plists name `/Users/me` literally.
+
 ## Packages
 
 | Package | What it configures |

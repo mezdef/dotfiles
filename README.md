@@ -38,11 +38,12 @@ OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. 
 2. On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
    `syncthing/.config/filesync/env.example` to `env` beside it (gitignored). `setup.sh` stows
    `syncthing` only when `env` exists; it shares every non-`_` dir in `~/Filesync` with the mini.
-3. Clone and run setup. On Linux the Brewfile adds `zsh`, `git` and `jq` and skips kanata and the
-   casks.
+3. Clone colocated with jj and run setup. On Linux the Brewfile adds `zsh`, `git` and `jq` and
+   skips kanata and the casks.
 
    ```sh
-   git clone git@github.com:mezdef/dotfiles.git ~/dotfiles
+   brew install jj
+   jj git clone --colocate git@github.com:mezdef/dotfiles.git ~/dotfiles
    ~/dotfiles/setup.sh
    ```
 
@@ -70,7 +71,7 @@ OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. 
 ### Existing machine
 
 ```sh
-cd ~/dotfiles && git pull && ./setup.sh
+cd ~/dotfiles && jj git fetch && jj new master && ./setup.sh
 ```
 
 LaunchAgents are not stowed. Their plists carry `@HOME@`, which `install-launchagent` renders into

@@ -37,7 +37,8 @@ OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. 
 
 2. On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
    `syncthing/.config/filesync/env.example` to `env` beside it (gitignored). `setup.sh` stows
-   `syncthing` only when `env` exists; it shares every non-`_` dir in `~/Filesync` with the mini.
+   `syncthing` only when `env` sets `FILESYNC_CLIENT=1`; it shares every non-`_` dir in
+   `~/Filesync` with the mini.
 3. Clone colocated with jj and run setup. On Linux the Brewfile adds `zsh`, `git` and `jq` and
    skips kanata and the casks.
 

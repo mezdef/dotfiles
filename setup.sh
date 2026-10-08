@@ -20,8 +20,8 @@ if [[ "$(uname)" == Darwin ]]; then
   # Karabiner replaces the link with a file on save; an existing file already skips its setup prompt.
   [[ -e ~/.config/karabiner/karabiner.json ]] || stow karabiner
   launchagents=(macos/Library/LaunchAgents/*.plist)
-  # Laptop only: the syncthing package needs its gitignored env.
-  if [[ -f syncthing/.config/filesync/env ]]; then
+  # Laptop only: its gitignored env opts in, and the mini's never does.
+  if grep -qx 'FILESYNC_CLIENT=1' syncthing/.config/filesync/env 2>/dev/null; then
     stow syncthing
     launchagents+=(syncthing/Library/LaunchAgents/*.plist)
   fi

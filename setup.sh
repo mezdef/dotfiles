@@ -9,7 +9,17 @@ if ! command -v brew >/dev/null; then
   exit 1
 fi
 
+# An upgrade drops kanata's Input Monitoring grant and it doubles every keypress; see kanata/README.md.
+# Pinned before bundle so it is never upgraded, and after so a fresh install is pinned too.
+pin_kanata() {
+  if [[ "$(uname)" == Darwin ]] && brew list --versions kanata >/dev/null && ! brew list --pinned | grep -qx kanata; then
+    brew pin kanata
+  fi
+}
+
+pin_kanata
 brew bundle
+pin_kanata
 
 # A directory missing at stow time becomes a symlink into the repo, so create the ones apps write to.
 mkdir -p ~/.config/jj ~/.local/bin ~/.local/share
@@ -18,10 +28,6 @@ stow atuin bat jjui nvim zsh
 stow -R --no-folding git jj tmux herdr
 
 if [[ "$(uname)" == Darwin ]]; then
-  # An upgrade drops kanata's Input Monitoring grant and it doubles every keypress; see kanata/README.md.
-  if brew list --versions kanata >/dev/null && ! brew list --pinned | grep -qx kanata; then
-    brew pin kanata
-  fi
   stow ghostty kanata macos
   # Karabiner replaces the link with a file on save; an existing file already skips its setup prompt.
   [[ -e ~/.config/karabiner/karabiner.json ]] || stow karabiner

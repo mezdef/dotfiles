@@ -56,6 +56,10 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
    stow ghostty kanata karabiner macos
    ```
 
+   On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
+   `syncthing/.config/filesync/env.example` to `env` beside it (gitignored), then stow `syncthing`,
+   which shares every non-`_` dir in `~/Filesync` with the mini through Syncthing.
+
    `docs/` and `raycast/` are not packages.
 4. On Linux, make brew's zsh the login shell:
 
@@ -108,6 +112,7 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 | `karabiner` | Not used for remapping — kept only for the DriverKit driver kanata needs |
 | `macos` | System defaults (`.macos`), wallpaper scripts, nvim-opener, LaunchAgents |
 | `nvim` | LazyVim-based Neovim config |
+| `syncthing` | Laptop-only Filesync client: shares `~/Filesync` dirs with the mini. Device ID stays in a gitignored `env` |
 | `tmux` | Multiplexer; prefix-less keybinds, helper scripts |
 | `zsh` | Shell: `.zshenv`, `.zprofile`, `.zshrc`, prompt, theme, jj helpers |
 

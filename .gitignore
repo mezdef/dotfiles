@@ -29,3 +29,6 @@ claude/.claude/settings.local.json
 # Worker runtime state, if it is ever created inside the package rather than ~/.claude/
 claude/.claude/workers/
 __pycache__/
+
+# Machine values the syncthing package stows but never publishes
+syncthing/.config/filesync/env

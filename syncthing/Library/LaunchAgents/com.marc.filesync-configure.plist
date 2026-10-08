@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.marc.filesync-configure.plist
+  Runs filesync-configure.sh when ~/Filesync changes, every 5 minutes and at login.
+  Laptop only: the mini runs media-server's tools/syncthing/configure.sh instead.
+
+  Deploy:  cd ~/dotfiles && stow syncthing
+  Load:    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.marc.filesync-configure.plist
+  Unload:  launchctl bootout gui/$(id -u)/com.marc.filesync-configure
+  Status:  launchctl print gui/$(id -u)/com.marc.filesync-configure | grep -E 'state|last exit'
+  Logs:    cat ~/Library/Logs/filesync-configure.log
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.marc.filesync-configure</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>/Users/me/.local/bin/filesync-configure.sh</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
+	<key>WatchPaths</key>
+	<array>
+		<string>/Users/me/Filesync</string>
+	</array>
+	<key>StartInterval</key>
+	<integer>300</integer>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/Users/me/Library/Logs/filesync-configure.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/me/Library/Logs/filesync-configure.log</string>
+</dict>
+</plist>

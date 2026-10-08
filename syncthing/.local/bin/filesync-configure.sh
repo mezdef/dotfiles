@@ -33,7 +33,8 @@ for dir in "$FILESYNC"/*/; do
   path=${dir%/} name=$(basename "$dir")
   case $name in _*) continue ;; esac
   # A folder already at this path keeps its ID, e.g. one accepted from the mini.
-  id=$(jq -r --arg path "$path" 'map(select(.path == $path)) | .[0].id // empty' <<<"$folders")
+  id=$(jq -r --arg path "$path" --arg home "$HOME" \
+    'map(select((.path | sub("^~"; $home) | rtrimstr("/")) == $path)) | .[0].id // empty' <<<"$folders")
   [ -n "$id" ] || id=$(printf '%s' "$name" | tr '[:upper:] ' '[:lower:]-')
   current=$(jq -c --arg id "$id" 'map(select(.id == $id)) | .[0] // null' <<<"$folders")
   st PUT "/rest/config/folders/$id" "$(jq -nc --argjson cur "$current" --arg id "$id" --arg path "$path" \

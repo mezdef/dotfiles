@@ -20,8 +20,12 @@ stow strips the package directory (`tmux/`) and recreates everything beneath it 
 
 ## Setup
 
-macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; see
-[`docs/windows.md`](docs/windows.md).
+macOS or Linux. Windows runs the Linux setup inside WSL2; see [`docs/windows.md`](docs/windows.md).
+
+`setup.sh` runs `brew bundle`, creates the directories apps write to, stows every package for the
+OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. It is safe to rerun.
+
+### New machine
 
 1. Install Homebrew from <https://brew.sh>. On Linux, install its prerequisites first and keep the
    default prefix, `/home/linuxbrew/.linuxbrew`, which `.zprofile` expects:
@@ -31,35 +35,17 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
    ```
 
-2. Clone and install the tools the packages call. On Linux the Brewfile adds `zsh`, `git` and `jq`
-   and skips kanata and the casks.
+2. On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
+   `syncthing/.config/filesync/env.example` to `env` beside it (gitignored). `setup.sh` stows
+   `syncthing` only when `env` exists; it shares every non-`_` dir in `~/Filesync` with the mini.
+3. Clone and run setup. On Linux the Brewfile adds `zsh`, `git` and `jq` and skips kanata and the
+   casks.
 
    ```sh
    git clone git@github.com:mezdef/dotfiles.git ~/dotfiles
-   cd ~/dotfiles
-   brew bundle
+   ~/dotfiles/setup.sh
    ```
 
-3. Create the target directories, then stow. A directory missing at stow time becomes one symlink
-   into the repo, and whatever an app writes there later lands in the repo. `~/.local/share` holds
-   atuin's history and key, and `~/.config/jj` gains a `repos/` dir and an optional `conf.d/`.
-
-   ```sh
-   mkdir -p ~/.config/jj ~/.local/bin ~/.local/share
-   stow atuin bat git herdr jj jjui nvim tmux zsh
-   ```
-
-   On macOS, also stow the macOS-only packages:
-
-   ```sh
-   stow ghostty kanata karabiner macos swiftbar
-   ```
-
-   On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
-   `syncthing/.config/filesync/env.example` to `env` beside it (gitignored), then stow `syncthing`,
-   which shares every non-`_` dir in `~/Filesync` with the mini through Syncthing.
-
-   `docs/` is not a package.
 4. On Linux, make brew's zsh the login shell:
 
    ```sh
@@ -67,30 +53,30 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
    chsh -s "$(command -v zsh)"
    ```
 
-5. Create `.zprofile.local` and `.zshrc.local` (see [Local Override Pattern](#local-override-pattern)),
-   then open a new terminal.
-6. tmux plugins:
-
-   ```sh
-   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
-   ~/.config/tmux/plugins/tpm/bin/install_plugins
-   ```
-
-7. atuin: `atuin login -u <user>`. The key comes from the old machine and is never committed.
-8. Identity and secrets come from an overlay outside this repo. Git includes
+5. Create `.zprofile.local` and `.zshrc.local` if needed (see
+   [Local Override Pattern](#local-override-pattern)), then open a new terminal.
+6. atuin: `atuin login -u <user>`. The key comes from the old machine and is never committed.
+7. Identity and secrets come from an overlay outside this repo. Git includes
    `~/.config/git/identity`, jj reads `~/.config/jj/conf.d/`, and `.zprofile` sources
    `~/.local/state/secrets.env`. Each is optional; without them, set `user.name` and `user.email`
    yourself.
-9. macOS only:
-   - kanata: install the daemon and grant the permissions in [`kanata/README.md`](kanata/README.md).
-     `brew bundle` and step 3 already did its `brew install` and `stow`.
+8. macOS only:
+   - kanata: install the daemon and grant Input Monitoring as in [`kanata/README.md`](kanata/README.md).
    - Run `~/.macos` for system defaults and `~/.local/share/nvim-opener/build.sh` for the
      NvimOpener app.
-   - LaunchAgents are not stowed. Their plists carry `@HOME@`, which `install-launchagent` renders
-     into `~/Library/LaunchAgents` before loading each one:
-     `install-launchagent ~/dotfiles/macos/Library/LaunchAgents/*.plist`, plus the `syncthing` one
-     on the laptop.
    - SwiftBar: set its plugin directory to `~/.config/swiftbar/plugins`.
+   - Raycast: add `~/.local/bin` as a script directory.
+
+### Existing machine
+
+```sh
+cd ~/dotfiles && git pull && ./setup.sh
+```
+
+LaunchAgents are not stowed. Their plists carry `@HOME@`, which `install-launchagent` renders into
+`~/Library/LaunchAgents` before loading each one, so a changed plist needs `setup.sh` again.
+`karabiner` is stowed only when `~/.config/karabiner/karabiner.json` is missing, because Karabiner
+replaces the link with a file on save. `docs/` is not a package.
 
 ## Packages
 

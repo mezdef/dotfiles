@@ -5,6 +5,10 @@ GNU Stow-managed dotfiles. Each top-level directory is a stow package that symli
 
 See `README.md` for the package inventory, including `swiftbar`, and the `.local` override pattern.
 
+**A machine is set up by `setup.sh`, never by hand-run stow commands.** It is idempotent, so an
+existing machine reruns it. A new package or target directory goes into it, and the README's Setup
+section lists only the steps it cannot do.
+
 ## Commits
 
 Conventional commits: `type(scope): imperative summary`, first line at most 72 characters.

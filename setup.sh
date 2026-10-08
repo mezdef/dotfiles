@@ -13,7 +13,9 @@ brew bundle
 
 # A directory missing at stow time becomes a symlink into the repo, so create the ones apps write to.
 mkdir -p ~/.config/jj ~/.local/bin ~/.local/share
-stow atuin bat git herdr jj jjui nvim tmux zsh
+stow atuin bat herdr jjui nvim tmux zsh
+# Real directories, so an overlay can add identity files beside these; -R unfolds an old folded link.
+stow -R --no-folding git jj
 
 if [[ "$(uname)" == Darwin ]]; then
   stow ghostty kanata macos swiftbar

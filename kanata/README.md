@@ -19,15 +19,22 @@ Grant in System Settings → Privacy & Security:
 
 ## Upgrading
 
-`setup.sh` pins kanata, so `brew bundle` never upgrades it: an upgrade drops the Input Monitoring
-grant and kanata then doubles every keypress. Upgrade on purpose:
+`setup.sh` pins kanata, so `brew bundle` never upgrades it: an upgrade drops both the Input
+Monitoring and the Accessibility grants, and kanata then doubles every keypress. Upgrade on purpose:
 
 ```bash
 brew unpin kanata && brew upgrade kanata && brew pin kanata
 ```
 
-Then re-grant Input Monitoring to `/opt/homebrew/bin/kanata` and run
-`sudo launchctl kickstart -k system/com.jtroo.kanata`.
+Then, in System Settings > Privacy & Security, under both Input Monitoring and Accessibility,
+remove the stale kanata entry and add `/opt/homebrew/bin/kanata` again. If the error persists, add
+the resolved Cellar binary as well (`realpath /opt/homebrew/bin/kanata`). Then restart the daemon:
+
+```bash
+sudo launchctl kickstart -k system/com.jtroo.kanata
+# if it was booted out instead:
+sudo launchctl bootstrap system /Library/LaunchDaemons/com.jtroo.kanata.plist
+```
 
 ## Files
 

@@ -9,7 +9,7 @@ if ! command -v brew >/dev/null; then
   exit 1
 fi
 
-# An upgrade drops kanata's Input Monitoring grant and it doubles every keypress; see kanata/README.md.
+# An upgrade drops kanata's Input Monitoring and Accessibility grants, doubling every keypress; see kanata/README.md.
 # Pinned before bundle so it is never upgraded, and after so a fresh install is pinned too.
 pin_kanata() {
   if [[ "$(uname)" == Darwin ]] && brew list --versions kanata >/dev/null && ! brew list --pinned | grep -qx kanata; then

@@ -21,4 +21,6 @@ export INFOPATH="$HOMEBREW_PREFIX/share/info:${INFOPATH:-}"
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$HOME/.local/bin:$PATH"
 
+# Secrets rendered from 1Password by the private dotfiles' secrets-sync.
+[[ -f "$HOME/.local/state/secrets.env" ]] && source "$HOME/.local/state/secrets.env"
 [[ -f "$ZDOTDIR/.zprofile.local" ]] && source "$ZDOTDIR/.zprofile.local"

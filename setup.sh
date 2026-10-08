@@ -18,6 +18,10 @@ stow atuin bat jjui nvim zsh
 stow -R --no-folding git jj tmux herdr
 
 if [[ "$(uname)" == Darwin ]]; then
+  # An upgrade drops kanata's Input Monitoring grant and it doubles every keypress; see kanata/README.md.
+  if brew list --versions kanata >/dev/null && ! brew list --pinned | grep -qx kanata; then
+    brew pin kanata
+  fi
   stow ghostty kanata macos
   # Karabiner replaces the link with a file on save; an existing file already skips its setup prompt.
   [[ -e ~/.config/karabiner/karabiner.json ]] || stow karabiner

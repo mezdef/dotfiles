@@ -17,6 +17,18 @@ Grant in System Settings → Privacy & Security:
 - Input Monitoring → `/opt/homebrew/bin/kanata`
 - Accessibility → `/opt/homebrew/bin/kanata`
 
+## Upgrading
+
+`setup.sh` pins kanata, so `brew bundle` never upgrades it: an upgrade drops the Input Monitoring
+grant and kanata then doubles every keypress. Upgrade on purpose:
+
+```bash
+brew unpin kanata && brew upgrade kanata && brew pin kanata
+```
+
+Then re-grant Input Monitoring to `/opt/homebrew/bin/kanata` and run
+`sudo launchctl kickstart -k system/com.jtroo.kanata`.
+
 ## Files
 
 ```

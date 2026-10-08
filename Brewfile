@@ -33,6 +33,7 @@ if OS.mac?
   brew "kanata"
   cask "karabiner-elements"
   cask "ghostty"
+  cask "swiftbar"
   cask "claude-code"
   cask "font-jetbrains-mono-nerd-font"
 end

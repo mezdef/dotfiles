@@ -21,3 +21,7 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # InitialKeyRepeat 20 = ~333ms before repeat starts
 defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 20
+
+# SwiftBar
+# Menu-bar plugins come from the swiftbar stow package
+defaults write com.ameba.SwiftBar PluginDirectory -string "$HOME/.config/swiftbar/plugins"

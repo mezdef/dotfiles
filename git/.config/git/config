@@ -1,11 +1,6 @@
 [core]
 	pager = delta
 
-[pager]
-	diff = diffnav
-	show = diffnav
-	log = diffnav
-
 [delta]
 	features = split-view
 	navigate = true

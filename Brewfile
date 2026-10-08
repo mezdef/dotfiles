@@ -1,10 +1,7 @@
 # Tools the stow packages call. `brew bundle` from the repo root.
 
-tap "dlvhdr/formulae"
-
 brew "stow"
 brew "git-delta"
-brew "dlvhdr/formulae/diffnav"
 brew "jj"
 brew "jjui"
 brew "neovim"

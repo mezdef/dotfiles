@@ -18,7 +18,7 @@
 	<string>com.marc.randomwallpaper</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Users/me/.local/bin/random-wallpaper.sh</string>
+		<string>@HOME@/.local/bin/random-wallpaper.sh</string>
 	</array>
 	<!-- Run daily at 7am. Missed runs fire when Mac wakes. -->
 	<key>StartCalendarInterval</key>
@@ -31,8 +31,8 @@
 	<key>RunAtLoad</key>
 	<true/>
 	<key>StandardOutPath</key>
-	<string>/Users/me/Library/Logs/random-wallpaper.log</string>
+	<string>@HOME@/Library/Logs/random-wallpaper.log</string>
 	<key>StandardErrorPath</key>
-	<string>/Users/me/Library/Logs/random-wallpaper.log</string>
+	<string>@HOME@/Library/Logs/random-wallpaper.log</string>
 </dict>
 </plist>

@@ -17,13 +17,15 @@ KANATA_SRC="$SCRIPT_DIR/../com.jtroo.kanata.plist"
 KANATA_DST="/Library/LaunchDaemons/com.jtroo.kanata.plist"
 RESTARTER_SRC="$SCRIPT_DIR/../com.jtroo.kanata-restarter.plist"
 RESTARTER_DST="/Library/LaunchDaemons/com.jtroo.kanata-restarter.plist"
+REAL_USER="${SUDO_USER:-$(whoami)}"
+REAL_UID=$(id -u "$REAL_USER")
+# The plists carry @HOME@; under sudo, $HOME may be root's.
+REAL_HOME=$(dscl . -read "/Users/$REAL_USER" NFSHomeDirectory | awk '{print $2}')
 WATCHER_SRC="$SCRIPT_DIR/../com.jtroo.kanata-watcher.plist"
-WATCHER_DST="$HOME/Library/LaunchAgents/com.jtroo.kanata-watcher.plist"
+WATCHER_DST="$REAL_HOME/Library/LaunchAgents/com.jtroo.kanata-watcher.plist"
 WATCHER_SWIFT="$SCRIPT_DIR/watch-keyboards.swift"
 WATCHER_BIN="/opt/homebrew/bin/kanata-watcher"
 LOG_DIR="/Library/Logs/Kanata"
-REAL_USER="${SUDO_USER:-$(whoami)}"
-REAL_UID=$(id -u "$REAL_USER")
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Must run as root: sudo $0"
@@ -53,14 +55,14 @@ launchctl bootout "gui/$REAL_UID/com.jtroo.kanata-watcher" 2>/dev/null || true
 for src_dst in "$KANATA_SRC:$KANATA_DST" "$RESTARTER_SRC:$RESTARTER_DST"; do
   src="${src_dst%%:*}"
   dst="${src_dst##*:}"
-  cp "$src" "$dst"
+  sed "s#@HOME@#$REAL_HOME#g" "$src" > "$dst"
   chown root:wheel "$dst"
   chmod 644 "$dst"
 done
 
 # Install LaunchAgent (user)
 mkdir -p "$(dirname "$WATCHER_DST")"
-cp "$WATCHER_SRC" "$WATCHER_DST"
+sed "s#@HOME@#$REAL_HOME#g" "$WATCHER_SRC" > "$WATCHER_DST"
 chown "$REAL_USER" "$WATCHER_DST"
 chmod 644 "$WATCHER_DST"
 

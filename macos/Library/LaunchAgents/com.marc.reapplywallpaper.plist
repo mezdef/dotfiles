@@ -16,7 +16,7 @@
 	<string>com.marc.reapplywallpaper</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Users/me/.local/bin/reapply-wallpaper.sh</string>
+		<string>@HOME@/.local/bin/reapply-wallpaper.sh</string>
 	</array>
 	<key>WatchPaths</key>
 	<array>
@@ -26,8 +26,8 @@
 	<key>ThrottleInterval</key>
 	<integer>20</integer>
 	<key>StandardOutPath</key>
-	<string>/Users/me/Library/Logs/reapply-wallpaper.log</string>
+	<string>@HOME@/Library/Logs/reapply-wallpaper.log</string>
 	<key>StandardErrorPath</key>
-	<string>/Users/me/Library/Logs/reapply-wallpaper.log</string>
+	<string>@HOME@/Library/Logs/reapply-wallpaper.log</string>
 </dict>
 </plist>

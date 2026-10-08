@@ -6,7 +6,7 @@
     <string>com.jtroo.kanata-restarter</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/me/dotfiles/kanata/scripts/restart-kanata.sh</string>
+        <string>@HOME@/dotfiles/kanata/scripts/restart-kanata.sh</string>
     </array>
     <key>WatchPaths</key>
     <array>

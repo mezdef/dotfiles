@@ -8,7 +8,7 @@
     <array>
         <string>/opt/homebrew/bin/kanata</string>
         <string>-c</string>
-        <string>/Users/me/.config/kanata/kanata.kbd</string>
+        <string>@HOME@/.config/kanata/kanata.kbd</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

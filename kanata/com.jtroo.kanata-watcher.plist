@@ -18,8 +18,8 @@
     <key>KeepAlive</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>/Users/me/Library/Logs/kanata-watcher.log</string>
+    <string>@HOME@/Library/Logs/kanata-watcher.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/me/Library/Logs/kanata-watcher.log</string>
+    <string>@HOME@/Library/Logs/kanata-watcher.log</string>
 </dict>
 </plist>

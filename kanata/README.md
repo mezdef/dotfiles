@@ -7,9 +7,11 @@ Requires the Karabiner-DriverKit-VirtualHIDDevice driver (keep Karabiner install
 
 ```bash
 brew install kanata
-stow kanata                              # symlinks .config/kanata/ to ~/.config/kanata/
-sudo ./kanata/scripts/install-daemon.sh  # installs LaunchDaemon (runs as root on boot)
+stow kanata  # symlinks .config/kanata/ to ~/.config/kanata/
 ```
+
+The LaunchDaemon that runs kanata at boot and the watcher that restarts it on keyboard connect are
+installed from a separate tools repo, not this one.
 
 Grant in System Settings → Privacy & Security:
 - Input Monitoring → `/opt/homebrew/bin/kanata`
@@ -25,15 +27,7 @@ kanata/
 │   ├── home-row-mods.kbd              ← per-finger timing, typing layer, spotlight remap
 │   ├── scroll.kbd                     ← page up/down, top/bottom bindings
 │   └── layers.kbd                     ← deflayermap per layer (one file per layer name)
-├── com.jtroo.kanata.plist             ← LaunchDaemon definition (not stowed)
-├── com.jtroo.kanata-watcher.plist     ← restarts kanata on keyboard connect (not stowed)
-├── com.jtroo.kanata-restarter.plist   ← runs scripts/restart-kanata.sh
-├── scripts/
-│   ├── install-daemon.sh              ← installs plist to /Library/LaunchDaemons/
-│   ├── restart-kanata.sh              ← restart helper
-│   ├── watch-keyboards.sh             ← wrapper for the watcher
-│   └── watch-keyboards.swift          ← keyboard connect/disconnect watcher
-└── .stow-local-ignore                 ← excludes plists/scripts/README from stow
+└── .stow-local-ignore                 ← excludes README from stow
 ```
 
 `kanata.kbd` includes the other four `.kbd` files, so a new layer must be added to

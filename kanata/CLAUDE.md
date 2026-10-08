@@ -14,11 +14,8 @@ Key files (all included from `kanata.kbd`):
 - `layers.kbd` — `deflayermap` blocks for every layer; one file per layer name
 - `scroll.kbd` — page up/down and top/bottom bindings
 
-Not stowed (excluded via `kanata/.stow-local-ignore`): `README.md`, `scripts/`, and the plists.
-- `com.jtroo.kanata.plist` — LaunchDaemon, installed to `/Library/LaunchDaemons/` via
-  `sudo ./kanata/scripts/install-daemon.sh`
-- `com.jtroo.kanata-watcher.plist` — restarts kanata when a keyboard is connected
-- `com.jtroo.kanata-restarter.plist` — runs `scripts/restart-kanata.sh`
+Not stowed (excluded via `kanata/.stow-local-ignore`): `README.md`. The LaunchDaemon, the keyboard
+watcher and their install script are not in this repo; a separate tools repo installs them.
 
 See `kanata/README.md` for setup, daemon management, and rollback.
 

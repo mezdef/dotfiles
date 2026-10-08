@@ -23,7 +23,7 @@ stow strips the package directory (`tmux/`) and recreates everything beneath it 
 macOS or Linux. Windows runs the Linux setup inside WSL2; see [`docs/windows.md`](docs/windows.md).
 
 `setup.sh` runs `brew bundle`, creates the directories apps write to, stows every package for the
-OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. It is safe to rerun.
+OS, and installs the tmux plugins. It is safe to rerun.
 
 ### New machine
 
@@ -64,9 +64,7 @@ OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. 
    yourself.
 8. macOS only:
    - kanata: install the daemon and grant Input Monitoring as in [`kanata/README.md`](kanata/README.md).
-   - Run `~/.macos` for system defaults and `~/.local/share/nvim-opener/build.sh` for the
-     NvimOpener app.
-   - SwiftBar: set its plugin directory to `~/.config/swiftbar/plugins`.
+   - Run `~/.macos` for system defaults.
    - Raycast: add `~/.local/bin` as a script directory.
 
 ### Existing machine
@@ -75,8 +73,9 @@ OS, renders and loads the LaunchAgents on macOS, and installs the tmux plugins. 
 cd ~/dotfiles && jj git fetch && jj new master && ./setup.sh
 ```
 
-LaunchAgents are not stowed. Their plists carry `@HOME@`, which `install-launchagent` renders into
-`~/Library/LaunchAgents` before loading each one, so a changed plist needs `setup.sh` again.
+This repo holds settings only. Programs such as the wallpaper agents, NvimOpener, the SwiftBar
+plugins, the kanata daemon and the tmux and herdr helper scripts are installed from a separate
+tools repo. Nothing here needs them: tmux binds a helper only when its script exists.
 `karabiner` is stowed only when `~/.config/karabiner/karabiner.json` is missing, because Karabiner
 replaces the link with a file on save. `docs/` is not a package.
 
@@ -93,11 +92,10 @@ replaces the link with a file on save. `docs/` is not a package.
 | `jjui` | Jujutsu TUI |
 | `kanata` | Keyboard remapping: home row mods, hyper key, scroll. See `kanata/README.md` |
 | `karabiner` | Not used for remapping — kept only for the DriverKit driver kanata needs |
-| `macos` | System defaults (`.macos`), wallpaper scripts, nvim-opener, LaunchAgents |
+| `macos` | System defaults (`.macos`) |
 | `nvim` | LazyVim-based Neovim config |
-| `swiftbar` | Menu-bar plugins: unread mail count, now playing |
 | `syncthing` | Laptop-only Filesync client: shares `~/Filesync` dirs with the mini. Device ID stays in a gitignored `env` |
-| `tmux` | Multiplexer; prefix-less keybinds, helper scripts |
+| `tmux` | Multiplexer; prefix-less keybinds |
 | `zsh` | Shell: `.zshenv`, `.zprofile`, `.zshrc`, prompt, theme, jj helpers |
 
 `karabiner-ts/` (the old TypeScript karabiner generator) is gone — kanata replaced it.

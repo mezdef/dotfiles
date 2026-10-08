@@ -3,7 +3,7 @@
 GNU Stow-managed dotfiles. Each top-level directory is a stow package that symlinks into `$HOME`.
 `.stowrc` sets `--target=~/`. From the repo root: `stow <package>`.
 
-See `README.md` for the package inventory, including `swiftbar`, and the `.local` override pattern.
+See `README.md` for the package inventory and the `.local` override pattern.
 
 **A machine is set up by `setup.sh`, never by hand-run stow commands.** It is idempotent, so an
 existing machine reruns it. A new package or target directory goes into it, and the README's Setup
@@ -36,11 +36,9 @@ Every other package keeps its own rules in a `CLAUDE.md` beside it, which costs 
 and loads when a file in that directory is read: `kanata/`, `zsh/`, `atuin/`, `ghostty/`, `tmux/`,
 `herdr/`.
 
-Four rules stay here, because each one has to fire before its package is opened:
+Three rules stay here, because each one has to fire before its package is opened:
 
 - **Keyboard remapping is kanata's, not karabiner's.** Detail in `kanata/CLAUDE.md`.
-- **A LaunchAgent plist writes `@HOME@`, never a literal home path.** `Library/` is excluded from
-  stow; `install-launchagent` renders and loads each plist. This covers `macos` and `syncthing`.
 - **A zsh tool init goes through `_cache_init`** (`.zshrc:31`) or it costs ~10ms per shell.
 - **Atuin's `key` is a secret** and `history.db` is machine state. Both live in
   `~/.local/share/atuin/` and are deliberately not version controlled.

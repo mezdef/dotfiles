@@ -13,21 +13,18 @@ brew bundle
 
 # A directory missing at stow time becomes a symlink into the repo, so create the ones apps write to.
 mkdir -p ~/.config/jj ~/.local/bin ~/.local/share
-stow atuin bat herdr jjui nvim tmux zsh
-# Real directories, so an overlay can add identity files beside these; -R unfolds an old folded link.
-stow -R --no-folding git jj
+stow atuin bat jjui nvim zsh
+# Real directories, so another repo can add files beside these; -R unfolds an old folded link.
+stow -R --no-folding git jj tmux herdr
 
 if [[ "$(uname)" == Darwin ]]; then
-  stow ghostty kanata macos swiftbar
+  stow ghostty kanata macos
   # Karabiner replaces the link with a file on save; an existing file already skips its setup prompt.
   [[ -e ~/.config/karabiner/karabiner.json ]] || stow karabiner
-  launchagents=(macos/Library/LaunchAgents/*.plist)
   # Laptop only: its gitignored env opts in, and the mini's never does.
   if grep -qx 'FILESYNC_CLIENT=1' syncthing/.config/filesync/env 2>/dev/null; then
     stow syncthing
-    launchagents+=(syncthing/Library/LaunchAgents/*.plist)
   fi
-  macos/.local/bin/install-launchagent "${launchagents[@]}"
 fi
 
 if [[ ! -d ~/.config/tmux/plugins/tpm ]]; then

@@ -1,0 +1,3 @@
+\.stow-local-ignore
+# tpm clones here; an old folded stow left its plugins in the repo
+^/\.config/tmux/plugins$

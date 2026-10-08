@@ -40,3 +40,7 @@
 
 [mergetool "codediff"]
 	cmd = nvim "$MERGED" -c "CodeDiff merge \"$MERGED\""
+
+# Name and email come from the private dotfiles
+[include]
+	path = ~/.config/git/identity

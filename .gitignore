@@ -3,31 +3,12 @@
 zsh/.zsh_history
 zsh/.config/zsh/.zsh_history
 tmux/.config/tmux/plugins/
-raycast/
 fzf
 history.txt
 zsh/.config/zsh/.zprofile.local
 zsh/.config/zsh/.zshrc.local
 jj/.config/jj/repos/
-
-# Work-specific Claude skills and scripts — kept local, not published
-claude/project-skills/work-app/clone-prod-read-replica-subset/
-claude/project-skills/work-app/query-db-production/
-claude/.claude/skills/neon/references/work-app.md
-claude/.claude/skills/query-logs-production/
-claude/.claude/skills/query-logs-development/
-claude/.claude/skills/lint-conventions/
-claude/.claude/skills/drizzle-migrations/
-claude/.claude/skills/browser-dev/
-claude/.claude/scripts/query-db-production.ts
-claude/.claude/scripts/query-logs-production.ts
-claude/.claude/scripts/query-logs-development.ts
-claude/.claude/scripts/dev-with-logging.sh
-claude/.claude/settings.local.json
 .claude/settings.local.json
-
-# Worker runtime state, if it is ever created inside the package rather than ~/.claude/
-claude/.claude/workers/
 __pycache__/
 
 # Machine values the syncthing package stows but never publishes

@@ -41,26 +41,25 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
    ```
 
 3. Create the target directories, then stow. A directory missing at stow time becomes one symlink
-   into the repo, and whatever an app writes there later lands in the repo. `~/.claude` holds
-   Claude Code's session state and `~/.local/share` holds atuin's history and key.
+   into the repo, and whatever an app writes there later lands in the repo. `~/.local/share` holds
+   atuin's history and key, and `~/.config/jj` gains a `repos/` dir and an optional `conf.d/`.
 
    ```sh
-   mkdir -p ~/.config ~/.claude ~/.local/bin ~/.local/share
-   stow atuin bat claude git herdr jj jjui nvim tmux zsh
+   mkdir -p ~/.config/jj ~/.local/bin ~/.local/share
+   stow atuin bat git herdr jj jjui nvim tmux zsh
    ```
 
    On macOS, also stow the macOS-only packages:
 
    ```sh
-   mkdir -p ~/Library/LaunchAgents
-   stow ghostty kanata karabiner macos
+   stow ghostty kanata karabiner macos swiftbar
    ```
 
    On the laptop only, never the mini (it runs media-server's `tools/syncthing/configure.sh`), copy
    `syncthing/.config/filesync/env.example` to `env` beside it (gitignored), then stow `syncthing`,
    which shares every non-`_` dir in `~/Filesync` with the mini through Syncthing.
 
-   `docs/` and `raycast/` are not packages.
+   `docs/` is not a package.
 4. On Linux, make brew's zsh the login shell:
 
    ```sh
@@ -78,23 +77,20 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
    ```
 
 7. atuin: `atuin login -u <user>`. The key comes from the old machine and is never committed.
-8. Claude Code. On macOS the Brewfile installs it. On Linux, use the installer from
-   <https://code.claude.com/docs/en/setup>:
-
-   ```sh
-   curl -fsSL https://claude.ai/install.sh | bash
-   ```
-
-   Reinstall the npx skills into `~/.agents/skills/`, then link them with
-   `~/.claude/scripts/skills/skills-link.sh fix`. `settings.local.json` is per machine and gitignored.
-
+8. Identity and secrets come from an overlay outside this repo. Git includes
+   `~/.config/git/identity`, jj reads `~/.config/jj/conf.d/`, and `.zprofile` sources
+   `~/.local/state/secrets.env`. Each is optional; without them, set `user.name` and `user.email`
+   yourself.
 9. macOS only:
    - kanata: install the daemon and grant the permissions in [`kanata/README.md`](kanata/README.md).
      `brew bundle` and step 3 already did its `brew install` and `stow`.
    - Run `~/.macos` for system defaults and `~/.local/share/nvim-opener/build.sh` for the
      NvimOpener app.
-   - `launchctl bootstrap gui/$(id -u) <plist>` for each plist in `~/Library/LaunchAgents/com.marc.*`.
-     The plists name `/Users/me` literally.
+   - LaunchAgents are not stowed. Their plists carry `@HOME@`, which `install-launchagent` renders
+     into `~/Library/LaunchAgents` before loading each one:
+     `install-launchagent ~/dotfiles/macos/Library/LaunchAgents/*.plist`, plus the `syncthing` one
+     on the laptop.
+   - SwiftBar: set its plugin directory to `~/.config/swiftbar/plugins`.
 
 ## Packages
 
@@ -102,7 +98,6 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 |---------|--------------------|
 | `atuin` | Shell history search (ctrl-r). History DB and sync key stay in `~/.local/share/atuin/`, untracked |
 | `bat` | `bat` pager, Catppuccin Mocha theme |
-| `claude` | Claude Code: `CLAUDE.md`, settings, hooks, skills, scripts, statusline, output styles. See the Claude Code section in `CLAUDE.md` |
 | `ghostty` | Terminal; keybind remaps for tmux compatibility |
 | `git` | `git/config` |
 | `herdr` | Terminal multiplexer; keybinds mirror tmux, plus tab-name plugin |
@@ -112,11 +107,12 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 | `karabiner` | Not used for remapping — kept only for the DriverKit driver kanata needs |
 | `macos` | System defaults (`.macos`), wallpaper scripts, nvim-opener, LaunchAgents |
 | `nvim` | LazyVim-based Neovim config |
+| `swiftbar` | Menu-bar plugins: unread mail count, now playing |
 | `syncthing` | Laptop-only Filesync client: shares `~/Filesync` dirs with the mini. Device ID stays in a gitignored `env` |
 | `tmux` | Multiplexer; prefix-less keybinds, helper scripts |
 | `zsh` | Shell: `.zshenv`, `.zprofile`, `.zshrc`, prompt, theme, jj helpers |
 
-`raycast/` is gitignored. `karabiner-ts/` (the old TypeScript karabiner generator) is gone — kanata replaced it.
+`karabiner-ts/` (the old TypeScript karabiner generator) is gone — kanata replaced it.
 
 ## Zsh
 
@@ -137,11 +133,11 @@ macOS or Linux, on a fresh account. Windows runs the Linux setup inside WSL2; se
 
 ## Local Override Pattern
 
-Machine-specific config and secrets go in untracked `.local` files:
+Machine-specific config goes in untracked `.local` files:
 
 | File | Purpose |
 |------|---------|
-| `~/.config/zsh/.zprofile.local` | Machine PATH (e.g. postgresql), secrets (DATABASE_URL, tokens), credentials |
+| `~/.config/zsh/.zprofile.local` | Machine PATH (e.g. postgresql) |
 | `~/.config/zsh/.zshrc.local` | Machine-specific aliases, interactive-only overrides |
 
 These files are gitignored and must be created manually on each machine. Both are sourced automatically at the end of their respective rc files if they exist.

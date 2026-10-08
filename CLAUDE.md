@@ -110,14 +110,14 @@ is written `USD 3.90`. Named variables such as `$WORKSTREAM_DIR` are untouched.
 
 ### Settings and permissions
 
-`settings.json` is verified against Claude Code 2.1.267, installed via Homebrew cask (trails npm by
+`settings.json` is verified against Claude Code 2.1.285, installed via Homebrew cask (trails npm by
 ~20 versions; `autoUpdates` has no effect). Permission rules, the deny/ask/allow layering, the
 allowlist derivation, and the version-gated settings are documented in
 `docs/claude-permissions.md`. **Read that file before editing `settings.json`.**
 
 ### Hooks
 
-Ten hook commands in `settings.json`, across thirteen registrations. **A hook whose `command` path is wrong fails silently**, so
+Eleven hook commands in `settings.json`, across fourteen registrations. **A hook whose `command` path is wrong fails silently**, so
 `scripts/tests/settings.sh` asserts every `command` resolves to an executable both in the package
 and at its stowed path. Run it after touching `settings.json` or renaming anything a hook calls.
 

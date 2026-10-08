@@ -24,6 +24,7 @@ claude/.claude/scripts/query-logs-production.ts
 claude/.claude/scripts/query-logs-development.ts
 claude/.claude/scripts/dev-with-logging.sh
 claude/.claude/settings.local.json
+.claude/settings.local.json
 
 # Worker runtime state, if it is ever created inside the package rather than ~/.claude/
 claude/.claude/workers/

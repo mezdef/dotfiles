@@ -1,0 +1,46 @@
+name: checks
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: List shell scripts
+        # Tracked *.sh/*.bash and sh/bash shebangs; zsh is skipped because shellcheck can't parse it.
+        run: |
+          git ls-files -z -- . ':(exclude)work/' ':(exclude)archive/' |
+            while IFS= read -r -d '' f; do
+              [ -f "$f" ] || continue
+              first=$(head -n1 "$f")
+              case "$first" in *zsh*) continue ;; esac
+              case "$f" in
+                *.sh | *.bash) ;;
+                *) [[ $first =~ ^\#!.*[/\ ](ba|da)?sh([[:space:]]|$) ]] || continue ;;
+              esac
+              printf '%s\0' "$f"
+            done >"$RUNNER_TEMP/scripts"
+      - name: Report warnings
+        continue-on-error: true
+        run: xargs -0 -r shellcheck -S warning <"$RUNNER_TEMP/scripts"
+      - name: Fail on errors
+        run: xargs -0 -r shellcheck -S error <"$RUNNER_TEMP/scripts"
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    env:
+      GITLEAKS_VERSION: 8.30.1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Scan full history
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar -xz gitleaks
+          ./gitleaks git --no-banner --redact .

@@ -42,9 +42,10 @@ focus_pane_right = "alt+l"
 split_vertical = "alt+v"
 split_horizontal = "alt+s"
 
-# Pane management (tmux: M-f, M-q)
+# Pane management (tmux: M-f, M-w)
 zoom = "alt+f"
-close_pane = "alt+q"
+close_pane = "alt+w"
+close_tab = "alt+shift+w"     # herdr default is prefix+shift+x
 
 # Pane resize (tmux: C-M-h/j/k/l)
 resize_pane_left = "ctrl+alt+h"

@@ -7,6 +7,11 @@ onboarding = false
 [theme]
 name = "catppuccin"
 
+# Matches jjui: active row = catppuccin surface2, selection = overlay0
+[theme.custom]
+active_row_bg = "#585b70"
+selection_bg = "#6c7086"
+
 [ui]
 accent = "#a6e3a1"          # catppuccin green: selected tab bg, active pane border
 prompt_new_tab_name = false # tmux M-t creates instantly

@@ -41,9 +41,9 @@ diff-editor = ":builtin"
 "status dimmed" = { fg = "#a6adc8" }
 "revset title" = { fg = "#a6adc8", dim = true }
 "revset text" = { fg = "#a6adc8", dim = true }
-# catppuccin mocha surface1=#45475a
-"selected" = { bg = "#45475a", bold = false }
-"revisions details selected" = { bg = "#45475a" }
+# catppuccin mocha surface2=#585b70, overlay0=#6c7086
+"selected" = { bg = "#585b70", bold = false }
+"revisions details selected" = { bg = "#6c7086" }
 "revisions details added" = { fg = "#a6e3a1" }
 "revisions details modified" = { fg = "#f9e2af" }
 "revisions details deleted" = { fg = "#f38ba8" }

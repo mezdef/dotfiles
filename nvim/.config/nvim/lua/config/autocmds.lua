@@ -16,7 +16,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.cmd("bwipeout")
       vim.schedule(function()
         if Snacks and Snacks.dashboard then
-          Snacks.dashboard()
+          -- Reuse the current window: a floating dashboard traps files opened from it
+          Snacks.dashboard({ win = 0, buf = 0 })
         end
       end)
     end
